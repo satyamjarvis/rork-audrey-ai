@@ -1,8 +1,9 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, View, ViewStyle, Platform } from 'react-native';
+import { StyleSheet, View, ViewStyle, Platform, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAppBackground } from '@/contexts/AppBackgroundContext';
 
 interface ScreenContainerProps {
   children: ReactNode;
@@ -12,6 +13,8 @@ interface ScreenContainerProps {
   noGradient?: boolean;
   gradientColors?: readonly [string, string, ...string[]];
   contentStyle?: ViewStyle;
+  useGlobalBackground?: boolean;
+  skipGlobalBackground?: boolean;
 }
 
 export default function ScreenContainer({
@@ -22,9 +25,12 @@ export default function ScreenContainer({
   noGradient = false,
   gradientColors,
   contentStyle,
+  useGlobalBackground = true,
+  skipGlobalBackground = false,
 }: ScreenContainerProps) {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { selectedBackground, hasCustomBackground } = useAppBackground();
   
   const isNightMode = theme.id === 'night-mode';
   const defaultGradientColors: readonly [string, string, ...string[]] = isNightMode 
@@ -33,11 +39,10 @@ export default function ScreenContainer({
   
   const colors = gradientColors || defaultGradientColors;
   
-  // Calculate proper padding
   const paddingTop = noPadding ? 0 : insets.top + 24;
   const paddingBottom = noTabBar 
     ? (noPadding ? 0 : insets.bottom + 20)
-    : (Platform.OS === 'ios' ? 110 : 105); // Account for tab bar height
+    : (Platform.OS === 'ios' ? 110 : 105);
   
   const contentView = (
     <View style={[
@@ -51,6 +56,24 @@ export default function ScreenContainer({
       {children}
     </View>
   );
+
+  const shouldUseGlobalBackground = useGlobalBackground && hasCustomBackground && !skipGlobalBackground;
+  
+  if (shouldUseGlobalBackground && selectedBackground.url !== 'default') {
+    return (
+      <View style={[styles.container, style]}>
+        <ImageBackground
+          source={{ uri: selectedBackground.url }}
+          style={styles.imageBackground}
+          resizeMode="cover"
+        >
+          <View style={styles.overlay}>
+            {contentView}
+          </View>
+        </ImageBackground>
+      </View>
+    );
+  }
   
   if (noGradient) {
     return (
@@ -78,5 +101,12 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  imageBackground: {
+    flex: 1,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
 });

@@ -43,6 +43,7 @@ import { MorningRoutinesProvider } from "@/contexts/MorningRoutinesContext";
 import { WellnessCheckProvider } from "@/contexts/WellnessCheckContext";
 import { LearnContext as LearnProvider } from "@/contexts/LearnContext";
 import { MindMapProvider } from "@/contexts/MindMapContext";
+import { AppBackgroundProvider } from "@/contexts/AppBackgroundContext";
 
 
 SplashScreen.preventAutoHideAsync().catch((error) => {
@@ -74,7 +75,8 @@ const AppProviders = ({ children }: AppProvidersProps) => (
     <QueryClientProvider client={queryClient}>
     <LanguageProvider>
       <ThemeProvider>
-        <FontSizeProvider>
+        <AppBackgroundProvider>
+          <FontSizeProvider>
           <UniverseModeProvider>
             <AudioStyleProvider>
               <MusicPlayerProvider>
@@ -123,6 +125,7 @@ const AppProviders = ({ children }: AppProvidersProps) => (
             </AudioStyleProvider>
           </UniverseModeProvider>
         </FontSizeProvider>
+          </AppBackgroundProvider>
       </ThemeProvider>
     </LanguageProvider>
     </QueryClientProvider>

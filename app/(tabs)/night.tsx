@@ -23,6 +23,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import AppBackgroundWrapper from "@/components/AppBackgroundWrapper";
 
 const { width } = Dimensions.get("window");
 
@@ -216,11 +217,12 @@ export default function NightScreen() {
 
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={["#0f0c29", "#1a1a2e", "#302b63"]}
-        style={styles.gradient}
-      >
+    <AppBackgroundWrapper overlayOpacity={0.2}>
+      <View style={styles.container}>
+        <LinearGradient
+          colors={["#0f0c29", "#1a1a2e", "#302b63"]}
+          style={styles.gradient}
+        >
         {starPositions.map((star, index) => (
           <Animated.View
             key={index}
@@ -321,9 +323,10 @@ export default function NightScreen() {
               </Text>
             </Animated.View>
           </ScrollView>
-        </View>
-      </LinearGradient>
-    </View>
+          </View>
+        </LinearGradient>
+      </View>
+    </AppBackgroundWrapper>
   );
 }
 

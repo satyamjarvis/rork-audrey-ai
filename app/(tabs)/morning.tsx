@@ -26,6 +26,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import AppBackgroundWrapper from "@/components/AppBackgroundWrapper";
 
 const { width } = Dimensions.get("window");
 
@@ -211,11 +212,12 @@ export default function MorningScreen() {
   });
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={["#FFF8DC", "#FFE4B5", "#FFD700"]}
-        style={styles.gradient}
-      >
+    <AppBackgroundWrapper overlayOpacity={0.15}>
+      <View style={styles.container}>
+        <LinearGradient
+          colors={["#FFF8DC", "#FFE4B5", "#FFD700"]}
+          style={styles.gradient}
+        >
         {sunrayPositions.map((ray, index) => (
           <Animated.View
             key={index}
@@ -316,9 +318,10 @@ export default function MorningScreen() {
               </Text>
             </Animated.View>
           </ScrollView>
-        </View>
-      </LinearGradient>
-    </View>
+          </View>
+        </LinearGradient>
+      </View>
+    </AppBackgroundWrapper>
   );
 }
 

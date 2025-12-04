@@ -39,6 +39,7 @@ import { useLanguage, Language as LanguageType } from "@/contexts/LanguageContex
 import { useAudioStyle, AudioStyle, AUDIO_STYLES } from "@/contexts/AudioStyleContext";
 import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
 import { useCalendar } from "@/contexts/CalendarContext";
+import { useAppBackground } from "@/contexts/AppBackgroundContext";
 import { useFontSize, FontSizeScale } from "@/contexts/FontSizeContext";
 import { useUniverseMode } from "@/contexts/UniverseModeContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -113,7 +114,8 @@ export default function SettingsScreen() {
     setSelectedTrack 
   } = useAudioStyle();
   const { isMuted, toggleMute, isLoading: isMusicLoading, isDisabled: isMusicDisabled } = useMusicPlayer();
-  const { calendars, selectedCalendar, selectedBackground, setBackground } = useCalendar();
+  const { calendars, selectedCalendar } = useCalendar();
+  const { selectedBackgroundId: selectedBackground, setBackground, backgrounds: appBackgrounds } = useAppBackground();
 
   const { scale: fontSize, config: fontSizeConfig, options: fontSizeOptions, setFontSize } = useFontSize();
   const { mode: universeMode, setMode: setUniverseMode } = useUniverseMode();
@@ -624,15 +626,15 @@ export default function SettingsScreen() {
 
             <View style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-                Calendar Backgrounds
+                App Background
               </Text>
               <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>
-                Customize your calendar appearance
+                Choose a background for all app screens (except chats)
               </Text>
             </View>
 
             <View style={styles.backgroundGrid}>
-              {CALENDAR_BACKGROUNDS.map((bg) => {
+              {appBackgrounds.map((bg) => {
                 const isSelected = selectedBackground === bg.id;
                 return (
                   <TouchableOpacity

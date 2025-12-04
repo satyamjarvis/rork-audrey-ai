@@ -34,13 +34,15 @@ import { useCalendar } from "@/contexts/CalendarContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { usePlanner } from "@/contexts/PlannerContext";
 import { getCalendarBackground } from '@/constants/calendarBackgrounds';
+import { useAppBackground } from "@/contexts/AppBackgroundContext";
 
 type PlannerView = "yearly" | "monthly" | "weekly" | "daily" | null;
 
 export default function PlannerScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { calendars, selectedCalendar, selectedBackground } = useCalendar();
+  const { calendars, selectedCalendar, selectedBackground: calendarSelectedBackground } = useCalendar();
+  const { selectedBackgroundId: globalSelectedBackground, hasCustomBackground } = useAppBackground();
   const { pendingTasks, todayTasks, overdueTasks, upcomingTasks, isLoading } = usePlanner();
   const [selectedPlannerView, setSelectedPlannerView] = useState<PlannerView>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -141,11 +143,14 @@ export default function PlannerScreen() {
   }), [pendingTasks, todayTasks, overdueTasks, upcomingTasks]);
 
   const activeBackground = useMemo(() => {
-    if (selectedBackground && selectedBackground !== 'default') {
-      return getCalendarBackground(selectedBackground);
+    if (hasCustomBackground && globalSelectedBackground !== 'default') {
+      return getCalendarBackground(globalSelectedBackground);
+    }
+    if (calendarSelectedBackground && calendarSelectedBackground !== 'default') {
+      return getCalendarBackground(calendarSelectedBackground);
     }
     return null;
-  }, [selectedBackground]);
+  }, [hasCustomBackground, globalSelectedBackground, calendarSelectedBackground]);
 
   const textColor = activeBackground ? "#FFFFFF" : (isNightMode ? "#FFD700" : "#1A2B3C");
   const subtextColor = activeBackground ? "#E0E0E0" : (isNightMode ? "#FF1493" : "#6B9BD1");
