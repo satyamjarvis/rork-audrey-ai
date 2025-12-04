@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Crown, Star, Sparkles, X, CheckCircle, ShieldCheck } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type SubscriptionTier = 'basic-monthly' | 'basic-yearly' | 'advanced-monthly' | 'advanced-yearly';
 
@@ -89,6 +90,7 @@ export default function SubscriptionSelectionScreen() {
   const insets = useSafeAreaInsets();
 
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionTier>('basic-yearly');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -183,7 +185,7 @@ export default function SubscriptionSelectionScreen() {
             >
               <View style={styles.modalHeader}>
                 <Text style={[styles.modalTitle, { color: '#FFD700', textShadowColor: 'rgba(205, 127, 50, 0.5)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 }]}>
-                  Confirm Subscription
+                  {t.confirmSubscription}
                 </Text>
                 <TouchableOpacity onPress={() => setShowConfirmModal(false)} style={styles.closeButton}>
                   <X size={20} color="#A0A0A0" />
@@ -206,7 +208,7 @@ export default function SubscriptionSelectionScreen() {
               
               <View style={styles.securityNote}>
                 <ShieldCheck size={14} color="#4ADE80" />
-                <Text style={[styles.securityText, { color: '#A0A0A0' }]}>Secured by App Store</Text>
+                <Text style={[styles.securityText, { color: '#A0A0A0' }]}>{t.securedByAppStore}</Text>
               </View>
 
               <TouchableOpacity
@@ -220,12 +222,12 @@ export default function SubscriptionSelectionScreen() {
                   end={{ x: 1, y: 0 }}
                   style={styles.confirmButtonGradient}
                 >
-                  <Text style={[styles.confirmButtonText, { color: '#FFFFFF' }]}>Double Click to Pay</Text>
+                  <Text style={[styles.confirmButtonText, { color: '#FFFFFF' }]}>{t.doubleClickToPay}</Text>
                 </LinearGradient>
               </TouchableOpacity>
               
               <TouchableOpacity onPress={() => setShowConfirmModal(false)}>
-                <Text style={[styles.cancelText, { color: '#A0A0A0' }]}>Cancel</Text>
+                <Text style={[styles.cancelText, { color: '#A0A0A0' }]}>{t.cancel}</Text>
               </TouchableOpacity>
             </LinearGradient>
           </View>
@@ -260,11 +262,11 @@ export default function SubscriptionSelectionScreen() {
                   </View>
                   
                   <Text style={[styles.successTitle, { color: '#FFD700' }]}>
-                    You&apos;re All Set!
+                    {t.youreAllSet}
                   </Text>
                   
                   <Text style={styles.successMessage}>
-                    Welcome to Audrey Premium. Your journey to extraordinary begins now.
+                    {t.welcomeToPremium}
                   </Text>
 
                   <TouchableOpacity
@@ -278,7 +280,7 @@ export default function SubscriptionSelectionScreen() {
                       end={{ x: 1, y: 0 }}
                       style={styles.confirmButtonGradient}
                     >
-                      <Text style={[styles.confirmButtonText, { color: '#FFFFFF' }]}>Let&apos;s Go!</Text>
+                      <Text style={[styles.confirmButtonText, { color: '#FFFFFF' }]}>{t.letsGo}</Text>
                     </LinearGradient>
                   </TouchableOpacity>
                 </LinearGradient>
@@ -315,10 +317,10 @@ export default function SubscriptionSelectionScreen() {
             <Text style={[styles.title, { 
               color: isNightMode ? theme.colors.text.secondary : theme.colors.primary,
               textShadowColor: isNightMode ? 'rgba(255, 215, 0, 0.5)' : `${theme.colors.primary}33`
-            }]}>Choose Your Premium Plan</Text>
+            }]}>{t.chooseYourPremiumPlan}</Text>
             <Text style={[styles.subtitle, { 
               color: isNightMode ? theme.colors.text.light : theme.colors.text.secondary 
-            }]}>Unlock the full power of Audrey&apos;s features</Text>
+            }]}>{t.unlockFullPower}</Text>
           </View>
 
           <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -366,7 +368,7 @@ export default function SubscriptionSelectionScreen() {
                             />
                             <Text style={[styles.popularBadgeText, { 
                               color: isNightMode ? '#000000' : theme.colors.cardBackground 
-                            }]}>Popular</Text>
+                            }]}>{t.popular}</Text>
                           </LinearGradient>
                         </View>
                       )}
@@ -379,7 +381,7 @@ export default function SubscriptionSelectionScreen() {
                               end={{ x: 1, y: 1 }}
                               style={styles.comingSoonGradient}
                            >
-                             <Text style={styles.comingSoonText}>Coming Soon!</Text>
+                             <Text style={styles.comingSoonText}>{t.comingSoon}!</Text>
                            </LinearGradient>
                         </View>
                       )}
@@ -425,7 +427,7 @@ export default function SubscriptionSelectionScreen() {
             
             <View style={styles.detailsNoteContainer}>
                <Text style={[styles.detailsNote, { color: isNightMode ? '#A8A8A8' : theme.colors.text.secondary }]}>
-                 To view full plan details, please check subscriptions in your Apple ID or Google Play account.
+                 {t.viewPlanDetails}
                </Text>
             </View>
           </View>
@@ -451,13 +453,13 @@ export default function SubscriptionSelectionScreen() {
                 </View>
                 <Text style={[styles.subscribeButtonText, { 
                   color: isNightMode ? '#000000' : theme.colors.cardBackground 
-                }]}>Continue with {plans.find(p => p.id === selectedPlan)?.name || 'Selected Plan'}</Text>
+                }]}>{t.continueWithPlan}</Text>
               </LinearGradient>
             </TouchableOpacity>
             <Text style={[styles.footerNote, { 
               color: isNightMode ? theme.colors.text.light : theme.colors.text.secondary 
             }]}>
-              Cancel anytime. No hidden fees.
+              {t.cancelAnytime}. {t.noHiddenFees}.
             </Text>
 
           </View>

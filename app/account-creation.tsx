@@ -5,12 +5,14 @@ import { useState, useRef, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserPlus, Sparkles, User, Mail, Lock, ScanFace, Cloud, Phone } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 export default function AccountCreationScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const [isAppleAuthAvailable, setIsAppleAuthAvailable] = useState(false);
@@ -190,10 +192,10 @@ export default function AccountCreationScreen() {
               <Text style={[styles.title, { 
                 color: isNightMode ? theme.colors.text.secondary : theme.colors.primary,
                 textShadowColor: isNightMode ? 'rgba(255, 215, 0, 0.5)' : `${theme.colors.primary}33`
-              }]}>Welcome to Audrey</Text>
+              }]}>{t.welcomeToAudrey}</Text>
               <Text style={[styles.subtitle, { 
                 color: isNightMode ? theme.colors.text.light : theme.colors.text.secondary 
-              }]}>Create your account to begin your journey</Text>
+              }]}>{t.createAccountToBegin}</Text>
             </View>
 
             <View style={styles.formContainer}>
@@ -201,7 +203,7 @@ export default function AccountCreationScreen() {
                 <View style={{ flex: 1 }}>
                   <InputField 
                     icon={User}
-                    placeholder="First Name"
+                    placeholder={t.firstName}
                     value={firstName}
                     onChangeText={setFirstName}
                     autoCapitalize="words"
@@ -211,7 +213,7 @@ export default function AccountCreationScreen() {
                 <View style={{ flex: 1 }}>
                   <InputField 
                     icon={User}
-                    placeholder="Last Name"
+                    placeholder={t.lastName}
                     value={lastName}
                     onChangeText={setLastName}
                     autoCapitalize="words"
@@ -221,7 +223,7 @@ export default function AccountCreationScreen() {
 
               <InputField 
                 icon={Mail}
-                placeholder="Email Address"
+                placeholder={t.emailAddress}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -230,7 +232,7 @@ export default function AccountCreationScreen() {
               <View>
                 <InputField 
                   icon={Phone}
-                  placeholder="Phone Number"
+                  placeholder={t.phoneNumber}
                   value={phoneNumber}
                   onChangeText={setPhoneNumber}
                   keyboardType="phone-pad"
@@ -238,13 +240,13 @@ export default function AccountCreationScreen() {
                 <Text style={[styles.helperText, { 
                   color: isNightMode ? theme.colors.text.light : theme.colors.text.secondary 
                 }]}>
-                  *Needed to use the chat features
+                  *{t.phoneNeededForChat}
                 </Text>
               </View>
 
               <InputField 
                 icon={Lock}
-                placeholder="Password"
+                placeholder={t.password}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -270,13 +272,13 @@ export default function AccountCreationScreen() {
                   />
                   <Text style={[styles.buttonText, { 
                     color: isNightMode ? '#000000' : theme.colors.cardBackground 
-                  }]}>Create Account</Text>
+                  }]}>{t.createAccount}</Text>
                 </LinearGradient>
               </TouchableOpacity>
 
               <View style={styles.dividerContainer}>
                 <View style={[styles.divider, { backgroundColor: isNightMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)' }]} />
-                <Text style={[styles.dividerText, { color: isNightMode ? theme.colors.text.light : theme.colors.text.secondary }]}>OR</Text>
+                <Text style={[styles.dividerText, { color: isNightMode ? theme.colors.text.light : theme.colors.text.secondary }]}>{t.or.toUpperCase()}</Text>
                 <View style={[styles.divider, { backgroundColor: isNightMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)' }]} />
               </View>
 
@@ -300,7 +302,7 @@ export default function AccountCreationScreen() {
                 >
                   <Cloud size={20} color={isNightMode ? '#FFF' : '#000'} />
                   <Text style={[styles.biometricText, { color: isNightMode ? '#FFF' : '#000' }]}>
-                    Sign up with iCloud
+                    {t.signUpWithICloud}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -315,7 +317,7 @@ export default function AccountCreationScreen() {
                 >
                   <ScanFace size={20} color={isNightMode ? '#FFF' : '#000'} />
                   <Text style={[styles.biometricText, { color: isNightMode ? '#FFF' : '#000' }]}>
-                    Sign up with Face ID
+                    {t.signUpWithFaceID}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -325,7 +327,7 @@ export default function AccountCreationScreen() {
               <Text style={[styles.footerText, { 
                 color: isNightMode ? theme.colors.text.light : theme.colors.text.secondary 
               }]}>
-                By continuing, you agree to our Terms of Service and Privacy Policy
+                {t.termsAndPrivacy}
               </Text>
             </View>
           </Animated.View>
