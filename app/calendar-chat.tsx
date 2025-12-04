@@ -2560,6 +2560,9 @@ const styles = StyleSheet.create({
   theirAttachmentSize: {
     color: colors.text.light,
   },
+  attachmentLoading: {
+    opacity: 0.7,
+  },
   keyboardDismissButton: {
     position: "absolute" as const,
     bottom: 140,
