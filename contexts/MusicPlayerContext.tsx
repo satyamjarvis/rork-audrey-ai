@@ -44,29 +44,33 @@ export const [MusicPlayerProvider, useMusicPlayer] = createContextHook(() => {
 
       await soundRef.current.unloadAsync();
       
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        { uri: nextUri },
-        { 
-          shouldPlay: !isMutedRef.current, 
-          isLooping: false,
-          volume: 0.4
-        }
-      );
+      try {
+        const { sound: newSound } = await Audio.Sound.createAsync(
+          { uri: nextUri },
+          { 
+            shouldPlay: !isMutedRef.current, 
+            isLooping: false,
+            volume: 0.4
+          }
+        );
 
-      soundRef.current = newSound;
-      currentUriRef.current = nextUri;
-      
-      newSound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish && !status.isLooping) {
-          playNextTrack();
-        }
-      });
+        soundRef.current = newSound;
+        currentUriRef.current = nextUri;
+        
+        newSound.setOnPlaybackStatusUpdate((status) => {
+          if (status.isLoaded && status.didJustFinish && !status.isLooping) {
+            playNextTrack();
+          }
+        });
 
-      if (isMutedRef.current) {
-        await newSound.pauseAsync();
+        if (isMutedRef.current) {
+          await newSound.pauseAsync();
+        }
+      } catch (audioError: any) {
+        console.log('[MusicPlayer] Next track not supported:', audioError?.message || audioError);
       }
     } catch (error) {
-      console.error("Error playing next track:", error);
+      console.log('[MusicPlayer] Error playing next track:', error);
     }
   }, []);
 
@@ -133,38 +137,46 @@ export const [MusicPlayerProvider, useMusicPlayer] = createContextHook(() => {
         console.log("Loading audio:", audioUri, "(track", startIndex + 1, "of", musicUris.length, ")");
         currentUriRef.current = audioUri;
         
-        const { sound: newSound } = await Audio.Sound.createAsync(
-          { uri: audioUri },
-          { 
-            shouldPlay: false, // Always start paused, will be started by calendar
-            isLooping: false,
-            volume: 0.4
-          },
-          (status) => {
-            if (!status.isLoaded && 'error' in status) {
-              console.error("Audio loading error:", status.error);
+        try {
+          const { sound: newSound } = await Audio.Sound.createAsync(
+            { uri: audioUri },
+            { 
+              shouldPlay: false,
+              isLooping: false,
+              volume: 0.4
+            },
+            (status) => {
+              if (!status.isLoaded && 'error' in status) {
+                console.error("Audio loading error:", status.error);
+              }
             }
+          );
+
+          if (!isMounted) {
+            await newSound?.unloadAsync().catch(() => {});
+            return;
           }
-        );
 
-        if (!isMounted) {
-          await newSound?.unloadAsync().catch(() => {});
-          return;
-        }
-
-        if (newSound) {
-          soundRef.current = newSound;
-          isInitializedRef.current = true;
-          
-          newSound.setOnPlaybackStatusUpdate((status) => {
-            if (status.isLoaded && status.didJustFinish && !status.isLooping) {
-              playNextTrack();
-            }
-          });
-          
-          // Always pause music initially (will be started by calendar)
-          await newSound.pauseAsync();
-          console.log('[MusicPlayer] Music loaded but paused, waiting for calendar page');
+          if (newSound) {
+            soundRef.current = newSound;
+            isInitializedRef.current = true;
+            
+            newSound.setOnPlaybackStatusUpdate((status) => {
+              if (status.isLoaded && status.didJustFinish && !status.isLooping) {
+                playNextTrack();
+              }
+            });
+            
+            await newSound.pauseAsync();
+            console.log('[MusicPlayer] Music loaded but paused, waiting for calendar page');
+          }
+        } catch (audioError: any) {
+          console.log('[MusicPlayer] Audio source not supported or unavailable:', audioError?.message || audioError);
+          if (isMounted) {
+            setIsDisabled(true);
+            soundRef.current = null;
+            isInitializedRef.current = false;
+          }
         }
       } catch (error) {
         console.log("Music player initialization error:", error);
@@ -250,40 +262,43 @@ export const [MusicPlayerProvider, useMusicPlayer] = createContextHook(() => {
 
         if (!isMounted) return;
 
-        const { sound: newSound } = await Audio.Sound.createAsync(
-          { uri: newUri },
-          { 
-            shouldPlay: true, // Auto-play when switching
-            isLooping: false,
-            volume: 0.4
-          },
-          (status) => {
-            if (!status.isLoaded && 'error' in status) {
-              console.error("Audio loading error:", status.error);
+        try {
+          const { sound: newSound } = await Audio.Sound.createAsync(
+            { uri: newUri },
+            { 
+              shouldPlay: true,
+              isLooping: false,
+              volume: 0.4
+            },
+            (status) => {
+              if (!status.isLoaded && 'error' in status) {
+                console.log('[MusicPlayer] Audio loading error:', status.error);
+              }
             }
-          }
-        );
+          );
 
-        if (!isMounted) {
-          await newSound?.unloadAsync().catch(() => {});
-          return;
+          if (!isMounted) {
+            await newSound?.unloadAsync().catch(() => {});
+            return;
+          }
+
+          soundRef.current = newSound;
+          isInitializedRef.current = true;
+          currentUriRef.current = newUri;
+          
+          newSound.setOnPlaybackStatusUpdate((status) => {
+            if (status.isLoaded && status.didJustFinish && !status.isLooping) {
+              playNextTrack();
+            }
+          });
+          
+          console.log('[MusicPlayer] Music switched successfully to:', newUri);
+        } catch (audioError: any) {
+          console.log('[MusicPlayer] Switch track not supported:', audioError?.message || audioError);
+          setIsDisabled(true);
         }
-
-        soundRef.current = newSound;
-        isInitializedRef.current = true;
-        currentUriRef.current = newUri;
-        
-        newSound.setOnPlaybackStatusUpdate((status) => {
-          if (status.isLoaded && status.didJustFinish && !status.isLooping) {
-            playNextTrack();
-          }
-        });
-        
-        console.log("Music switched successfully to:", newUri);
-        
-        // Removed pauseAsync to allow auto-play
       } catch (error) {
-        console.error("Error switching music:", error);
+        console.log('[MusicPlayer] Error switching music:', error);
       }
     }
 
