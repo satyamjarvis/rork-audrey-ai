@@ -57,6 +57,257 @@ import ChatThemeModal from "@/components/ChatThemeModal";
 
 
 
+function GlitterSendButton({ hasText, onPress, theme, isNightMode }: { hasText: boolean; onPress: () => void; theme: any; isNightMode: boolean }) {
+  const glowAnim = useRef(new Animated.Value(0)).current;
+  const sparkleAnim1 = useRef(new Animated.Value(0)).current;
+  const sparkleAnim2 = useRef(new Animated.Value(0)).current;
+  const sparkleAnim3 = useRef(new Animated.Value(0)).current;
+  const sparkleAnim4 = useRef(new Animated.Value(0)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (hasText) {
+      const glowLoop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: false,
+          }),
+          Animated.timing(glowAnim, {
+            toValue: 0.3,
+            duration: 800,
+            useNativeDriver: false,
+          }),
+        ])
+      );
+
+      const pulseLoop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.1,
+            duration: 600,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 600,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+
+      const rotateLoop = Animated.loop(
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        })
+      );
+
+      const createSparkle = (anim: Animated.Value, delay: number) => {
+        return Animated.loop(
+          Animated.sequence([
+            Animated.timing(anim, {
+              toValue: 1,
+              duration: 400,
+              delay,
+              useNativeDriver: true,
+            }),
+            Animated.timing(anim, {
+              toValue: 0,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+          ])
+        );
+      };
+
+      const sparkle1 = createSparkle(sparkleAnim1, 0);
+      const sparkle2 = createSparkle(sparkleAnim2, 200);
+      const sparkle3 = createSparkle(sparkleAnim3, 400);
+      const sparkle4 = createSparkle(sparkleAnim4, 600);
+
+      glowLoop.start();
+      pulseLoop.start();
+      rotateLoop.start();
+      sparkle1.start();
+      sparkle2.start();
+      sparkle3.start();
+      sparkle4.start();
+
+      return () => {
+        glowLoop.stop();
+        pulseLoop.stop();
+        rotateLoop.stop();
+        sparkle1.stop();
+        sparkle2.stop();
+        sparkle3.stop();
+        sparkle4.stop();
+      };
+    } else {
+      glowAnim.setValue(0);
+      pulseAnim.setValue(1);
+      rotateAnim.setValue(0);
+      sparkleAnim1.setValue(0);
+      sparkleAnim2.setValue(0);
+      sparkleAnim3.setValue(0);
+      sparkleAnim4.setValue(0);
+    }
+  }, [hasText]);
+
+  const glowOpacity = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 0.8],
+  });
+
+  const rotateInterpolate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  const sparklePositions = [
+    { top: -6, right: -6 },
+    { top: -4, left: -4 },
+    { bottom: -6, right: -4 },
+    { bottom: -4, left: -6 },
+  ];
+
+  return (
+    <TouchableOpacity
+      style={[glitterSendStyles.container, !hasText && glitterSendStyles.disabled]}
+      onPress={onPress}
+      disabled={!hasText}
+      activeOpacity={0.8}
+    >
+      {hasText && (
+        <>
+          <Animated.View
+            style={[
+              glitterSendStyles.glowOuter,
+              {
+                opacity: glowOpacity,
+                backgroundColor: isNightMode ? '#FFD700' : theme.colors.primary,
+                transform: [{ scale: pulseAnim }],
+              },
+            ]}
+          />
+          <Animated.View
+            style={[
+              glitterSendStyles.glowMiddle,
+              {
+                opacity: glowOpacity,
+                backgroundColor: isNightMode ? '#FF1493' : theme.colors.secondary || theme.colors.primary,
+                transform: [{ rotate: rotateInterpolate }],
+              },
+            ]}
+          />
+          {[sparkleAnim1, sparkleAnim2, sparkleAnim3, sparkleAnim4].map((anim, index) => (
+            <Animated.View
+              key={index}
+              style={[
+                glitterSendStyles.sparkle,
+                sparklePositions[index],
+                {
+                  opacity: anim,
+                  transform: [
+                    {
+                      scale: anim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.3, 1.2],
+                      }),
+                    },
+                  ],
+                  backgroundColor: index % 2 === 0 
+                    ? (isNightMode ? '#FFD700' : '#FFD700') 
+                    : (isNightMode ? '#FF1493' : '#00BFFF'),
+                },
+              ]}
+            />
+          ))}
+        </>
+      )}
+      <Animated.View
+        style={[
+          glitterSendStyles.buttonInner,
+          hasText && { transform: [{ scale: pulseAnim }] },
+        ]}
+      >
+        <LinearGradient
+          colors={
+            hasText
+              ? (isNightMode ? ['#FFD700', '#FF8C00', '#FF1493'] : theme.gradients.primary as any)
+              : ['#E0E0E0', '#D0D0D0']
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={glitterSendStyles.gradient}
+        >
+          <Send color="#FFFFFF" size={18} strokeWidth={2.5} />
+        </LinearGradient>
+      </Animated.View>
+    </TouchableOpacity>
+  );
+}
+
+const glitterSendStyles = StyleSheet.create({
+  container: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    position: 'relative' as const,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  glowOuter: {
+    position: 'absolute' as const,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    zIndex: -2,
+  },
+  glowMiddle: {
+    position: 'absolute' as const,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    zIndex: -1,
+  },
+  sparkle: {
+    position: 'absolute' as const,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    zIndex: 10,
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
+    elevation: 6,
+  },
+  buttonInner: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    overflow: 'hidden' as const,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  gradient: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+});
+
 function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: string }) {
   const scaleAnim1 = useRef(new Animated.Value(0.3)).current;
   const scaleAnim2 = useRef(new Animated.Value(0.5)).current;
@@ -1453,25 +1704,12 @@ export default function CalendarChatScreen() {
                 autoCapitalize="sentences"
                 autoCorrect
               />
-              <TouchableOpacity
-                style={[
-                  styles.sendButton,
-                  !messageText.trim() && styles.sendButtonDisabled,
-                ]}
+              <GlitterSendButton
+                hasText={!!messageText.trim()}
                 onPress={handleSendMessage}
-                disabled={!messageText.trim()}
-              >
-                <LinearGradient
-                  colors={
-                    messageText.trim()
-                      ? (theme.gradients.primary as any)
-                      : ["#E0E0E0", "#D0D0D0"]
-                  }
-                  style={styles.sendButtonGradient}
-                >
-                  <Send color="#FFFFFF" size={18} strokeWidth={2.5} />
-                </LinearGradient>
-              </TouchableOpacity>
+                theme={theme}
+                isNightMode={isNightMode}
+              />
             </View>
           </View>
         </View>
