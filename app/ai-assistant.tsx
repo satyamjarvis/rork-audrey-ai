@@ -40,6 +40,7 @@ import {
   Search,
   BookOpen,
   Download,
+  Zap,
 } from "lucide-react-native";
 import { Audio } from "expo-av";
 import * as Speech from "expo-speech";
@@ -2282,6 +2283,18 @@ GUIDELINES FOR EXCELLENCE:
                   ) : (
                     <Mic color={palette.textPrimary} size={18} strokeWidth={2.2} />
                   )}
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.floatingIconButton, { borderColor: palette.cardBorder }]}
+                  onPress={() => {
+                    if (Platform.OS !== "web") {
+                      Haptics.selectionAsync();
+                    }
+                    router.push("/automations-manager" as any);
+                  }}
+                >
+                  <Zap color={palette.accent} size={18} strokeWidth={2.2} />
                 </TouchableOpacity>
 
                 {messages.length > 0 && (
