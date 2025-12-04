@@ -15,7 +15,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   X,
-  Download,
   FileText,
   Video,
   Lock,
@@ -27,7 +26,6 @@ import {
   StickyNote,
   Network,
   Share2,
-  Mail,
 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { Audio } from "expo-av";
@@ -35,7 +33,7 @@ import { router } from "expo-router";
 import * as XLSX from "xlsx";
 import type { Attachment } from "@/contexts/CalendarContext";
 import { useStatistics, Tracker, SpreadsheetColumn, SpreadsheetRow } from "@/contexts/StatisticsContext";
-import { downloadAttachmentToDevice, getMimeTypeFromFileName, shareAttachment, shareViaEmail } from "@/utils/attachmentHelpers";
+import { getMimeTypeFromFileName, shareAttachment } from "@/utils/attachmentHelpers";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -101,47 +99,6 @@ export default function AttachmentPreviewModal({
     onClose();
   };
 
-  const handleDownload = async () => {
-    if (!canDownload) {
-      Alert.alert(
-        "Download Restricted",
-        `The owner of this calendar (${calendarOwner}) has disabled downloads for shared users.`
-      );
-      return;
-    }
-
-    if (!attachment || !fileData) {
-      Alert.alert("Error", "No file data available");
-      return;
-    }
-
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }
-
-    console.log('[AttachmentPreview] Starting download for:', attachment.name);
-    console.log('[AttachmentPreview] File type:', attachment.type);
-    console.log('[AttachmentPreview] File data length:', fileData?.length);
-
-    try {
-      const mimeType = attachment.type || getMimeTypeFromFileName(attachment.name);
-      
-      const success = await downloadAttachmentToDevice({
-        fileName: attachment.name,
-        fileData: fileData,
-        fileType: mimeType,
-        showSuccessAlert: true,
-      });
-
-      if (!success) {
-        console.error('[AttachmentPreview] Download returned false');
-      }
-    } catch (error) {
-      console.error("[AttachmentPreview] Error downloading attachment:", error);
-      Alert.alert("Error", "Failed to download file. Please try again.");
-    }
-  };
-
   const handleShare = async () => {
     if (!canDownload) {
       Alert.alert(
@@ -171,40 +128,6 @@ export default function AttachmentPreviewModal({
     } catch (error) {
       console.error("[AttachmentPreview] Error sharing attachment:", error);
       Alert.alert("Error", "Failed to share file. Please try again.");
-    }
-  };
-
-  const handleShareViaEmail = async () => {
-    if (!canDownload) {
-      Alert.alert(
-        "Share Restricted",
-        `The owner of this calendar (${calendarOwner}) has disabled sharing for shared users.`
-      );
-      return;
-    }
-
-    if (!attachment || !fileData) {
-      Alert.alert("Error", "No file data available");
-      return;
-    }
-
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }
-
-    try {
-      const mimeType = attachment.type || getMimeTypeFromFileName(attachment.name);
-      
-      await shareViaEmail({
-        fileName: attachment.name,
-        fileData: fileData,
-        fileType: mimeType,
-        subject: `Shared: ${attachment.name}`,
-        body: 'Please find the attached file from our shared calendar.',
-      });
-    } catch (error) {
-      console.error("[AttachmentPreview] Error sharing via email:", error);
-      Alert.alert("Error", "Failed to share via email. Please try again.");
     }
   };
 
@@ -730,59 +653,59 @@ export default function AttachmentPreviewModal({
             <View style={styles.footerButtonsRow}>
               <TouchableOpacity
                 style={[
-                  styles.secondaryButton,
-                  !canDownload && styles.buttonDisabled,
-                ]}
-                onPress={handleShareViaEmail}
-                disabled={!canDownload}
-              >
-                <View style={[styles.secondaryButtonContent, { borderColor: canDownload ? themeColors.primary : "#666666" }]}>
-                  <Mail color={canDownload ? themeColors.primary : "#666666"} size={20} strokeWidth={2.5} />
-                  <Text style={[styles.secondaryButtonText, { color: canDownload ? themeColors.primary : "#666666" }]}>
-                    Email
-                  </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.secondaryButton,
+                  styles.primaryActionButton,
                   !canDownload && styles.buttonDisabled,
                 ]}
                 onPress={handleShare}
                 disabled={!canDownload}
               >
-                <View style={[styles.secondaryButtonContent, { borderColor: canDownload ? themeColors.primary : "#666666" }]}>
-                  <Share2 color={canDownload ? themeColors.primary : "#666666"} size={20} strokeWidth={2.5} />
-                  <Text style={[styles.secondaryButtonText, { color: canDownload ? themeColors.primary : "#666666" }]}>
-                    Share
+                <LinearGradient
+                  colors={
+                    canDownload
+                      ? [themeColors.primary, themeColors.secondary]
+                      : ["#666666", "#555555"]
+                  }
+                  style={styles.primaryActionButtonGradient}
+                >
+                  <Share2 color="#FFFFFF" size={20} strokeWidth={2.5} />
+                  <Text style={styles.primaryActionButtonText}>
+                    Share to Device
                   </Text>
-                </View>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.primaryActionButton,
+                  !canDownload && styles.buttonDisabled,
+                ]}
+                onPress={handleOpenInAnalytics}
+                disabled={!canDownload}
+              >
+                <LinearGradient
+                  colors={
+                    canDownload
+                      ? [themeColors.secondary, themeColors.primary]
+                      : ["#666666", "#555555"]
+                  }
+                  style={styles.primaryActionButtonGradient}
+                >
+                  <BarChart3 color="#FFFFFF" size={20} strokeWidth={2.5} />
+                  <Text style={styles.primaryActionButtonText}>
+                    Download to Metrics
+                  </Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              style={[
-                styles.downloadButton,
-                !canDownload && styles.downloadButtonDisabled,
-              ]}
-              onPress={handleDownload}
-              disabled={!canDownload}
-            >
-              <LinearGradient
-                colors={
-                  canDownload
-                    ? [themeColors.primary, themeColors.secondary]
-                    : ["#666666", "#555555"]
-                }
-                style={styles.downloadButtonGradient}
-              >
-                <Download color="#FFFFFF" size={20} strokeWidth={2.5} />
-                <Text style={styles.downloadButtonText}>
-                  {canDownload ? "Download File" : "Download Restricted"}
+            {!canDownload && (
+              <View style={[styles.restrictedNote, { backgroundColor: "rgba(255, 165, 0, 0.1)" }]}>
+                <Lock color="#FFA500" size={16} strokeWidth={2.5} />
+                <Text style={[styles.restrictedNoteText, { color: "#FFA500" }]}>
+                  Actions restricted by owner
                 </Text>
-              </LinearGradient>
-            </TouchableOpacity>
+              </View>
+            )}
           </View>
         </LinearGradient>
       </View>
@@ -945,24 +868,45 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
   },
-  secondaryButton: {
+  primaryActionButton: {
     flex: 1,
+    borderRadius: 16,
+    overflow: "hidden",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
-  secondaryButtonContent: {
+  primaryActionButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 14,
-    borderRadius: 12,
-    borderWidth: 2,
+    paddingVertical: 16,
     gap: 8,
   },
-  secondaryButtonText: {
-    fontSize: 15,
+  primaryActionButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
     fontWeight: "700" as const,
+    letterSpacing: 0.3,
   },
   buttonDisabled: {
     opacity: 0.5,
+  },
+  restrictedNote: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  restrictedNoteText: {
+    fontSize: 13,
+    fontWeight: "600" as const,
   },
   actionButton: {
     flexDirection: "row",
