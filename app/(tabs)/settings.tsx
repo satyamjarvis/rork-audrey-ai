@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Platform,
   Switch,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
@@ -26,10 +28,8 @@ import {
   Volume2,
   VolumeX,
   Crown,
-  Calendar,
   ChevronRight,
   Type,
-  Video,
 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
@@ -44,7 +44,7 @@ import { useFontSize, FontSizeScale } from "@/contexts/FontSizeContext";
 import { useUniverseMode } from "@/contexts/UniverseModeContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { encrypt, decrypt } from "@/utils/encryption";
-import { CALENDAR_BACKGROUNDS } from '@/constants/calendarBackgrounds';
+
 import { Image } from 'expo-image';
 import AppBackgroundWrapper from "@/components/AppBackgroundWrapper";
 
@@ -73,7 +73,7 @@ const languages: LanguageOption[] = [
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
 
-  const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
     loadEncryptedSettings();
@@ -105,7 +105,8 @@ export default function SettingsScreen() {
   };
   const { theme, setTheme, autoThemeEnabled, toggleAutoTheme, availableThemes, activeHolidayTheme } = useTheme();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, setLanguageWithRestart, pendingRestart } = useLanguage();
+  const [isChangingLanguage, setIsChangingLanguage] = useState(false);
   const { 
     audioStyle, 
     setAudioStyle, 
@@ -123,7 +124,7 @@ export default function SettingsScreen() {
   const [showThemeSelector, setShowThemeSelector] = useState<boolean>(false);
   const [showFontSizeSelector, setShowFontSizeSelector] = useState<boolean>(false);
 
-  const [newPasscode, setNewPasscode] = useState<string>("");
+  
   const [showLanguageSelector, setShowLanguageSelector] = useState<boolean>(false);
   const [showAudioStyleSelector, setShowAudioStyleSelector] = useState<boolean>(false);
   const [selectedStyleForTracks, setSelectedStyleForTracks] = useState<AudioStyle | null>(null);
@@ -170,12 +171,38 @@ export default function SettingsScreen() {
     toggleAutoTheme(value);
   };
 
-  const handleSelectLanguage = (lang: LanguageType) => {
+  const handleSelectLanguage = async (lang: LanguageType) => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    setLanguage(lang);
-    saveEncryptedSettings({ language: lang, timestamp: Date.now() });
+    
+    // Check if language is actually changing
+    if (lang === language) {
+      setShowLanguageSelector(false);
+      return;
+    }
+    
+    // Show confirmation for language change with restart
+    Alert.alert(
+      'Restart Required',
+      'The app needs to restart to apply the new language. This ensures all text is properly updated.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Restart Now',
+          style: 'default',
+          onPress: async () => {
+            setIsChangingLanguage(true);
+            console.log('[Settings] User confirmed language change to:', lang);
+            await saveEncryptedSettings({ language: lang, timestamp: Date.now() });
+            await setLanguageWithRestart(lang);
+          },
+        },
+      ]
+    );
   };
 
   const handleSelectAudioStyle = (style: AudioStyle) => {
@@ -416,6 +443,15 @@ export default function SettingsScreen() {
             contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
             showsVerticalScrollIndicator={false}
           >
+            {(isChangingLanguage || pendingRestart) && (
+              <View style={[styles.restartOverlay, { backgroundColor: 'rgba(0,0,0,0.7)' }]}>
+                <ActivityIndicator size="large" color="#FFD700" />
+                <Text style={styles.restartText}>
+                  {pendingRestart ? 'Restarting app...' : 'Applying language...'}
+                </Text>
+              </View>
+            )}
+
             <View style={styles.languagesGrid}>
               {languages.map((lang) => {
                 const isSelected = lang.code === language;
@@ -432,6 +468,7 @@ export default function SettingsScreen() {
                     ]}
                     onPress={() => handleSelectLanguage(lang.code)}
                     activeOpacity={0.7}
+                    disabled={isChangingLanguage || pendingRestart}
                   >
                     <View style={styles.languageCardHeader}>
                       <Text style={styles.languageFlag}>{lang.flag}</Text>
@@ -1938,5 +1975,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
+  },
+  restartOverlay: {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    borderRadius: 20,
+    gap: 16,
+  },
+  restartText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600' as const,
   },
 });
