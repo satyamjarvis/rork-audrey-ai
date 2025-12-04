@@ -1650,6 +1650,9 @@ export default function CalendarChatScreen() {
                 uri: "",
                 size: selectedAttachment.attachment.size,
                 uploadedAt: selectedAttachment.attachment.uploadedAt || new Date().toISOString(),
+                sourceFeature: selectedAttachment.attachment.sourceFeature,
+                sourceId: selectedAttachment.attachment.sourceId,
+                metadata: selectedAttachment.attachment.metadata,
               }
             : null
         }

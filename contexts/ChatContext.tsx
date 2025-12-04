@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import createContextHook from "@nkzw/create-context-hook";
 import { usePersistentStorage } from "@/utils/usePersistentStorage";
 import { encryptMessage, decryptMessage, encryptFile, decryptFile, EncryptedData } from "@/utils/encryption";
+import { getMimeTypeFromFileName } from "@/utils/attachmentHelpers";
 
 export type FileAttachment = {
   id: string;
@@ -11,6 +12,9 @@ export type FileAttachment = {
   size: number;
   uploadedAt: string;
   allowEditing?: boolean;
+  sourceFeature?: 'analytics' | 'planner' | 'notes' | 'mindmap' | 'external';
+  sourceId?: string;
+  metadata?: any;
 };
 
 export type ChatMessage = {
@@ -152,18 +156,26 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     fileName: string,
     messageText: string = "Shared a file",
     senderEmail: string = "me",
-    allowEditing: boolean = true
+    allowEditing: boolean = true,
+    sourceFeature?: 'analytics' | 'planner' | 'notes' | 'mindmap' | 'external',
+    sourceId?: string,
+    metadata?: any
   ) => {
     try {
       const encryptedFileData = await encryptFile(fileData);
       
+      const mimeType = getMimeTypeFromFileName(fileName);
+
       const attachment: Omit<FileAttachment, "uploadedAt"> = {
         id: `file_${Date.now()}_${Math.random()}`,
         fileName,
-        fileType: 'application/octet-stream',
+        fileType: mimeType,
         encryptedData: encryptedFileData,
         size: fileData.length,
         allowEditing,
+        sourceFeature,
+        sourceId,
+        metadata
       };
       
       return await sendMessage(calendarId, messageText, senderEmail, attachment);

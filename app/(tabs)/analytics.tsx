@@ -803,7 +803,16 @@ export default function AnalyticsScreen() {
          fullFileName = fileName + ".pdf";
       }
 
-      await sendFileAttachment(calendarId, fileData, fullFileName, `📊 Shared encrypted analytics ${options.format.toUpperCase()}`);
+      await sendFileAttachment(
+        calendarId, 
+        fileData, 
+        fullFileName, 
+        `📊 Shared encrypted analytics ${options.format.toUpperCase()}`,
+        "me",
+        true,
+        "analytics",
+        activeTrackerId || undefined
+      );
       
       const trackerName = activeTrackerId 
         ? savedTrackers.find(t => t.id === activeTrackerId)?.customName || selectedTemplate || "Custom"

@@ -90,7 +90,7 @@ export default function AttachmentPreviewModal({
       }
       setIsPlaying(false);
     }
-  }, [visible]);
+  }, [visible, sound]);
 
   const handleClose = () => {
     if (Platform.OS !== "web") {
@@ -474,7 +474,7 @@ export default function AttachmentPreviewModal({
                 >
                   {getSourceFeatureIcon()}
                   <Text style={[styles.actionButtonText, { color: themeColors.primary }]}>
-                    Open in {getSourceFeatureName()}
+                    Open in Metrics
                   </Text>
                 </TouchableOpacity>
               )}
@@ -484,7 +484,7 @@ export default function AttachmentPreviewModal({
               >
                 <ExternalLink color={themeColors.primary} size={20} strokeWidth={2.5} />
                 <Text style={[styles.actionButtonText, { color: themeColors.primary }]}>
-                  Import to Analytics
+                  Save as Active Spreadsheet
                 </Text>
               </TouchableOpacity>
             </View>
