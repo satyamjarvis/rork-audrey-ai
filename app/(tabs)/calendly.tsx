@@ -214,18 +214,22 @@ export default function SolaraScreen() {
     const playFirstTimeSound = async () => {
       if (hasPlayedSound.current) return;
       
+      // Skip audio autoplay on web due to browser autoplay policies
+      if (Platform.OS === 'web') {
+        console.log('[Solara] Skipping first-time sound on web (autoplay policy)');
+        return;
+      }
+      
       try {
         const isFirstTime = await markSolaraAccessed();
         if (isFirstTime) {
           hasPlayedSound.current = true;
           console.log('[Solara] Playing first-time sound');
           
-          if (Platform.OS !== 'web') {
-            await Audio.setAudioModeAsync({
-              playsInSilentModeIOS: true,
-              staysActiveInBackground: false,
-            });
-          }
+          await Audio.setAudioModeAsync({
+            playsInSilentModeIOS: true,
+            staysActiveInBackground: false,
+          });
           
           const { sound } = await Audio.Sound.createAsync(
             { uri: 'https://rork.app/pa/ier8mze8ucoqq9oktvadp/piano_2' },
