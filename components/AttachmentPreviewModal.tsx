@@ -26,6 +26,8 @@ import {
   CheckSquare,
   StickyNote,
   Network,
+  Share2,
+  Mail,
 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { Audio } from "expo-av";
@@ -33,7 +35,7 @@ import { router } from "expo-router";
 import * as XLSX from "xlsx";
 import type { Attachment } from "@/contexts/CalendarContext";
 import { useStatistics, Tracker, SpreadsheetColumn, SpreadsheetRow } from "@/contexts/StatisticsContext";
-import { downloadAttachmentToDevice, getMimeTypeFromFileName } from "@/utils/attachmentHelpers";
+import { downloadAttachmentToDevice, getMimeTypeFromFileName, shareAttachment, shareViaEmail } from "@/utils/attachmentHelpers";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -137,6 +139,72 @@ export default function AttachmentPreviewModal({
     } catch (error) {
       console.error("[AttachmentPreview] Error downloading attachment:", error);
       Alert.alert("Error", "Failed to download file. Please try again.");
+    }
+  };
+
+  const handleShare = async () => {
+    if (!canDownload) {
+      Alert.alert(
+        "Share Restricted",
+        `The owner of this calendar (${calendarOwner}) has disabled sharing for shared users.`
+      );
+      return;
+    }
+
+    if (!attachment || !fileData) {
+      Alert.alert("Error", "No file data available");
+      return;
+    }
+
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+
+    try {
+      const mimeType = attachment.type || getMimeTypeFromFileName(attachment.name);
+      
+      await shareAttachment({
+        fileName: attachment.name,
+        fileData: fileData,
+        fileType: mimeType,
+      });
+    } catch (error) {
+      console.error("[AttachmentPreview] Error sharing attachment:", error);
+      Alert.alert("Error", "Failed to share file. Please try again.");
+    }
+  };
+
+  const handleShareViaEmail = async () => {
+    if (!canDownload) {
+      Alert.alert(
+        "Share Restricted",
+        `The owner of this calendar (${calendarOwner}) has disabled sharing for shared users.`
+      );
+      return;
+    }
+
+    if (!attachment || !fileData) {
+      Alert.alert("Error", "No file data available");
+      return;
+    }
+
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+
+    try {
+      const mimeType = attachment.type || getMimeTypeFromFileName(attachment.name);
+      
+      await shareViaEmail({
+        fileName: attachment.name,
+        fileData: fileData,
+        fileType: mimeType,
+        subject: `Shared: ${attachment.name}`,
+        body: 'Please find the attached file from our shared calendar.',
+      });
+    } catch (error) {
+      console.error("[AttachmentPreview] Error sharing via email:", error);
+      Alert.alert("Error", "Failed to share via email. Please try again.");
     }
   };
 
@@ -659,6 +727,40 @@ export default function AttachmentPreviewModal({
               },
             ]}
           >
+            <View style={styles.footerButtonsRow}>
+              <TouchableOpacity
+                style={[
+                  styles.secondaryButton,
+                  !canDownload && styles.buttonDisabled,
+                ]}
+                onPress={handleShareViaEmail}
+                disabled={!canDownload}
+              >
+                <View style={[styles.secondaryButtonContent, { borderColor: canDownload ? themeColors.primary : "#666666" }]}>
+                  <Mail color={canDownload ? themeColors.primary : "#666666"} size={20} strokeWidth={2.5} />
+                  <Text style={[styles.secondaryButtonText, { color: canDownload ? themeColors.primary : "#666666" }]}>
+                    Email
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.secondaryButton,
+                  !canDownload && styles.buttonDisabled,
+                ]}
+                onPress={handleShare}
+                disabled={!canDownload}
+              >
+                <View style={[styles.secondaryButtonContent, { borderColor: canDownload ? themeColors.primary : "#666666" }]}>
+                  <Share2 color={canDownload ? themeColors.primary : "#666666"} size={20} strokeWidth={2.5} />
+                  <Text style={[styles.secondaryButtonText, { color: canDownload ? themeColors.primary : "#666666" }]}>
+                    Share
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
             <TouchableOpacity
               style={[
                 styles.downloadButton,
@@ -837,6 +939,30 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     borderTopWidth: 1,
     borderTopColor: "rgba(255, 255, 255, 0.1)",
+    gap: 12,
+  },
+  footerButtonsRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  secondaryButton: {
+    flex: 1,
+  },
+  secondaryButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 2,
+    gap: 8,
+  },
+  secondaryButtonText: {
+    fontSize: 15,
+    fontWeight: "700" as const,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
   actionButton: {
     flexDirection: "row",

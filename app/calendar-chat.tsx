@@ -47,7 +47,7 @@ import { Audio } from "expo-av";
 import { useChat, type FileAttachment, DEFAULT_THEME } from "@/contexts/ChatContext";
 import { useCalendar } from "@/contexts/CalendarContext";
 import colors from "@/constants/colors";
-import { downloadAttachmentToDevice, getMimeTypeFromFileName } from "@/utils/attachmentHelpers";
+import { downloadAttachmentToDevice, getMimeTypeFromFileName, pickFileFromDevice } from "@/utils/attachmentHelpers";
 import { useTheme } from "@/contexts/ThemeContext";
 import EmojiPickerModal from "@/components/EmojiPickerModal";
 import FontStyleModal from "@/components/FontStyleModal";
@@ -666,7 +666,7 @@ export default function CalendarChatScreen() {
     }
   };
 
-  const handlePickDocument = async (type: string = "*/*") => {
+  const handlePickDocument = async (type: string = "any") => {
     if (isPickingDocument) {
       console.log("Document picker already in progress, ignoring request");
       return;
@@ -675,81 +675,53 @@ export default function CalendarChatScreen() {
     try {
       setIsPickingDocument(true);
       
-      // Set appropriate mime type based on the selection
-      let mimeType = "*/*";
+      let fileType: 'image' | 'video' | 'audio' | 'document' | 'any' = 'any';
       let messagePrefix = "📎";
       
       if (type === "media") {
-        mimeType = "image/*,video/*";
+        fileType = 'any';
         messagePrefix = "📸";
       } else if (type === "document") {
-        mimeType = "*/*";
+        fileType = 'document';
         messagePrefix = "📄";
       } else if (type === "image") {
-        mimeType = "image/*";
+        fileType = 'image';
         messagePrefix = "🖼️";
       } else if (type === "video") {
-        mimeType = "video/*";
+        fileType = 'video';
         messagePrefix = "🎥";
+      } else if (type === "audio") {
+        fileType = 'audio';
+        messagePrefix = "🎵";
       }
       
-      const result = await DocumentPicker.getDocumentAsync({
-        type: mimeType,
-        copyToCacheDirectory: true,
-        multiple: false,
-      });
-
-      if (result.canceled) {
+      const pickedFile = await pickFileFromDevice({ type: fileType, maxSizeInMB: 10 });
+      
+      if (!pickedFile) {
         setIsPickingDocument(false);
         return;
       }
-
-      if (!result.assets || result.assets.length === 0) {
-        Alert.alert("Error", "No file selected");
-        setIsPickingDocument(false);
-        return;
-      }
-
-      const file = result.assets[0];
       
       if (Platform.OS !== "web") {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       }
 
-      // Check file size (limit to 10MB)
-      if (file.size && file.size > 10 * 1024 * 1024) {
-        Alert.alert("File Too Large", "Please select a file smaller than 10MB");
-        setIsPickingDocument(false);
-        return;
+      if (calendarId) {
+        const displayName = pickedFile.name.length > 30 ? pickedFile.name.substring(0, 27) + "..." : pickedFile.name;
+        
+        await sendFileAttachment(
+          calendarId,
+          pickedFile.base64Data,
+          pickedFile.name,
+          `${messagePrefix} ${displayName}`,
+          "me",
+          true,
+          'external'
+        );
       }
-
-      const response = await fetch(file.uri);
-      const blob = await response.blob();
-      const reader = new FileReader();
       
-      reader.onloadend = async () => {
-        const base64data = reader.result as string;
-        if (calendarId) {
-          const fileName = file.name || `file_${Date.now()}`;
-          const displayName = fileName.length > 30 ? fileName.substring(0, 27) + "..." : fileName;
-          
-          await sendFileAttachment(
-            calendarId,
-            base64data.split(",")[1] || base64data,
-            fileName,
-            `${messagePrefix} ${displayName}`
-          );
-        }
-        setShowAttachMenu(false);
-        setIsPickingDocument(false);
-      };
-      
-      reader.onerror = () => {
-        Alert.alert("Error", "Failed to read file");
-        setIsPickingDocument(false);
-      };
-      
-      reader.readAsDataURL(blob);
+      setShowAttachMenu(false);
+      setIsPickingDocument(false);
     } catch (err) {
       console.error("Error picking document:", err);
       Alert.alert("Error", "Failed to pick document: " + (err instanceof Error ? err.message : String(err)));

@@ -358,3 +358,158 @@ export async function shareAttachment(options: DownloadOptions): Promise<boolean
     return false;
   }
 }
+
+export interface ShareViaEmailOptions {
+  fileName: string;
+  fileData: string;
+  fileType: string;
+  recipientEmail?: string;
+  subject?: string;
+  body?: string;
+}
+
+export async function shareViaEmail(options: ShareViaEmailOptions): Promise<boolean> {
+  const { fileName, fileData, fileType, recipientEmail = '', subject = 'Shared File', body = 'Please find the attached file.' } = options;
+
+  console.log('[Email Share] Preparing to share via email:', fileName);
+
+  try {
+    if (Platform.OS === 'web') {
+      const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body + '\n\nNote: File attachment not supported in web mailto links. Please download the file and attach manually.')}`;
+      const win = window.open(mailtoLink, '_blank');
+      if (win) {
+        win.focus();
+      }
+      await downloadForWeb(fileName, fileData, fileType);
+      return true;
+    }
+
+    const MailComposerModule = await import('expo-mail-composer') as any;
+    const FileSystemModule = await import('expo-file-system') as any;
+    
+    const isAvailableAsync = MailComposerModule.isAvailableAsync;
+    const composeAsync = MailComposerModule.composeAsync;
+    
+    const isAvailable = await isAvailableAsync();
+    
+    if (!isAvailable) {
+      Alert.alert('Email Not Available', 'Email is not configured on this device.');
+      return false;
+    }
+
+    const cacheDir = FileSystemModule.cacheDirectory || '';
+    const fileUri = `${cacheDir}${fileName}`;
+    
+    const base64Encoding = FileSystemModule.EncodingType?.Base64 || 'base64';
+    const utf8Encoding = FileSystemModule.EncodingType?.UTF8 || 'utf8';
+    const writeAsync = FileSystemModule.writeAsStringAsync;
+    
+    if (isBase64Data(fileData)) {
+      await writeAsync(fileUri, fileData, {
+        encoding: base64Encoding,
+      });
+    } else {
+      await writeAsync(fileUri, fileData, {
+        encoding: utf8Encoding,
+      });
+    }
+
+    const emailOptions: any = {
+      recipients: recipientEmail ? [recipientEmail] : [],
+      subject,
+      body,
+      attachments: [fileUri],
+    };
+
+    const result = await composeAsync(emailOptions);
+    
+    console.log('[Email Share] Email composer result:', result);
+    return result.status === 'sent' || result.status === 'saved';
+  } catch (error) {
+    console.error('[Email Share] Error:', error);
+    Alert.alert('Email Error', 'Failed to share via email. Please try again.');
+    return false;
+  }
+}
+
+export interface PickFileOptions {
+  type?: 'image' | 'video' | 'audio' | 'document' | 'any';
+  allowMultiple?: boolean;
+  maxSizeInMB?: number;
+}
+
+export interface PickedFile {
+  name: string;
+  uri: string;
+  type: string;
+  size: number;
+  base64Data: string;
+}
+
+export async function pickFileFromDevice(options: PickFileOptions = {}): Promise<PickedFile | null> {
+  const { type = 'any', allowMultiple = false, maxSizeInMB = 10 } = options;
+
+  try {
+    const DocumentPickerModule = await import('expo-document-picker') as any;
+    const getDocumentAsync = DocumentPickerModule.getDocumentAsync;
+
+    let mimeType = '*/*';
+    
+    if (type === 'image') {
+      mimeType = 'image/*';
+    } else if (type === 'video') {
+      mimeType = 'video/*';
+    } else if (type === 'audio') {
+      mimeType = 'audio/*';
+    } else if (type === 'document') {
+      mimeType = 'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    }
+    
+    const result = await getDocumentAsync({
+      type: mimeType,
+      copyToCacheDirectory: true,
+      multiple: allowMultiple,
+    });
+
+    if (result.canceled || !result.assets || result.assets.length === 0) {
+      return null;
+    }
+
+    const file = result.assets[0];
+    
+    if (file.size && file.size > maxSizeInMB * 1024 * 1024) {
+      Alert.alert('File Too Large', `Please select a file smaller than ${maxSizeInMB}MB`);
+      return null;
+    }
+
+    const response = await fetch(file.uri);
+    const blob = await response.blob();
+    
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        const base64data = reader.result as string;
+        const base64 = base64data.split(',')[1] || base64data;
+        
+        resolve({
+          name: file.name || `file_${Date.now()}`,
+          uri: file.uri,
+          type: file.mimeType || getMimeTypeFromFileName(file.name || ''),
+          size: file.size || 0,
+          base64Data: base64,
+        });
+      };
+      
+      reader.onerror = () => {
+        reject(new Error('Failed to read file'));
+      };
+      
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('[Pick File] Error:', error);
+    Alert.alert('Error', 'Failed to pick file. Please try again.');
+    return null;
+  }
+}
