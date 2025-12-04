@@ -187,13 +187,10 @@ export default function SolaraScreen() {
         });
         plusIconPan.setValue({ x: 0, y: 0 });
       },
-      onPanResponderMove: Animated.event(
-        [
-          null,
-          { dx: plusIconPan.x, dy: plusIconPan.y },
-        ],
-        { useNativeDriver: false }
-      ),
+      onPanResponderMove: (_, gestureState) => {
+        plusIconPan.x.setValue(gestureState.dx);
+        plusIconPan.y.setValue(gestureState.dy);
+      },
       onPanResponderRelease: (_, gestureState) => {
         plusIconPan.flattenOffset();
         setPlusIconPosition({
