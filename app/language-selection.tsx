@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Animated, Platform, Easing, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Animated, Platform, Easing } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Check, ChevronRight } from 'lucide-react-native';
@@ -81,11 +81,10 @@ const getFontFamily = (option: FontStyleOption) =>
 
 export default function LanguageSelectionScreen() {
   const insets = useSafeAreaInsets();
-  const { language, setLanguage, setLanguageWithRestart, t, pendingRestart } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { theme } = useTheme();
   const [selectedLang, setSelectedLang] = useState<Language>(language);
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
-  const [isFirstSelection, setIsFirstSelection] = useState(true);
   const scaleAnims = useRef(languages.map(() => new Animated.Value(1))).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -166,46 +165,19 @@ export default function LanguageSelectionScreen() {
   };
 
   const handleContinue = async () => {
-    const languageChanged = selectedLang !== language;
+    console.log('[LanguageSelection] Continue pressed, selected:', selectedLang);
     
-    console.log('[LanguageSelection] Continue pressed, selected:', selectedLang, 'current:', language, 'changed:', languageChanged);
+    setIsChangingLanguage(true);
+    await setLanguage(selectedLang);
     
-    if (languageChanged && !isFirstSelection) {
-      // Language was changed mid-app - show confirmation and restart
-      Alert.alert(
-        'Restart Required',
-        'The app needs to restart to apply the new language. Continue?',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Restart',
-            style: 'default',
-            onPress: async () => {
-              setIsChangingLanguage(true);
-              console.log('[LanguageSelection] User confirmed restart for language change');
-              await setLanguageWithRestart(selectedLang);
-            },
-          },
-        ]
-      );
-    } else {
-      // First time selection or no change - just save and continue
-      setIsChangingLanguage(true);
-      await setLanguage(selectedLang);
-      setIsFirstSelection(false);
-      
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }).start(() => {
-        setIsChangingLanguage(false);
-        router.replace('/mode-selection');
-      });
-    }
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start(() => {
+      setIsChangingLanguage(false);
+      router.replace('/mode-selection');
+    });
   };
 
   const planetTranslateY = planetMotion.interpolate({
@@ -400,10 +372,10 @@ export default function LanguageSelectionScreen() {
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.continueButton, (isChangingLanguage || pendingRestart) && styles.buttonDisabled]}
+              style={[styles.continueButton, isChangingLanguage && styles.buttonDisabled]}
               onPress={handleContinue}
               activeOpacity={0.85}
-              disabled={isChangingLanguage || pendingRestart}
+              disabled={isChangingLanguage}
             >
               <LinearGradient
                 colors={['#FFD700', '#FDB931', '#FFD700']}
@@ -411,26 +383,15 @@ export default function LanguageSelectionScreen() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                {(isChangingLanguage || pendingRestart) ? (
-                  <>
-                    <ActivityIndicator size="small" color="#000000" />
-                    <Text style={[styles.buttonText, { color: '#000000' }]}>
-                      {pendingRestart ? 'Restarting...' : 'Applying...'}
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <Text
-                      style={[
-                        styles.buttonText,
-                        { color: '#000000' },
-                      ]}
-                    >
-                      {t.continue}
-                    </Text>
-                    <ChevronRight color="#000000" size={20} strokeWidth={3} />
-                  </>
-                )}
+                <Text
+                  style={[
+                    styles.buttonText,
+                    { color: '#000000' },
+                  ]}
+                >
+                  {t.continue}
+                </Text>
+                <ChevronRight color="#000000" size={20} strokeWidth={3} />
               </LinearGradient>
             </TouchableOpacity>
           </View>

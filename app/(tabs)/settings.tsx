@@ -7,8 +7,6 @@ import {
   TouchableOpacity,
   Platform,
   Switch,
-  Alert,
-  ActivityIndicator,
 } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
@@ -84,7 +82,7 @@ export default function SettingsScreen() {
       const encryptedData = await AsyncStorage.getItem('settings_encrypted_data');
       if (encryptedData) {
         const decrypted = await decrypt(encryptedData);
-        const settings = JSON.parse(decrypted);
+        JSON.parse(decrypted);
         console.log('[Settings] Loaded encrypted settings');
       }
       setSettingsLoaded(true);
@@ -105,7 +103,7 @@ export default function SettingsScreen() {
   };
   const { theme, setTheme, autoThemeEnabled, toggleAutoTheme, availableThemes, activeHolidayTheme } = useTheme();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
-  const { language, setLanguage, setLanguageWithRestart, pendingRestart } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
   const { 
     audioStyle, 
@@ -176,33 +174,12 @@ export default function SettingsScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     
-    // Check if language is actually changing
-    if (lang === language) {
-      setShowLanguageSelector(false);
-      return;
-    }
-    
-    // Show confirmation for language change with restart
-    Alert.alert(
-      'Restart Required',
-      'The app needs to restart to apply the new language. This ensures all text is properly updated.',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Restart Now',
-          style: 'default',
-          onPress: async () => {
-            setIsChangingLanguage(true);
-            console.log('[Settings] User confirmed language change to:', lang);
-            await saveEncryptedSettings({ language: lang, timestamp: Date.now() });
-            await setLanguageWithRestart(lang);
-          },
-        },
-      ]
-    );
+    setIsChangingLanguage(true);
+    console.log('[Settings] Changing language to:', lang);
+    await setLanguage(lang);
+    await saveEncryptedSettings({ language: lang, timestamp: Date.now() });
+    setIsChangingLanguage(false);
+    setShowLanguageSelector(false);
   };
 
   const handleSelectAudioStyle = (style: AudioStyle) => {
@@ -443,14 +420,7 @@ export default function SettingsScreen() {
             contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 100 }]}
             showsVerticalScrollIndicator={false}
           >
-            {(isChangingLanguage || pendingRestart) && (
-              <View style={[styles.restartOverlay, { backgroundColor: 'rgba(0,0,0,0.7)' }]}>
-                <ActivityIndicator size="large" color="#FFD700" />
-                <Text style={styles.restartText}>
-                  {pendingRestart ? 'Restarting app...' : 'Applying language...'}
-                </Text>
-              </View>
-            )}
+
 
             <View style={styles.languagesGrid}>
               {languages.map((lang) => {
@@ -468,7 +438,7 @@ export default function SettingsScreen() {
                     ]}
                     onPress={() => handleSelectLanguage(lang.code)}
                     activeOpacity={0.7}
-                    disabled={isChangingLanguage || pendingRestart}
+                    disabled={isChangingLanguage}
                   >
                     <View style={styles.languageCardHeader}>
                       <Text style={styles.languageFlag}>{lang.flag}</Text>
