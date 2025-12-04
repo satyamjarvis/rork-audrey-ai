@@ -165,8 +165,25 @@ export const [ChatProvider, useChat] = createContextHook(() => {
       console.log("📤 [Chat] Sending file attachment:", fileName);
       console.log("📤 [Chat] File data length:", fileData?.length || 0);
       
+      // Validate file data
+      if (!fileData || fileData.length === 0) {
+        console.error("❌ [Chat] No file data provided");
+        throw new Error("No file data provided");
+      }
+      
+      if (!calendarId) {
+        console.error("❌ [Chat] No calendar ID provided");
+        throw new Error("No calendar ID provided");
+      }
+      
       const encryptedFileData = await encryptFile(fileData);
-      console.log("📤 [Chat] Encrypted data length:", encryptedFileData.data?.length || 0);
+      
+      if (!encryptedFileData.data || encryptedFileData.data.length === 0) {
+        console.error("❌ [Chat] Encryption returned empty data");
+        throw new Error("Failed to encrypt file data");
+      }
+      
+      console.log("📤 [Chat] Encrypted data length:", encryptedFileData.data.length);
       
       const mimeType = getMimeTypeFromFileName(fileName);
       console.log("📤 [Chat] MIME type:", mimeType);

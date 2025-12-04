@@ -1505,7 +1505,7 @@ export default function CalendarChatScreen() {
                 if (Platform.OS !== "web") {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 }
-                handlePickDocument("attachment");
+                handlePickDocument("any");
               }}
               disabled={isPickingDocument}
               activeOpacity={0.7}

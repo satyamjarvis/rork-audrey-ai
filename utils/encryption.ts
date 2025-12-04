@@ -118,26 +118,47 @@ export async function decryptMessage(encryptedData: EncryptedData): Promise<stri
 // Files are already base64 encoded, so we encode the base64 string itself
 export async function encryptFile(data: string): Promise<EncryptedData> {
   try {
-    console.log('[Encryption] Encrypting file, data length:', data?.length || 0);
+    if (!data || data.length === 0) {
+      console.error('[Encryption] Cannot encrypt empty file data');
+      return { data: '', iv: '', isBase64: true };
+    }
+    
+    console.log('[Encryption] Encrypting file, data length:', data.length);
     // For files, the data is already base64 encoded from the file picker
     // We'll encode it again for "encryption" but mark it
     const encrypted = await encrypt(data);
+    console.log('[Encryption] Encrypted file length:', encrypted?.length || 0);
     return { data: encrypted, iv: '', isBase64: true };
   } catch (error) {
     console.error('[Encryption] Error encrypting file:', error);
+    // Return original data on error to preserve it
     return { data: data, iv: '', isBase64: true };
   }
 }
 
 export async function decryptFile(encryptedData: EncryptedData): Promise<string> {
   try {
-    console.log('[Encryption] Decrypting file, data length:', encryptedData.data?.length || 0);
+    if (!encryptedData || !encryptedData.data) {
+      console.error('[Encryption] No encrypted data to decrypt');
+      return '';
+    }
+    
+    console.log('[Encryption] Decrypting file, data length:', encryptedData.data.length);
+    
+    // Try to decrypt
     const decrypted = await decrypt(encryptedData.data);
-    console.log('[Encryption] Decrypted file length:', decrypted?.length || 0);
+    
+    if (!decrypted || decrypted.length === 0) {
+      console.warn('[Encryption] Decryption returned empty, returning original data');
+      return encryptedData.data;
+    }
+    
+    console.log('[Encryption] Decrypted file length:', decrypted.length);
     return decrypted;
   } catch (error) {
     console.error('[Encryption] Error decrypting file:', error);
-    // Return raw data if decryption fails - might be unencrypted
-    return encryptedData.data;
+    // Return raw data if decryption fails - might be unencrypted or corrupted
+    console.log('[Encryption] Returning original data as fallback');
+    return encryptedData.data || '';
   }
 }

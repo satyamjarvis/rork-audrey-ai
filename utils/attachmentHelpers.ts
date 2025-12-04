@@ -489,29 +489,64 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
     }
 
     console.log('[Pick File] Fetching file from URI:', file.uri);
-    const response = await fetch(file.uri);
-    const blob = await response.blob();
-    console.log('[Pick File] Blob size:', blob.size, 'type:', blob.type);
+    
+    let blob: Blob;
+    try {
+      const response = await fetch(file.uri);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch file: ${response.status}`);
+      }
+      blob = await response.blob();
+      console.log('[Pick File] Blob size:', blob.size, 'type:', blob.type);
+    } catch (fetchError) {
+      console.error('[Pick File] Fetch error:', fetchError);
+      Alert.alert('Error', 'Failed to read the selected file. Please try again.');
+      return null;
+    }
+    
+    if (blob.size === 0) {
+      console.error('[Pick File] Empty blob received');
+      Alert.alert('Error', 'The selected file appears to be empty.');
+      return null;
+    }
     
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       
       reader.onloadend = () => {
-        const base64data = reader.result as string;
-        // Always extract the base64 part after the data URI prefix
-        const base64 = base64data.includes(',') ? base64data.split(',')[1] : base64data;
-        
-        const detectedMimeType = file.mimeType || getMimeTypeFromFileName(file.name || '');
-        console.log('[Pick File] Base64 data length:', base64?.length || 0);
-        console.log('[Pick File] Detected MIME type:', detectedMimeType);
-        
-        resolve({
-          name: file.name || `file_${Date.now()}`,
-          uri: file.uri,
-          type: detectedMimeType,
-          size: file.size || blob.size || 0,
-          base64Data: base64,
-        });
+        try {
+          const base64data = reader.result as string;
+          
+          if (!base64data) {
+            console.error('[Pick File] No data from FileReader');
+            reject(new Error('Failed to read file data'));
+            return;
+          }
+          
+          // Always extract the base64 part after the data URI prefix
+          const base64 = base64data.includes(',') ? base64data.split(',')[1] : base64data;
+          
+          if (!base64 || base64.length === 0) {
+            console.error('[Pick File] Empty base64 data');
+            reject(new Error('File data is empty'));
+            return;
+          }
+          
+          const detectedMimeType = file.mimeType || getMimeTypeFromFileName(file.name || '');
+          console.log('[Pick File] Base64 data length:', base64.length);
+          console.log('[Pick File] Detected MIME type:', detectedMimeType);
+          
+          resolve({
+            name: file.name || `file_${Date.now()}`,
+            uri: file.uri,
+            type: detectedMimeType,
+            size: file.size || blob.size || 0,
+            base64Data: base64,
+          });
+        } catch (processError) {
+          console.error('[Pick File] Processing error:', processError);
+          reject(processError);
+        }
       };
       
       reader.onerror = (error) => {
