@@ -392,16 +392,16 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
         glow.stop();
       };
     } else {
-      scaleAnim1.setValue(0.3);
-      scaleAnim2.setValue(0.5);
-      scaleAnim3.setValue(0.4);
-      scaleAnim4.setValue(0.6);
-      scaleAnim5.setValue(0.3);
+      // Reset animations to base values when stopped
+      Animated.timing(scaleAnim1, { toValue: 0.3, duration: 200, useNativeDriver: false }).start();
+      Animated.timing(scaleAnim2, { toValue: 0.5, duration: 200, useNativeDriver: false }).start();
+      Animated.timing(scaleAnim3, { toValue: 0.4, duration: 200, useNativeDriver: false }).start();
+      Animated.timing(scaleAnim4, { toValue: 0.6, duration: 200, useNativeDriver: false }).start();
+      Animated.timing(scaleAnim5, { toValue: 0.3, duration: 200, useNativeDriver: false }).start();
       pulseAnim.setValue(1);
       glowAnim.setValue(0);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlaying]);
+  }, [isPlaying, scaleAnim1, scaleAnim2, scaleAnim3, scaleAnim4, scaleAnim5, pulseAnim, glowAnim]);
 
   const glowOpacity = glowAnim.interpolate({
     inputRange: [0, 1],
@@ -416,7 +416,7 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
             styles.waveBar,
             {
               backgroundColor: color,
-              transform: [{ scaleY: isPlaying ? scaleAnim1 : new Animated.Value(0.3) }],
+              transform: [{ scaleY: scaleAnim1 }],
               opacity: isPlaying ? 1 : 0.5,
             },
           ]}
@@ -426,7 +426,7 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
             styles.waveBar,
             {
               backgroundColor: color,
-              transform: [{ scaleY: isPlaying ? scaleAnim2 : new Animated.Value(0.5) }],
+              transform: [{ scaleY: scaleAnim2 }],
               opacity: isPlaying ? 1 : 0.5,
             },
           ]}
@@ -437,7 +437,7 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
             styles.waveBarCenter,
             {
               backgroundColor: color,
-              transform: [{ scaleY: isPlaying ? scaleAnim3 : new Animated.Value(0.4) }],
+              transform: [{ scaleY: scaleAnim3 }],
               opacity: isPlaying ? 1 : 0.6,
             },
           ]}
@@ -447,7 +447,7 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
             styles.waveBar,
             {
               backgroundColor: color,
-              transform: [{ scaleY: isPlaying ? scaleAnim4 : new Animated.Value(0.6) }],
+              transform: [{ scaleY: scaleAnim4 }],
               opacity: isPlaying ? 1 : 0.5,
             },
           ]}
@@ -457,7 +457,7 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
             styles.waveBar,
             {
               backgroundColor: color,
-              transform: [{ scaleY: isPlaying ? scaleAnim5 : new Animated.Value(0.3) }],
+              transform: [{ scaleY: scaleAnim5 }],
               opacity: isPlaying ? 1 : 0.5,
             },
           ]}

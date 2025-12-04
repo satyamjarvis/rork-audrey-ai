@@ -96,7 +96,7 @@ export default function PlannerScreen() {
         anim.stopAnimation();
       });
     };
-  }, []);
+  }, [fadeAnim, scaleAnim, slideAnimYearly, slideAnimMonthly, slideAnimWeekly, slideAnimDaily]);
 
 
 
