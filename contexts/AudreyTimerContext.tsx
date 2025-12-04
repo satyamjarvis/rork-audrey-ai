@@ -349,7 +349,7 @@ export const [AudreyTimerProvider, useAudreyTimer] = createContextHook(() => {
 
       console.log("[AudreyTimer] Automated SMS result:", result);
 
-      if (Platform.OS !== "web") {
+      if (Platform.OS !== "web" as typeof Platform.OS) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
 
