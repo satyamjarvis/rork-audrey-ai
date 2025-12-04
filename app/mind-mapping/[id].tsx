@@ -204,6 +204,46 @@ export default function MindMapEditor() {
     lastTranslate.current = { x: translateX, y: translateY };
   }, [translateX, translateY]);
 
+  const getBounds = useCallback(() => {
+    if (nodes.length === 0) {
+      return {
+        minX: -SCREEN_WIDTH,
+        maxX: SCREEN_WIDTH,
+        minY: -SCREEN_HEIGHT,
+        maxY: SCREEN_HEIGHT
+      };
+    }
+
+    let minNodeX = Infinity;
+    let maxNodeX = -Infinity;
+    let minNodeY = Infinity;
+    let maxNodeY = -Infinity;
+
+    nodes.forEach(node => {
+      minNodeX = Math.min(minNodeX, node.x);
+      maxNodeX = Math.max(maxNodeX, node.x + (node.width || NODE_WIDTH));
+      minNodeY = Math.min(minNodeY, node.y);
+      maxNodeY = Math.max(maxNodeY, node.y + (node.height || NODE_HEIGHT));
+    });
+
+    const boundaryPadding = SCREEN_WIDTH * 0.3;
+    
+    return {
+      minX: -(maxNodeX * scale) - boundaryPadding,
+      maxX: -(minNodeX * scale) + SCREEN_WIDTH + boundaryPadding,
+      minY: -(maxNodeY * scale) - boundaryPadding,
+      maxY: -(minNodeY * scale) + SCREEN_HEIGHT + boundaryPadding
+    };
+  }, [nodes, scale]);
+
+  const constrainTranslation = useCallback((x: number, y: number) => {
+    const bounds = getBounds();
+    return {
+      x: Math.max(bounds.minX, Math.min(bounds.maxX, x)),
+      y: Math.max(bounds.minY, Math.min(bounds.maxY, y))
+    };
+  }, [getBounds]);
+
   const canvasPanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -216,8 +256,11 @@ export default function MindMapEditor() {
       },
       onPanResponderMove: (evt, gestureState) => {
         if (isPanning.current) {
-          setTranslateX(lastTranslate.current.x + gestureState.dx);
-          setTranslateY(lastTranslate.current.y + gestureState.dy);
+          const newX = lastTranslate.current.x + gestureState.dx;
+          const newY = lastTranslate.current.y + gestureState.dy;
+          const constrained = constrainTranslation(newX, newY);
+          setTranslateX(constrained.x);
+          setTranslateY(constrained.y);
         }
       },
       onPanResponderRelease: () => {
