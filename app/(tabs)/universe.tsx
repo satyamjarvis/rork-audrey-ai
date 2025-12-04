@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUniverseMode } from "@/contexts/UniverseModeContext";
+import AppBackgroundWrapper from "@/components/AppBackgroundWrapper";
 
 import { Sparkles } from "lucide-react-native";
 
@@ -34,6 +35,7 @@ export default function UniverseScreen() {
 
 
   return (
+    <AppBackgroundWrapper overlayOpacity={0.2}>
     <View style={styles.container}>
       <LinearGradient colors={backgroundColors} style={styles.gradient}>
         <View style={[styles.header, { paddingTop: insets.top + 24 }]}>
@@ -48,6 +50,7 @@ export default function UniverseScreen() {
 
         <View style={styles.content} />
       </LinearGradient>
+    </View>
       
       {/* Show floating buttons based on universe mode */}
       {universeMode === "universe" ? (
@@ -72,8 +75,7 @@ export default function UniverseScreen() {
           <SettingsFloatingButton />
         </>
       )}
-
-    </View>
+    </AppBackgroundWrapper>
   );
 }
 

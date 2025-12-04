@@ -46,6 +46,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { encrypt, decrypt } from "@/utils/encryption";
 import { CALENDAR_BACKGROUNDS } from '@/constants/calendarBackgrounds';
 import { Image } from 'expo-image';
+import AppBackgroundWrapper from "@/components/AppBackgroundWrapper";
 
 type LanguageOption = {
   code: LanguageType;
@@ -805,6 +806,7 @@ export default function SettingsScreen() {
 
 
   return (
+    <AppBackgroundWrapper overlayOpacity={0.15}>
     <View style={styles.container}>
       <LinearGradient colors={isNightMode ? ["#0a0a0f", "#1a0a1f", "#2a0a2f", "#1a0a1f", "#0a0a0f"] : theme.gradients.background as any} style={styles.gradient}>
         <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
@@ -1214,6 +1216,7 @@ export default function SettingsScreen() {
         </ScrollView>
       </LinearGradient>
     </View>
+    </AppBackgroundWrapper>
   );
 }
 

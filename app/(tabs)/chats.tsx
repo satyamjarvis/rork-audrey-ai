@@ -30,6 +30,8 @@ import { getCalendarBackground } from '@/constants/calendarBackgrounds';
 import { Image } from 'expo-image';
 import { useTheme } from "@/contexts/ThemeContext";
 import { useFontSize } from "@/contexts/FontSizeContext";
+import AppBackgroundWrapper from "@/components/AppBackgroundWrapper";
+import { useAppBackground } from "@/contexts/AppBackgroundContext";
 
 const { width } = Dimensions.get("window");
 
@@ -52,6 +54,7 @@ export default function ChatsListScreen() {
   const { getFontSize } = useFontSize();
   const { getMessagesForCalendar, getDecryptedMessage } = useChat();
   const { calendars, selectedBackground } = useCalendar();
+  const { hasCustomBackground } = useAppBackground();
   
   const [chatNotifications, setChatNotifications] = useState<{[key: string]: boolean}>({});
   const [lastMessagePreviews, setLastMessagePreviews] = useState<{[key: string]: string}>({});
@@ -69,6 +72,8 @@ export default function ChatsListScreen() {
     }
     return null;
   }, [selectedBackground]);
+
+  const shouldShowAppBackground = hasCustomBackground && !activeBackground;
 
   const glitterParticles = useMemo(() => {
     return Array.from({ length: 40 }, () => {
@@ -631,6 +636,7 @@ export default function ChatsListScreen() {
   );
 
   return (
+    <AppBackgroundWrapper skip={!shouldShowAppBackground} overlayOpacity={0.15}>
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
       {activeBackground ? (
@@ -642,6 +648,7 @@ export default function ChatsListScreen() {
       ) : null}
       {renderContent()}
     </View>
+    </AppBackgroundWrapper>
   );
 }
 
