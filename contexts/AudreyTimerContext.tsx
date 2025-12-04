@@ -4,6 +4,7 @@ import { usePersistentStorage } from "@/utils/usePersistentStorage";
 import { Platform, Alert } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as Speech from "expo-speech";
+import * as SMS from "expo-sms";
 
 export type TimerType = "countdown" | "stopwatch" | "pomodoro";
 export type TimerStatus = "idle" | "running" | "paused" | "completed";
@@ -44,10 +45,12 @@ export type AudreyAutomation = {
     timerId?: string;
   };
   action: {
-    type: "speak" | "notify" | "task" | "reminder" | "affirmation";
+    type: "speak" | "notify" | "task" | "reminder" | "affirmation" | "sms";
     message?: string;
     taskTitle?: string;
     affirmationCategory?: string;
+    phoneNumber?: string;
+    includeSignature?: boolean;
   };
   lastRun?: number;
   nextRun?: number;
@@ -296,6 +299,82 @@ export const [AudreyTimerProvider, useAudreyTimer] = createContextHook(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.automations]);
 
+  const sendAutomatedSMS = useCallback(async (automation: AudreyAutomation) => {
+    try {
+      const phoneNumber = automation.action.phoneNumber;
+      const message = automation.action.message;
+      const includeSignature = automation.action.includeSignature !== false;
+
+      if (!phoneNumber || !message) {
+        console.error("[AudreyTimer] SMS automation missing phone number or message");
+        Alert.alert(
+          "SMS Automation Error",
+          "This automation is missing a phone number or message.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+
+      console.log("[AudreyTimer] Sending automated SMS to:", phoneNumber);
+
+      if (Platform.OS === "web") {
+        console.log("[AudreyTimer] SMS not available on web, showing notification instead");
+        Alert.alert(
+          "SMS Scheduled",
+          `Would send SMS to ${phoneNumber}: ${message}`,
+          [{ text: "OK" }]
+        );
+        return;
+      }
+
+      const isAvailable = await SMS.isAvailableAsync();
+      if (!isAvailable) {
+        console.error("[AudreyTimer] SMS is not available on this device");
+        Alert.alert(
+          "SMS Not Available",
+          "SMS is not available on this device.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+
+      const formattedMessage = includeSignature
+        ? `🤖 Audrey AI Assistant:\n\n${message}\n\n— Sent via Audrey AI (Automated)`
+        : message;
+
+      const { result } = await SMS.sendSMSAsync(
+        [phoneNumber],
+        formattedMessage
+      );
+
+      console.log("[AudreyTimer] Automated SMS result:", result);
+
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+
+      if (result === "sent") {
+        console.log("[AudreyTimer] Automated SMS sent successfully");
+        Speech.speak(`Automated SMS sent to ${phoneNumber}`, {
+          language: "en-US",
+          pitch: 1.0,
+          rate: 0.9,
+        });
+      } else if (result === "cancelled") {
+        console.log("[AudreyTimer] Automated SMS was cancelled");
+      } else {
+        console.log("[AudreyTimer] SMS app opened for automated message");
+      }
+    } catch (error) {
+      console.error("[AudreyTimer] Error sending automated SMS:", error);
+      Alert.alert(
+        "SMS Error",
+        "Failed to send automated SMS. Please try again.",
+        [{ text: "OK" }]
+      );
+    }
+  }, []);
+
   const executeAutomation = useCallback(async (automation: AudreyAutomation) => {
     console.log("[AudreyTimer] Executing automation:", automation.name);
 
@@ -349,12 +428,16 @@ export const [AudreyTimerProvider, useAudreyTimer] = createContextHook(() => {
           rate: 0.85,
         });
         break;
+
+      case "sms":
+        await sendAutomatedSMS(automation);
+        break;
     }
 
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-  }, [data, saveData]);
+  }, [data, saveData, sendAutomatedSMS]);
 
   const createTimer = useCallback(async (
     name: string,
@@ -605,6 +688,7 @@ export const [AudreyTimerProvider, useAudreyTimer] = createContextHook(() => {
       getActiveTimer,
       formatTime,
       executeAutomation,
+      sendAutomatedSMS,
     }),
     [
       data,
@@ -622,6 +706,7 @@ export const [AudreyTimerProvider, useAudreyTimer] = createContextHook(() => {
       getActiveTimer,
       formatTime,
       executeAutomation,
+      sendAutomatedSMS,
     ]
   );
 });

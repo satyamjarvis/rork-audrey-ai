@@ -1216,6 +1216,174 @@ GUIDELINES FOR EXCELLENCE:
           return `🗑️ Automation "${automation.name}" has been deleted.`;
         },
       }),
+
+      scheduleAutomatedSMS: createRorkTool({
+        description: "Schedule an automated SMS message to be sent at a specific time, daily, weekly, or when a timer completes. The SMS will be sent automatically without manual intervention once the trigger conditions are met. The user must have a phone number configured in account settings.",
+        zodSchema: z.object({
+          name: z.string().describe("Name for this scheduled SMS automation (e.g., 'Morning Greeting', 'Meeting Reminder')"),
+          phoneNumber: z.string().describe("The phone number to send the SMS to (including country code if needed, e.g., '+1234567890')"),
+          message: z.string().describe("The text message content to send"),
+          trigger: z.enum(["time", "daily", "weekly", "timer_complete"]).describe("When to send: 'time' for one-time, 'daily' for every day, 'weekly' for specific days, 'timer_complete' when a timer finishes"),
+          time: z.string().optional().describe("Time in HH:MM format (24-hour) for time-based triggers"),
+          daysOfWeek: z.array(z.number()).optional().describe("Days of week (0=Sunday, 6=Saturday) for weekly triggers"),
+          timerName: z.string().optional().describe("Name of timer for timer_complete trigger"),
+          includeSignature: z.boolean().optional().describe("Include 'Audrey AI Assistant' signature (default: true)"),
+        }),
+        async execute(input) {
+          try {
+            console.log("[AI Assistant] Creating scheduled SMS automation:", input.name);
+
+            if (!profile.phoneNumber || profile.phoneNumber.trim() === '') {
+              if (Platform.OS !== "web") {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+              }
+              
+              Alert.alert(
+                "Phone Number Required",
+                "An active phone number needs to be updated in Account Settings before you can schedule SMS messages through Audrey.",
+                [
+                  { text: "Cancel", style: "cancel" },
+                  { 
+                    text: "Go to Settings", 
+                    onPress: () => router.push("/account-settings" as any)
+                  }
+                ]
+              );
+              
+              return "❌ An active phone number needs to be updated in Account Settings before you can schedule SMS messages. Please go to Settings > Account Settings and add your phone number.";
+            }
+
+            let triggerConfig: { time?: string; dayOfWeek?: number[]; timerId?: string } = {};
+
+            if (input.trigger === "time" || input.trigger === "daily") {
+              if (!input.time) {
+                return "❌ Time is required for time-based SMS automation. Please provide time in HH:MM format (24-hour).";
+              }
+              triggerConfig.time = input.time;
+            }
+
+            if (input.trigger === "weekly") {
+              if (!input.time || !input.daysOfWeek || input.daysOfWeek.length === 0) {
+                return "❌ Time and days of week are required for weekly SMS automation.";
+              }
+              triggerConfig.time = input.time;
+              triggerConfig.dayOfWeek = input.daysOfWeek;
+            }
+
+            if (input.trigger === "timer_complete") {
+              if (!input.timerName) {
+                return "❌ Timer name is required for timer_complete SMS automation.";
+              }
+              const linkedTimer = timers.find(t => 
+                t.name.toLowerCase().includes(input.timerName!.toLowerCase())
+              );
+              if (!linkedTimer) {
+                return `❌ Timer "${input.timerName}" not found. Please create the timer first.`;
+              }
+              triggerConfig.timerId = linkedTimer.id;
+            }
+
+            await createAutomation(
+              input.name,
+              input.trigger,
+              triggerConfig,
+              {
+                type: "sms",
+                message: input.message,
+                phoneNumber: input.phoneNumber,
+                includeSignature: input.includeSignature !== false,
+              }
+            );
+
+            if (Platform.OS !== "web") {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }
+
+            const triggerDesc = input.trigger === "daily" ? `daily at ${input.time}` :
+              input.trigger === "weekly" ? `weekly at ${input.time} on selected days` :
+              input.trigger === "timer_complete" ? `when "${input.timerName}" timer completes` :
+              `at ${input.time}`;
+
+            return `📱 Automated SMS scheduled!\n\n✅ Name: "${input.name}"\n📞 To: ${input.phoneNumber}\n⏰ Trigger: ${triggerDesc}\n💬 Message: "${input.message}"\n\nThe SMS will be sent automatically when the conditions are met.`;
+          } catch (error) {
+            console.error("[AI Assistant] Error creating scheduled SMS:", error);
+            return "❌ Failed to schedule SMS automation. Please try again.";
+          }
+        },
+      }),
+
+      listScheduledSMS: createRorkTool({
+        description: "List all scheduled/automated SMS messages.",
+        zodSchema: z.object({}),
+        async execute() {
+          const smsAutomations = automations.filter(a => a.action.type === "sms");
+
+          if (smsAutomations.length === 0) {
+            return "📭 No scheduled SMS automations yet. Ask me to schedule an automated SMS message!";
+          }
+
+          const smsList = smsAutomations.map((a, index) => {
+            const statusEmoji = a.enabled ? "✅" : "❌";
+            const triggerDesc = a.trigger === "daily" ? `Daily at ${a.triggerConfig.time}` :
+              a.trigger === "weekly" ? `Weekly at ${a.triggerConfig.time}` :
+              a.trigger === "timer_complete" ? "On timer complete" :
+              `At ${a.triggerConfig.time}`;
+            
+            return `${index + 1}. ${statusEmoji} ${a.name}\n   📞 To: ${a.action.phoneNumber}\n   ⏰ Trigger: ${triggerDesc}\n   💬 Message: "${a.action.message?.substring(0, 50)}${(a.action.message?.length || 0) > 50 ? '...' : ''}"\n   Last sent: ${a.lastRun ? new Date(a.lastRun).toLocaleString() : 'Never'}`;
+          }).join('\n\n');
+
+          return `📱 Scheduled SMS Messages:\n\n${smsList}`;
+        },
+      }),
+
+      cancelScheduledSMS: createRorkTool({
+        description: "Cancel/delete a scheduled SMS automation by name.",
+        zodSchema: z.object({
+          name: z.string().describe("Name of the scheduled SMS to cancel"),
+        }),
+        async execute(input) {
+          const smsAutomation = automations.find(a => 
+            a.action.type === "sms" && a.name.toLowerCase().includes(input.name.toLowerCase())
+          );
+
+          if (!smsAutomation) {
+            return `❌ Scheduled SMS "${input.name}" not found.`;
+          }
+
+          await deleteAutomation(smsAutomation.id);
+
+          if (Platform.OS !== "web") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
+
+          return `🗑️ Scheduled SMS "${smsAutomation.name}" has been cancelled.`;
+        },
+      }),
+
+      toggleScheduledSMS: createRorkTool({
+        description: "Enable or disable a scheduled SMS automation.",
+        zodSchema: z.object({
+          name: z.string().describe("Name of the scheduled SMS to toggle"),
+        }),
+        async execute(input) {
+          const smsAutomation = automations.find(a => 
+            a.action.type === "sms" && a.name.toLowerCase().includes(input.name.toLowerCase())
+          );
+
+          if (!smsAutomation) {
+            return `❌ Scheduled SMS "${input.name}" not found.`;
+          }
+
+          await toggleAutomation(smsAutomation.id);
+
+          if (Platform.OS !== "web") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }
+
+          const newState = smsAutomation.enabled ? "disabled" : "enabled";
+          return `📱 Scheduled SMS "${smsAutomation.name}" has been ${newState}.`;
+        },
+      }),
     },
   });
 
