@@ -155,6 +155,7 @@ function GlitterSendButton({ hasText, onPress, theme, isNightMode }: { hasText: 
       sparkleAnim3.setValue(0);
       sparkleAnim4.setValue(0);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasText]);
 
   const glowOpacity = glowAnim.interpolate({
@@ -399,6 +400,7 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
       pulseAnim.setValue(1);
       glowAnim.setValue(0);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying]);
 
   const glowOpacity = glowAnim.interpolate({
@@ -575,12 +577,7 @@ export default function CalendarChatScreen() {
     }
   }, [messages, getDecryptedMessage]);
 
-  const handleBackPress = () => {
-    if (Platform.OS !== "web") {
-      Haptics.selectionAsync();
-    }
-    router.back();
-  };
+
 
   const handleSendMessage = async () => {
     if (!messageText.trim() || !calendarId) return;
@@ -708,25 +705,7 @@ export default function CalendarChatScreen() {
     }
   };
 
-  const cancelRecording = async () => {
-    if (!recording) return;
-    
-    try {
-      setIsRecording(false);
-      await recording.stopAndUnloadAsync();
-      
-      if (Platform.OS !== "web") {
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: false,
-        });
-      }
-      
-      setRecording(null);
-      setRecordingUri(null);
-    } catch (err) {
-      console.error("Failed to cancel recording", err);
-    }
-  };
+
 
   const playRecording = async () => {
     if (!recordingUri) return;
