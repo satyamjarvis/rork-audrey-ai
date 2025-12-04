@@ -461,7 +461,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
     if (!getDocumentAsync) {
       console.error('[Pick File] getDocumentAsync not found in module');
       console.log('[Pick File] Available exports:', Object.keys(DocumentPicker));
-      Alert.alert('Error', 'File picker is not available on this device.');
+      Alert.alert('File Picker Error', 'File picker is not available on this device.');
       return null;
     }
 
@@ -502,7 +502,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
     
     if (!result.assets || result.assets.length === 0) {
       console.log('[Pick File] No assets in result');
-      Alert.alert('Error', 'No file was selected. Please try again.');
+      Alert.alert('No File Selected', 'No file was selected. Please try again.');
       return null;
     }
 
@@ -520,7 +520,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
 
     if (!file.uri) {
       console.error('[Pick File] No URI in file result');
-      Alert.alert('Error', 'Failed to get file location. Please try again.');
+      Alert.alert('File Error', 'Failed to get file location. Please try again.');
       return null;
     }
 
@@ -541,13 +541,13 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
         console.log('[Pick File] Blob created - size:', blob.size, 'type:', blob.type);
       } catch (fetchError) {
         console.error('[Pick File] Fetch error:', fetchError);
-        Alert.alert('Error', 'Failed to read the selected file. Please try again.');
+        Alert.alert('Read Error', 'Failed to read the selected file. Please try again.');
         return null;
       }
       
       if (blob.size === 0) {
         console.error('[Pick File] Empty blob received');
-        Alert.alert('Error', 'The selected file appears to be empty.');
+        Alert.alert('Empty File', 'The selected file appears to be empty.');
         return null;
       }
       
@@ -560,8 +560,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
             
             if (!base64data) {
               console.error('[Pick File] No data from FileReader');
-              Alert.alert('Error', 'Failed to read file data. Please try again.');
-              reject(new Error('Failed to read file data'));
+              resolve(null);
               return;
             }
             
@@ -569,8 +568,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
             
             if (!base64 || base64.length === 0) {
               console.error('[Pick File] Empty base64 data');
-              Alert.alert('Error', 'File data is empty. Please try a different file.');
-              reject(new Error('File data is empty'));
+              resolve(null);
               return;
             }
             
@@ -588,15 +586,13 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
             });
           } catch (processError) {
             console.error('[Pick File] Processing error:', processError);
-            Alert.alert('Error', 'Failed to process file. Please try again.');
-            reject(processError);
+            resolve(null);
           }
         };
         
         reader.onerror = (error) => {
           console.error('[Pick File] FileReader error:', error);
-          Alert.alert('Error', 'Failed to read file. Please try again.');
-          reject(new Error('Failed to read file'));
+          resolve(null);
         };
         
         reader.readAsDataURL(blob);
@@ -611,7 +607,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
         
         if (!fileInfo.exists) {
           console.error('[Pick File] File does not exist at URI:', file.uri);
-          Alert.alert('Error', 'File could not be found. Please try again.');
+          Alert.alert('File Not Found', 'File could not be found. Please try again.');
           return null;
         }
         
@@ -621,7 +617,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
         
         if (!fileContent || fileContent.length === 0) {
           console.error('[Pick File] FileSystem returned empty content');
-          Alert.alert('Error', 'File appears to be empty. Please try a different file.');
+          Alert.alert('Empty File', 'File appears to be empty. Please try a different file.');
           return null;
         }
         
@@ -639,13 +635,13 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
         };
       } catch (fsError) {
         console.error('[Pick File] FileSystem read error:', fsError);
-        Alert.alert('Error', 'Failed to read the selected file. Please try again.');
+        Alert.alert('Read Error', 'Failed to read the selected file. Please try again.');
         return null;
       }
     }
   } catch (error) {
     console.error('[Pick File] Unexpected error:', error);
-    Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    Alert.alert('Unexpected Error', 'An unexpected error occurred while selecting file. Please try again.');
     return null;
   }
 }

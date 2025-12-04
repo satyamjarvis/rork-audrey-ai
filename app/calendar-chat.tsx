@@ -925,6 +925,7 @@ export default function CalendarChatScreen() {
 
     try {
       setIsPickingDocument(true);
+      setShowAttachMenu(false);
       console.log("[CalendarChat] Starting document picker, type:", type);
       
       let fileType: 'image' | 'video' | 'audio' | 'document' | 'any' = 'any';
@@ -950,7 +951,7 @@ export default function CalendarChatScreen() {
       const pickedFile = await pickFileFromDevice({ type: fileType, maxSizeInMB: 10 });
       
       if (!pickedFile) {
-        console.log("[CalendarChat] No file picked");
+        console.log("[CalendarChat] No file picked or user cancelled");
         setIsPickingDocument(false);
         return;
       }
@@ -960,34 +961,53 @@ export default function CalendarChatScreen() {
       console.log("[CalendarChat] File size:", pickedFile.size);
       console.log("[CalendarChat] Base64 data length:", pickedFile.base64Data?.length || 0);
       
+      if (!pickedFile.base64Data || pickedFile.base64Data.length === 0) {
+        console.error("[CalendarChat] File has no data");
+        Alert.alert("Attachment Error", "The selected file could not be read. Please try a different file.");
+        setIsPickingDocument(false);
+        return;
+      }
+      
       if (Platform.OS !== "web") {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       }
 
-      if (calendarId && pickedFile.base64Data) {
+      if (calendarId) {
         const displayName = pickedFile.name.length > 30 ? pickedFile.name.substring(0, 27) + "..." : pickedFile.name;
         
         console.log("[CalendarChat] Sending attachment to chat...");
-        await sendFileAttachment(
-          calendarId,
-          pickedFile.base64Data,
-          pickedFile.name,
-          `${messagePrefix} ${displayName}`,
-          "me",
-          true,
-          'external'
-        );
-        console.log("[CalendarChat] Attachment sent successfully");
+        try {
+          await sendFileAttachment(
+            calendarId,
+            pickedFile.base64Data,
+            pickedFile.name,
+            `${messagePrefix} ${displayName}`,
+            "me",
+            true,
+            'external'
+          );
+          console.log("[CalendarChat] Attachment sent successfully");
+          
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          }
+          
+          setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+          }, 100);
+        } catch (sendError) {
+          console.error("[CalendarChat] Error sending attachment:", sendError);
+          Alert.alert("Send Error", "Failed to send attachment. Please try again.");
+        }
       } else {
-        console.error("[CalendarChat] Missing calendarId or base64Data");
-        Alert.alert("Error", "Failed to process file. Please try again.");
+        console.error("[CalendarChat] Missing calendarId");
+        Alert.alert("Error", "Chat not found. Please try again.");
       }
       
-      setShowAttachMenu(false);
       setIsPickingDocument(false);
     } catch (err) {
       console.error("[CalendarChat] Error picking document:", err);
-      Alert.alert("Error", "Failed to pick document: " + (err instanceof Error ? err.message : String(err)));
+      Alert.alert("Attachment Error", "Failed to attach file. Please try again.");
       setIsPickingDocument(false);
     }
   };
