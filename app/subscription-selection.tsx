@@ -264,7 +264,7 @@ export default function SubscriptionSelectionScreen() {
                   </Text>
                   
                   <Text style={styles.successMessage}>
-                    Welcome to SOLARA Premium. Your journey to extraordinary begins now.
+                    Welcome to Audrey Premium. Your journey to extraordinary begins now.
                   </Text>
 
                   <TouchableOpacity
