@@ -186,6 +186,7 @@ function RootLayoutNav() {
       <Stack.Screen name="dream-journal" options={{ headerShown: false, presentation: "card" }} />
       <Stack.Screen name="sleep-meditation" options={{ headerShown: false, presentation: "card" }} />
       <Stack.Screen name="tomorrows-intentions" options={{ headerShown: false, presentation: "card" }} />
+      <Stack.Screen name="automations-manager" options={{ headerShown: false, presentation: "card" }} />
       <Stack.Screen name="shared-contact" options={{ headerShown: false, presentation: "card" }} />
       <Stack.Screen name="+not-found" />
     </Stack>

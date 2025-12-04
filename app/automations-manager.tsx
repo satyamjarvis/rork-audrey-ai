@@ -532,7 +532,7 @@ export default function AutomationsManagerScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient colors={palette.background} style={styles.gradient}>
-        <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+        <View style={[styles.header, { paddingTop: insets.top }]}>
           <TouchableOpacity
             style={[styles.backButton, { borderColor: palette.cardBorder }]}
             onPress={handleBackPress}
