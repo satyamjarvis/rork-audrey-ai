@@ -8,13 +8,7 @@ import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context'
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage, Language } from '@/contexts/LanguageContext';
-
-type LanguageOption = {
-  code: Language;
-  name: string;
-  nativeName: string;
-  flag: string;
-};
+import { languageInfo, supportedLanguages } from '@/utils/i18n';
 
 type FontStyleOption = {
   id: 'modernSans' | 'elegantSerif' | 'roundedSoft';
@@ -30,20 +24,10 @@ type FontStyleOption = {
   textTransform?: 'none' | 'uppercase';
 };
 
-const languages: LanguageOption[] = [
-  { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
-  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
-  { code: 'it', name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
-  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
-  { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
-  { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
-  { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹' },
-  { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
-  { code: 'he', name: 'Hebrew', nativeName: 'עברית', flag: '🇮🇱' },
-  { code: 'ro', name: 'Romanian', nativeName: 'Română', flag: '🇷🇴' },
-  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
-  { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳' },
-];
+const languages = supportedLanguages.map((code) => ({
+  code,
+  ...languageInfo[code],
+}));
 
 const fontStyleOptions: FontStyleOption[] = [
   {
@@ -344,7 +328,7 @@ export default function LanguageSelectionScreen() {
                             isSelected && styles.languageNameSelected,
                           ]}
                         >
-                          {lang.name}
+                          {languageInfo[lang.code].name}
                         </Text>
                         <Text
                           style={[
@@ -353,7 +337,7 @@ export default function LanguageSelectionScreen() {
                             isSelected && styles.languageNativeNameSelected,
                           ]}
                         >
-                          {lang.nativeName}
+                          {languageInfo[lang.code].nativeName}
                         </Text>
                       </View>
                     </View>
