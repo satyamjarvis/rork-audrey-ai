@@ -299,10 +299,18 @@ export default function MindMapEditor() {
     
     lastGestures.current.set(nodeId, { dx, dy });
 
+    const dragSensitivity = 0.6;
+
     setNodes(prev => prev.map(n => {
       if (n.id === nodeId) {
-        const newX = n.x + deltaDx / scale;
-        const newY = n.y + deltaDy / scale;
+        const targetX = n.x + (deltaDx / scale) * dragSensitivity;
+        const targetY = n.y + (deltaDy / scale) * dragSensitivity;
+        
+        const currentPos = nodePositions.current.get(nodeId) || { x: n.x, y: n.y };
+        const smoothingFactor = 0.7;
+        const newX = currentPos.x + (targetX - currentPos.x) * smoothingFactor;
+        const newY = currentPos.y + (targetY - currentPos.y) * smoothingFactor;
+        
         nodePositions.current.set(nodeId, { x: newX, y: newY });
         return { ...n, x: newX, y: newY };
       }
