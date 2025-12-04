@@ -49,6 +49,7 @@ import * as Haptics from "expo-haptics";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import * as MediaLibrary from "expo-media-library";
+import * as SMS from "expo-sms";
 
 
 import {
@@ -693,6 +694,51 @@ GUIDELINES FOR EXCELLENCE:
           });
 
           return `📚 Personalized Learning Plan:\n\n${learningPlan}`;
+        },
+      }),
+
+      sendSMSToPhoneNumber: createRorkTool({
+        description: "Send an SMS text message to an external phone number. This uses the device's native SMS functionality. The user must have a phone number configured in their account settings.",
+        zodSchema: z.object({
+          phoneNumber: z.string().describe("The phone number to send the SMS to (including country code if needed, e.g., '+1234567890')"),
+          message: z.string().describe("The text message content to send"),
+        }),
+        async execute(input) {
+          try {
+            if (!profile.phoneNumber || profile.phoneNumber.trim() === '') {
+              if (Platform.OS !== "web") {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+              }
+              return "❌ An active phone number needs to be updated in Account Settings before you can send SMS messages. Please go to Settings > Account Settings and add your phone number.";
+            }
+
+            if (Platform.OS === "web") {
+              return "❌ SMS sending is not available on web. Please use the mobile app to send SMS messages.";
+            }
+
+            const isAvailable = await SMS.isAvailableAsync();
+            if (!isAvailable) {
+              return "❌ SMS is not available on this device. Please check if your device supports SMS messaging.";
+            }
+
+            const { result } = await SMS.sendSMSAsync(
+              [input.phoneNumber],
+              input.message
+            );
+
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+            if (result === 'sent') {
+              return `✅ SMS message sent successfully to ${input.phoneNumber}!`;
+            } else if (result === 'cancelled') {
+              return `⚠️ SMS sending was cancelled.`;
+            } else {
+              return `📱 SMS app opened for ${input.phoneNumber}. Please complete sending the message in your SMS app.`;
+            }
+          } catch (error) {
+            console.error("[AI Assistant] Error sending SMS:", error);
+            return "❌ Failed to send SMS. Please try again.";
+          }
         },
       }),
 
