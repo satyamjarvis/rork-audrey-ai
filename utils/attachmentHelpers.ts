@@ -450,6 +450,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
   const { type = 'any', allowMultiple = false, maxSizeInMB = 10 } = options;
 
   try {
+    console.log('[Pick File] Starting file picker, type:', type);
     const DocumentPickerModule = await import('expo-document-picker') as any;
     const getDocumentAsync = DocumentPickerModule.getDocumentAsync;
 
@@ -465,43 +466,56 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
       mimeType = 'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     }
     
+    console.log('[Pick File] Opening picker with mimeType:', mimeType);
     const result = await getDocumentAsync({
       type: mimeType,
       copyToCacheDirectory: true,
       multiple: allowMultiple,
     });
 
+    console.log('[Pick File] Picker result:', result.canceled ? 'canceled' : 'selected');
+
     if (result.canceled || !result.assets || result.assets.length === 0) {
+      console.log('[Pick File] No file selected');
       return null;
     }
 
     const file = result.assets[0];
+    console.log('[Pick File] Selected file:', file.name, 'type:', file.mimeType, 'size:', file.size);
     
     if (file.size && file.size > maxSizeInMB * 1024 * 1024) {
       Alert.alert('File Too Large', `Please select a file smaller than ${maxSizeInMB}MB`);
       return null;
     }
 
+    console.log('[Pick File] Fetching file from URI:', file.uri);
     const response = await fetch(file.uri);
     const blob = await response.blob();
+    console.log('[Pick File] Blob size:', blob.size, 'type:', blob.type);
     
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       
       reader.onloadend = () => {
         const base64data = reader.result as string;
-        const base64 = base64data.split(',')[1] || base64data;
+        // Always extract the base64 part after the data URI prefix
+        const base64 = base64data.includes(',') ? base64data.split(',')[1] : base64data;
+        
+        const detectedMimeType = file.mimeType || getMimeTypeFromFileName(file.name || '');
+        console.log('[Pick File] Base64 data length:', base64?.length || 0);
+        console.log('[Pick File] Detected MIME type:', detectedMimeType);
         
         resolve({
           name: file.name || `file_${Date.now()}`,
           uri: file.uri,
-          type: file.mimeType || getMimeTypeFromFileName(file.name || ''),
-          size: file.size || 0,
+          type: detectedMimeType,
+          size: file.size || blob.size || 0,
           base64Data: base64,
         });
       };
       
-      reader.onerror = () => {
+      reader.onerror = (error) => {
+        console.error('[Pick File] FileReader error:', error);
         reject(new Error('Failed to read file'));
       };
       

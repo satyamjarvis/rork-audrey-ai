@@ -162,9 +162,14 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     metadata?: any
   ) => {
     try {
+      console.log("📤 [Chat] Sending file attachment:", fileName);
+      console.log("📤 [Chat] File data length:", fileData?.length || 0);
+      
       const encryptedFileData = await encryptFile(fileData);
+      console.log("📤 [Chat] Encrypted data length:", encryptedFileData.data?.length || 0);
       
       const mimeType = getMimeTypeFromFileName(fileName);
+      console.log("📤 [Chat] MIME type:", mimeType);
 
       const attachment: Omit<FileAttachment, "uploadedAt"> = {
         id: `file_${Date.now()}_${Math.random()}`,
@@ -178,9 +183,11 @@ export const [ChatProvider, useChat] = createContextHook(() => {
         metadata
       };
       
-      return await sendMessage(calendarId, messageText, senderEmail, attachment);
+      const result = await sendMessage(calendarId, messageText, senderEmail, attachment);
+      console.log("✅ [Chat] File attachment sent successfully:", attachment.id);
+      return result;
     } catch (error) {
-      console.error("❌ Error sending file attachment:", error);
+      console.error("❌ [Chat] Error sending file attachment:", error);
       throw error;
     }
   }, [sendMessage]);
@@ -191,9 +198,15 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     messageId: string
   ): Promise<string> => {
     try {
-      return await decryptFile(attachment.encryptedData);
+      console.log("📥 [Chat] Downloading attachment:", attachment.fileName);
+      console.log("📥 [Chat] Encrypted data length:", attachment.encryptedData?.data?.length || 0);
+      
+      const decryptedData = await decryptFile(attachment.encryptedData);
+      console.log("📥 [Chat] Decrypted data length:", decryptedData?.length || 0);
+      
+      return decryptedData;
     } catch (error) {
-      console.error("❌ Error downloading attachment:", error);
+      console.error("❌ [Chat] Error downloading attachment:", error);
       throw error;
     }
   }, []);

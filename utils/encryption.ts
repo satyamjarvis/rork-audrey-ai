@@ -8,15 +8,60 @@ import * as Crypto from 'expo-crypto';
 export type EncryptedData = {
   data: string;
   iv: string;
+  isBase64?: boolean; // Flag to indicate if data was originally base64
 };
+
+// Helper to check if string is valid base64
+function isValidBase64(str: string): boolean {
+  if (!str || str.length === 0) return false;
+  // Base64 strings should only contain A-Z, a-z, 0-9, +, /, and = for padding
+  const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+  return base64Regex.test(str) && str.length % 4 === 0;
+}
+
+// Safe btoa that handles unicode
+function safeBtoa(str: string): string {
+  try {
+    // First encode to handle unicode characters
+    const utf8Bytes = encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => 
+      String.fromCharCode(parseInt(p1, 16))
+    );
+    return btoa(utf8Bytes);
+  } catch (error) {
+    console.error('[Encryption] safeBtoa error:', error);
+    // Fallback: try direct btoa
+    return btoa(str);
+  }
+}
+
+// Safe atob that handles unicode
+function safeAtob(str: string): string {
+  try {
+    const decoded = atob(str);
+    // Try to decode URI component for unicode support
+    try {
+      return decodeURIComponent(decoded.split('').map(c => 
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
+    } catch {
+      // If decode fails, return the direct atob result
+      return decoded;
+    }
+  } catch (error) {
+    console.error('[Encryption] safeAtob error:', error);
+    return str;
+  }
+}
 
 export async function encrypt(text: string): Promise<string> {
   try {
+    console.log('[Encryption] Encrypting text, length:', text?.length || 0);
     // Simple Base64 encoding for obfuscation
-    const encoded = btoa(text);
+    const encoded = safeBtoa(text);
+    console.log('[Encryption] Encoded length:', encoded?.length || 0);
     return encoded;
   } catch (error) {
-    console.error('Error encrypting:', error);
+    console.error('[Encryption] Error encrypting:', error);
     return text;
   }
 }
@@ -27,12 +72,14 @@ export async function decrypt(encryptedText: string): Promise<string> {
     // SHA256 hash is 64 characters of hex (0-9, a-f)
     const isHash = /^[a-f0-9]{64}$/i.test(encryptedText);
     if (isHash) {
-      console.warn('Detected legacy hash data, treating as corrupted/empty');
+      console.warn('[Encryption] Detected legacy hash data, treating as corrupted/empty');
       throw new Error('Cannot decrypt legacy hash data');
     }
 
+    console.log('[Encryption] Decrypting text, length:', encryptedText?.length || 0);
     // Try to decode Base64
-    const decoded = atob(encryptedText);
+    const decoded = safeAtob(encryptedText);
+    console.log('[Encryption] Decoded length:', decoded?.length || 0);
     return decoded;
   } catch (error) {
     // If decoding fails, it might be plain text or the legacy hash that failed checks
@@ -42,7 +89,7 @@ export async function decrypt(encryptedText: string): Promise<string> {
       return encryptedText;
     } catch {
       // If it's not valid JSON and failed decode, throw
-      console.warn('Failed to decrypt data, returning original');
+      console.warn('[Encryption] Failed to decrypt data, returning original');
       return encryptedText;
     }
   }
@@ -53,7 +100,7 @@ export async function encryptMessage(text: string): Promise<EncryptedData> {
     const data = await encrypt(text);
     return { data, iv: '' };
   } catch (error) {
-    console.error('Error encrypting message:', error);
+    console.error('[Encryption] Error encrypting message:', error);
     return { data: text, iv: '' };
   }
 }
@@ -62,15 +109,35 @@ export async function decryptMessage(encryptedData: EncryptedData): Promise<stri
   try {
     return await decrypt(encryptedData.data);
   } catch (error) {
-    console.error('Error decrypting message:', error);
+    console.error('[Encryption] Error decrypting message:', error);
     return encryptedData.data;
   }
 }
 
+// For file attachments, we need to be more careful with base64 data
+// Files are already base64 encoded, so we encode the base64 string itself
 export async function encryptFile(data: string): Promise<EncryptedData> {
-  return encryptMessage(data);
+  try {
+    console.log('[Encryption] Encrypting file, data length:', data?.length || 0);
+    // For files, the data is already base64 encoded from the file picker
+    // We'll encode it again for "encryption" but mark it
+    const encrypted = await encrypt(data);
+    return { data: encrypted, iv: '', isBase64: true };
+  } catch (error) {
+    console.error('[Encryption] Error encrypting file:', error);
+    return { data: data, iv: '', isBase64: true };
+  }
 }
 
 export async function decryptFile(encryptedData: EncryptedData): Promise<string> {
-  return decryptMessage(encryptedData);
+  try {
+    console.log('[Encryption] Decrypting file, data length:', encryptedData.data?.length || 0);
+    const decrypted = await decrypt(encryptedData.data);
+    console.log('[Encryption] Decrypted file length:', decrypted?.length || 0);
+    return decrypted;
+  } catch (error) {
+    console.error('[Encryption] Error decrypting file:', error);
+    // Return raw data if decryption fails - might be unencrypted
+    return encryptedData.data;
+  }
 }

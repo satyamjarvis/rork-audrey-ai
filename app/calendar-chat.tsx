@@ -668,12 +668,13 @@ export default function CalendarChatScreen() {
 
   const handlePickDocument = async (type: string = "any") => {
     if (isPickingDocument) {
-      console.log("Document picker already in progress, ignoring request");
+      console.log("[CalendarChat] Document picker already in progress, ignoring request");
       return;
     }
 
     try {
       setIsPickingDocument(true);
+      console.log("[CalendarChat] Starting document picker, type:", type);
       
       let fileType: 'image' | 'video' | 'audio' | 'document' | 'any' = 'any';
       let messagePrefix = "📎";
@@ -698,17 +699,24 @@ export default function CalendarChatScreen() {
       const pickedFile = await pickFileFromDevice({ type: fileType, maxSizeInMB: 10 });
       
       if (!pickedFile) {
+        console.log("[CalendarChat] No file picked");
         setIsPickingDocument(false);
         return;
       }
+      
+      console.log("[CalendarChat] File picked:", pickedFile.name);
+      console.log("[CalendarChat] File type:", pickedFile.type);
+      console.log("[CalendarChat] File size:", pickedFile.size);
+      console.log("[CalendarChat] Base64 data length:", pickedFile.base64Data?.length || 0);
       
       if (Platform.OS !== "web") {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       }
 
-      if (calendarId) {
+      if (calendarId && pickedFile.base64Data) {
         const displayName = pickedFile.name.length > 30 ? pickedFile.name.substring(0, 27) + "..." : pickedFile.name;
         
+        console.log("[CalendarChat] Sending attachment to chat...");
         await sendFileAttachment(
           calendarId,
           pickedFile.base64Data,
@@ -718,12 +726,16 @@ export default function CalendarChatScreen() {
           true,
           'external'
         );
+        console.log("[CalendarChat] Attachment sent successfully");
+      } else {
+        console.error("[CalendarChat] Missing calendarId or base64Data");
+        Alert.alert("Error", "Failed to process file. Please try again.");
       }
       
       setShowAttachMenu(false);
       setIsPickingDocument(false);
     } catch (err) {
-      console.error("Error picking document:", err);
+      console.error("[CalendarChat] Error picking document:", err);
       Alert.alert("Error", "Failed to pick document: " + (err instanceof Error ? err.message : String(err)));
       setIsPickingDocument(false);
     }
@@ -775,21 +787,32 @@ export default function CalendarChatScreen() {
 
   const handleDownloadAttachment = async (messageId: string) => {
     const message = messages.find(m => m.id === messageId);
-    if (!message?.attachment || !calendarId) return;
+    if (!message?.attachment || !calendarId) {
+      console.error('[CalendarChat] Download failed: missing message or attachment');
+      return;
+    }
 
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
     console.log('[CalendarChat] Starting download for:', message.attachment.fileName);
+    console.log('[CalendarChat] Attachment file type:', message.attachment.fileType);
+    console.log('[CalendarChat] Encrypted data exists:', !!message.attachment.encryptedData);
 
     try {
       const fileData = await downloadAttachment(message.attachment, calendarId, messageId);
       const fileName = message.attachment.fileName;
       const mimeType = message.attachment.fileType || getMimeTypeFromFileName(fileName);
 
-      console.log('[CalendarChat] File data retrieved, length:', fileData?.length);
-      console.log('[CalendarChat] MIME type:', mimeType);
+      console.log('[CalendarChat] Decrypted file data length:', fileData?.length || 0);
+      console.log('[CalendarChat] Using MIME type:', mimeType);
+
+      if (!fileData || fileData.length === 0) {
+        console.error('[CalendarChat] No file data to download');
+        Alert.alert("Error", "File data is empty. The file may be corrupted.");
+        return;
+      }
 
       const success = await downloadAttachmentToDevice({
         fileName: fileName,
@@ -799,7 +822,9 @@ export default function CalendarChatScreen() {
       });
 
       if (!success) {
-        console.error('[CalendarChat] Download returned false');
+        console.error('[CalendarChat] Download helper returned false');
+      } else {
+        console.log('[CalendarChat] Download completed successfully');
       }
     } catch (error) {
       console.error("[CalendarChat] Error downloading attachment:", error);
