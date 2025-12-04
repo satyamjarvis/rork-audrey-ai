@@ -20,7 +20,6 @@ export default function BrainFloatingButton() {
   
   // Use default position from utils as initial state to avoid jump
   const initialPos = DEFAULT_POSITIONS.brain;
-  const panY = useRef(new Animated.Value(initialPos.y)).current;
   
   const pan = useRef(new Animated.ValueXY(initialPos)).current;
   const lastTap = useRef<number>(0);
@@ -35,10 +34,9 @@ export default function BrainFloatingButton() {
       const isUniversePage = pathname === '/universe';
       getButtonPosition('brain', isUniversePage).then(position => {
         pan.setValue(position);
-        panY.setValue(position.y);
       });
     }
-  }, [pan, panY, pathname]);
+  }, [pan, pathname]);
 
   // Force Universe Position (circular formation on Universe page in universe mode)
   // Keep classic position on calendly page in classic mode
@@ -50,33 +48,21 @@ export default function BrainFloatingButton() {
         const currentX = (pan.x as any)._value;
         const currentY = (pan.y as any)._value;
         if (Math.abs(currentX - savedPos.x) > 5 || Math.abs(currentY - savedPos.y) > 5) {
-          Animated.parallel([
-            Animated.spring(pan, {
-              toValue: savedPos,
-              useNativeDriver: false,
-            }),
-            Animated.spring(panY, {
-              toValue: savedPos.y,
-              useNativeDriver: false,
-            })
-          ]).start();
+          Animated.spring(pan, {
+            toValue: savedPos,
+            useNativeDriver: false,
+          }).start();
         }
       });
     } else if ((pathname === '/calendly' || pathname === '/(tabs)/calendly') && universeMode === 'classic') {
       // Classic mode on Solara calendar: use default position (left curve)
       const defaultPos = DEFAULT_POSITIONS.brain;
-      Animated.parallel([
-        Animated.spring(pan, {
-          toValue: defaultPos,
-          useNativeDriver: false,
-        }),
-        Animated.spring(panY, {
-          toValue: defaultPos.y,
-          useNativeDriver: false,
-        })
-      ]).start();
+      Animated.spring(pan, {
+        toValue: defaultPos,
+        useNativeDriver: false,
+      }).start();
     }
-  }, [pathname, universeMode, pan, panY]);
+  }, [pathname, universeMode, pan]);
 
   // Trigger entrance animation on mount
   useEffect(() => {
@@ -192,16 +178,10 @@ export default function BrainFloatingButton() {
         const boundedX = Math.max(0, Math.min(SCREEN_WIDTH - BUTTON_SIZE, currentX));
         const boundedY = Math.max(0, Math.min(SCREEN_HEIGHT - BUTTON_SIZE, currentY));
 
-        Animated.parallel([
-          Animated.spring(pan, {
-            toValue: { x: boundedX, y: boundedY },
-            useNativeDriver: false,
-          }),
-          Animated.spring(panY, {
-            toValue: boundedY,
-            useNativeDriver: false,
-          })
-        ]).start(() => {
+        Animated.spring(pan, {
+          toValue: { x: boundedX, y: boundedY },
+          useNativeDriver: false,
+        }).start(() => {
           // Save position after animation completes
           const isUniversePage = pathname === '/universe';
           saveButtonPosition('brain', { x: boundedX, y: boundedY }, isUniversePage);
@@ -254,7 +234,7 @@ export default function BrainFloatingButton() {
         {
           transform: [
             { translateX: pan.x },
-            { translateY: Animated.add(panY, bounceAnim) },
+            { translateY: Animated.add(pan.y, bounceAnim) },
             { scale: entranceScale },
           ],
           opacity: entranceOpacity,
