@@ -205,6 +205,161 @@ type TranslationKeys = {
   completed: string;
   badges: string;
   xp: string;
+  or: string;
+
+  // Account Creation
+  welcomeToAudrey: string;
+  createYourAccount: string;
+  createAccountToBegin: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+  phoneNumber: string;
+  phoneNeededForChat: string;
+  password: string;
+  createAccount: string;
+  signUpWithICloud: string;
+  signUpWithFaceID: string;
+  termsAndPrivacy: string;
+
+  // Subscription
+  chooseYourPremiumPlan: string;
+  unlockFullPower: string;
+  basicMonthly: string;
+  basicYearly: string;
+  advancedMonthly: string;
+  advancedYearly: string;
+  save: string;
+  perMonth: string;
+  perYear: string;
+  popular: string;
+  comingSoon: string;
+  fullAccessToFeatures: string;
+  aiPoweredAssistant: string;
+  unlimitedPlanning: string;
+  cloudSync: string;
+  prioritySupport: string;
+  everythingInBasic: string;
+  saveAmount: string;
+  yearlyBonuses: string;
+  earlyAccess: string;
+  accessOnlineCourses: string;
+  excelInLife: string;
+  becomeExtraordinary: string;
+  vipSupport: string;
+  premiumCourses: string;
+  exclusiveContent: string;
+  personalCoaching: string;
+  continueWithPlan: string;
+  cancelAnytime: string;
+  noHiddenFees: string;
+  confirmSubscription: string;
+  planSummary: string;
+  securedByAppStore: string;
+  doubleClickToPay: string;
+  youreAllSet: string;
+  welcomeToPremium: string;
+  letsGo: string;
+  viewPlanDetails: string;
+
+  // AI Assistant
+  audrey: string;
+  aiAssistant: string;
+  chatWithAudrey: string;
+  typeMessage: string;
+  listening: string;
+  clearChat: string;
+  areYouSureClearChat: string;
+  whatCanIHelp: string;
+  audreyCapabilities: string;
+
+  // Planner
+  daily: string;
+  weekly: string;
+  monthly: string;
+  yearly: string;
+  addTask: string;
+  editTask: string;
+  deleteTask: string;
+  dueDate: string;
+  reminder: string;
+  notes: string;
+  attachments: string;
+  markComplete: string;
+  markIncomplete: string;
+
+  // Todo List
+  todoList: string;
+  addTodo: string;
+  editTodo: string;
+  deleteTodo: string;
+  allTodos: string;
+  activeTodos: string;
+  completedTodos: string;
+
+  // Notes
+  notesAndPads: string;
+  createNote: string;
+  editNote: string;
+  deleteNote: string;
+  noteTitle: string;
+  noteContent: string;
+
+  // Mind Mapping
+  createMap: string;
+  editMap: string;
+  deleteMap: string;
+  addNode: string;
+  deleteNode: string;
+  mapTitle: string;
+
+  // Chats
+  messages: string;
+  sendMessage: string;
+  newMessage: string;
+  lastSeen: string;
+  online: string;
+  offline: string;
+  typing: string;
+
+  // Phonebook
+  contacts: string;
+  addContact: string;
+  editContact: string;
+  deleteContact: string;
+  phone: string;
+  mobile: string;
+  address: string;
+  website: string;
+  favorites: string;
+  allContacts: string;
+  company: string;
+  position: string;
+
+  // Password Manager
+  addPassword: string;
+  editPassword: string;
+  deletePassword: string;
+  username: string;
+  url: string;
+  category: string;
+  secureNotes: string;
+
+  // Metrics/Analytics
+  metrics: string;
+  dashboard: string;
+  templates: string;
+  activeMetrics: string;
+  export: string;
+  import: string;
+  filter: string;
+  search: string;
+
+  // Modals
+  confirm: string;
+  areYouSure: string;
+  yes: string;
+  no: string;
 };
 
 const translations: Record<Language, TranslationKeys> = {
