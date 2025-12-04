@@ -40,7 +40,6 @@ import {
   Search,
   BookOpen,
   Download,
-
 } from "lucide-react-native";
 import { Audio } from "expo-av";
 import * as Speech from "expo-speech";
@@ -215,6 +214,8 @@ GUIDELINES FOR EXCELLENCE:
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<{ uri: string; type: string; name: string }[]>([]);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [currentlyReadingMessageId, setCurrentlyReadingMessageId] = useState<string | null>(null);
+  const lastTapRef = useRef<{ messageId: string; timestamp: number } | null>(null);
 
   const palette = useMemo(
     () => ({
@@ -974,6 +975,72 @@ GUIDELINES FOR EXCELLENCE:
     }
   };
 
+  const handleDoubleTapMessage = async (messageId: string, text: string) => {
+    const now = Date.now();
+    const lastTap = lastTapRef.current;
+
+    if (lastTap && lastTap.messageId === messageId && now - lastTap.timestamp < 300) {
+      console.log('[AI Assistant] Double tap detected on message:', messageId);
+      lastTapRef.current = null;
+
+      if (Platform.OS !== 'web') {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      }
+
+      if (currentlyReadingMessageId === messageId && isSpeaking) {
+        console.log('[AI Assistant] Stopping speech');
+        Speech.stop();
+        setIsSpeaking(false);
+        setCurrentlyReadingMessageId(null);
+        return;
+      }
+
+      if (isSpeaking) {
+        Speech.stop();
+      }
+
+      setIsSpeaking(true);
+      setCurrentlyReadingMessageId(messageId);
+
+      const speechOptions: Speech.SpeechOptions = {
+        language: language === 'en' ? 'en-US' : 
+                  language === 'es' ? 'es-ES' :
+                  language === 'fr' ? 'fr-FR' :
+                  language === 'it' ? 'it-IT' :
+                  language === 'pt' ? 'pt-BR' :
+                  language === 'ja' ? 'ja-JP' :
+                  language === 'zh' ? 'zh-CN' :
+                  language === 'ar' ? 'ar-SA' :
+                  language === 'he' ? 'he-IL' :
+                  language === 'ro' ? 'ro-RO' :
+                  language === 'ru' ? 'ru-RU' :
+                  language === 'hi' ? 'hi-IN' : 'en-US',
+        pitch: 1.0,
+        rate: 0.9,
+        onDone: () => {
+          console.log('[AI Assistant] Speech finished');
+          setIsSpeaking(false);
+          setCurrentlyReadingMessageId(null);
+        },
+        onError: (error) => {
+          console.error('[AI Assistant] Speech error:', error);
+          setIsSpeaking(false);
+          setCurrentlyReadingMessageId(null);
+        },
+        onStopped: () => {
+          console.log('[AI Assistant] Speech stopped');
+          setIsSpeaking(false);
+          setCurrentlyReadingMessageId(null);
+        },
+      };
+
+      console.log('[AI Assistant] Starting speech for message');
+      Speech.speak(text, speechOptions);
+    } else {
+      lastTapRef.current = { messageId, timestamp: now };
+    }
+  };
+
   const handleMicToggle = async () => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -1360,9 +1427,17 @@ GUIDELINES FOR EXCELLENCE:
                               if (hasFiles && part.text === "Attached files") return null;
                               if (!part.text) return null;
 
+                              const isCurrentlyReading = !isUser && currentlyReadingMessageId === message.id;
+
                               return (
-                                <View
+                                <TouchableOpacity
                                   key={`${message.id}-${partIndex}`}
+                                  activeOpacity={isUser ? 1 : 0.7}
+                                  onPress={() => {
+                                    if (!isUser) {
+                                      handleDoubleTapMessage(message.id, part.text);
+                                    }
+                                  }}
                                   style={[
                                     styles.messageBubble,
                                     isUser ? styles.userMessage : styles.assistantMessage,
@@ -1370,9 +1445,12 @@ GUIDELINES FOR EXCELLENCE:
                                       backgroundColor: isUser ? palette.bubbleUser : palette.bubbleAssistant,
                                       borderColor: isUser
                                         ? "rgba(0,0,0,0.05)"
+                                        : isCurrentlyReading
+                                        ? palette.neonBlue
                                         : isNightMode
                                         ? "rgba(111, 243, 255, 0.12)"
                                         : "rgba(46, 142, 235, 0.15)",
+                                      borderWidth: isCurrentlyReading ? 2 : 1,
                                     },
                                   ]}
                                 >
@@ -1384,7 +1462,15 @@ GUIDELINES FOR EXCELLENCE:
                                   >
                                     {part.text}
                                   </Text>
-                                </View>
+                                  {!isUser && (
+                                    <View style={styles.doubleTapHint}>
+                                      <Volume2 
+                                        color={isCurrentlyReading ? palette.neonBlue : palette.subtext} 
+                                        size={12} 
+                                      />
+                                    </View>
+                                  )}
+                                </TouchableOpacity>
                               );
                             }
 
@@ -2220,5 +2306,11 @@ const styles = StyleSheet.create({
   chatAttachmentType: {
     fontSize: 12,
     opacity: 0.7,
+  },
+  doubleTapHint: {
+    position: "absolute" as const,
+    bottom: 4,
+    right: 8,
+    opacity: 0.5,
   },
 });
