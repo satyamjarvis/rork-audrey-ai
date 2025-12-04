@@ -166,7 +166,7 @@ export default function AccountSettingsScreen() {
                 />
               </View>
               <Text style={[styles.helperText, { color: theme.colors.text.secondary }]}>
-                Optional but necessary to use messages for shared calendars
+                Required for Audrey AI to send SMS messages on your behalf. Messages will appear from your number with Audrey AI Assistant signature.
               </Text>
             </View>
           </View>

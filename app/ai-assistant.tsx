@@ -698,17 +698,33 @@ GUIDELINES FOR EXCELLENCE:
       }),
 
       sendSMSToPhoneNumber: createRorkTool({
-        description: "Send an SMS text message to an external phone number. This uses the device's native SMS functionality. The user must have a phone number configured in their account settings.",
+        description: "Send an SMS text message to an external phone number on behalf of Audrey AI Assistant. This uses the device's native SMS functionality. The user must have a phone number configured in their account settings. The message will be prefixed with 'Audrey AI Assistant:' so the recipient knows it's from Audrey.",
         zodSchema: z.object({
           phoneNumber: z.string().describe("The phone number to send the SMS to (including country code if needed, e.g., '+1234567890')"),
           message: z.string().describe("The text message content to send"),
+          includeSignature: z.boolean().optional().describe("Whether to include 'Audrey AI Assistant' signature (default: true)"),
         }),
         async execute(input) {
           try {
+            console.log("[AI Assistant] SMS request received:", { phoneNumber: input.phoneNumber, hasMessage: !!input.message });
+            
             if (!profile.phoneNumber || profile.phoneNumber.trim() === '') {
               if (Platform.OS !== "web") {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
               }
+              
+              Alert.alert(
+                "Phone Number Required",
+                "An active phone number needs to be updated in Account Settings before you can send SMS messages through Audrey.",
+                [
+                  { text: "Cancel", style: "cancel" },
+                  { 
+                    text: "Go to Settings", 
+                    onPress: () => router.push("/account-settings" as any)
+                  }
+                ]
+              );
+              
               return "❌ An active phone number needs to be updated in Account Settings before you can send SMS messages. Please go to Settings > Account Settings and add your phone number.";
             }
 
@@ -721,19 +737,28 @@ GUIDELINES FOR EXCELLENCE:
               return "❌ SMS is not available on this device. Please check if your device supports SMS messaging.";
             }
 
+            const includeSignature = input.includeSignature !== false;
+            const formattedMessage = includeSignature 
+              ? `🤖 Audrey AI Assistant:\n\n${input.message}\n\n— Sent via Audrey AI`
+              : input.message;
+
+            console.log("[AI Assistant] Opening SMS composer for:", input.phoneNumber);
+            
             const { result } = await SMS.sendSMSAsync(
               [input.phoneNumber],
-              input.message
+              formattedMessage
             );
 
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
+            console.log("[AI Assistant] SMS result:", result);
+
             if (result === 'sent') {
-              return `✅ SMS message sent successfully to ${input.phoneNumber}!`;
+              return `✅ SMS message sent successfully to ${input.phoneNumber} as Audrey AI Assistant!`;
             } else if (result === 'cancelled') {
               return `⚠️ SMS sending was cancelled.`;
             } else {
-              return `📱 SMS app opened for ${input.phoneNumber}. Please complete sending the message in your SMS app.`;
+              return `📱 SMS app opened for ${input.phoneNumber}. The message is prepared with Audrey AI Assistant signature. Please complete sending in your SMS app.`;
             }
           } catch (error) {
             console.error("[AI Assistant] Error sending SMS:", error);
