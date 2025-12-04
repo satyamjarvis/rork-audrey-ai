@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,9 @@ import {
   Modal,
   Animated,
   Platform,
-  Alert
+  Alert,
+  Dimensions,
+  Easing
 } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -18,7 +20,6 @@ import {
   Brain, 
   ArrowLeft, 
   Trash2, 
-  MoreVertical, 
   Calendar,
   Sparkles,
   Search,
@@ -30,6 +31,91 @@ import * as Haptics from 'expo-haptics';
 import { useMindMap, MindMap } from '@/contexts/MindMapContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import KeyboardDismissButton from '@/components/KeyboardDismissButton';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+const GLITTER_COLORS = [
+  '#CD7F32', // Bronze
+  '#C0C0C0', // Silver
+  '#FF00FF', // Magenta
+  '#00BFFF', // Deep Sky Blue
+];
+
+const GlitterParticle = ({ initialX, initialY }: { initialX: number, initialY: number }) => {
+  const anim = useRef(new Animated.Value(0)).current;
+  const color = useMemo(() => GLITTER_COLORS[Math.floor(Math.random() * GLITTER_COLORS.length)], []);
+  const size = useMemo(() => Math.random() * 4 + 2, []);
+  const duration = useMemo(() => Math.random() * 2000 + 1500, []);
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: duration,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(anim, {
+          toValue: 0,
+          duration: duration,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        })
+      ])
+    ).start();
+  }, [anim, duration]);
+
+  const translateY = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -20]
+  });
+
+  const opacity = anim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [0.3, 1, 0.3]
+  });
+
+  return (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        left: initialX,
+        top: initialY,
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        backgroundColor: color,
+        opacity: opacity,
+        transform: [{ translateY }],
+        shadowColor: color,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.8,
+        shadowRadius: 4,
+      }}
+    />
+  );
+};
+
+const BackgroundGlitter = React.memo(() => {
+  const particles = useMemo(() => {
+    return Array.from({ length: 30 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * SCREEN_WIDTH,
+      y: Math.random() * SCREEN_HEIGHT,
+    }));
+  }, []);
+
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      {particles.map(p => (
+        <GlitterParticle key={p.id} initialX={p.x} initialY={p.y} />
+      ))}
+    </View>
+  );
+});
+
+BackgroundGlitter.displayName = 'BackgroundGlitter';
 
 const MindMapCard = React.memo(({ map, onPress, onDelete, index }: { 
   map: MindMap; 
@@ -74,21 +160,26 @@ const MindMapCard = React.memo(({ map, onPress, onDelete, index }: {
           styles.card,
           {
             backgroundColor: isNightMode ? "rgba(30, 30, 40, 0.6)" : "rgba(255, 255, 255, 0.8)",
-            borderColor: isNightMode ? "rgba(255, 215, 0, 0.2)" : "rgba(0, 0, 0, 0.05)",
+            // Enhanced border for sophistication
+            borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(0, 0, 0, 0.08)",
+            borderWidth: 1,
           }
         ]}
       >
         <LinearGradient
           colors={isNightMode 
-            ? ["rgba(255, 215, 0, 0.05)", "rgba(255, 215, 0, 0.01)"] 
-            : ["rgba(255, 255, 255, 0.9)", "rgba(255, 255, 255, 0.5)"]
+            ? ["rgba(255, 215, 0, 0.08)", "rgba(255, 215, 0, 0.02)"] 
+            : ["rgba(255, 255, 255, 0.95)", "rgba(255, 255, 255, 0.7)"]
           }
           style={styles.cardGradient}
         >
+          {/* Subtle Glow Background */}
+          <View style={[StyleSheet.absoluteFill, { backgroundColor: isNightMode ? '#FFD700' : theme.colors.primary, opacity: 0.03, zIndex: -1 }]} />
+          
           <View style={styles.cardHeader}>
             <View style={[
               styles.iconContainer,
-              { backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.1)" : theme.colors.primary + "15" }
+              { backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.15)" : theme.colors.primary + "20" }
             ]}>
               <Brain size={24} color={isNightMode ? "#FFD700" : theme.colors.primary} />
             </View>
@@ -122,7 +213,7 @@ const MindMapCard = React.memo(({ map, onPress, onDelete, index }: {
                 </Text>
               </View>
               <View style={styles.footerItem}>
-                <View style={[styles.nodeCountBadge, { backgroundColor: theme.colors.primary + "20" }]}>
+                <View style={[styles.nodeCountBadge, { backgroundColor: theme.colors.primary + "15" }]}>
                   <Text style={[styles.nodeCountText, { color: theme.colors.primary }]}>
                     {map.nodes.length} nodes
                   </Text>
@@ -193,6 +284,8 @@ export default function MindMappingList() {
           </Text>
           <View style={{ width: 40 }} /> 
         </View>
+
+        <BackgroundGlitter />
 
         <View style={styles.searchContainer}>
           <View style={[

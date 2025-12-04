@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,8 @@ import {
   Dimensions,
   Platform,
   Alert,
-  Modal
+  Modal,
+  Easing
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import Svg, { Line } from 'react-native-svg';
@@ -22,7 +23,7 @@ import {
   Palette, 
   Type, 
   ZoomIn,
-  ZoomOut,
+  ZoomOut
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -32,20 +33,104 @@ import { useTheme } from '@/contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const NODE_WIDTH = 120;
-const NODE_HEIGHT = 60;
+const NODE_WIDTH = 140;
+const NODE_HEIGHT = 70;
 const CANVAS_SIZE = 5000;
 
 const COLORS = [
-  '#FFD700',
-  '#FF00FF',
-  '#00FFFF',
-  '#FF4500',
-  '#32CD32',
-  '#1E90FF',
-  '#9370DB',
-  '#FF1493',
+  '#FFD700', // Gold
+  '#FF00FF', // Magenta
+  '#00FFFF', // Cyan
+  '#FF4500', // OrangeRed
+  '#32CD32', // LimeGreen
+  '#1E90FF', // DodgerBlue
+  '#9370DB', // MediumPurple
+  '#FF1493', // DeepPink
 ];
+
+const GLITTER_COLORS = [
+  '#CD7F32', // Bronze
+  '#C0C0C0', // Silver
+  '#FF00FF', // Magenta
+  '#00BFFF', // Deep Sky Blue
+];
+
+const GlitterParticle = ({ initialX, initialY }: { initialX: number, initialY: number }) => {
+  const anim = useRef(new Animated.Value(0)).current;
+  const color = useMemo(() => GLITTER_COLORS[Math.floor(Math.random() * GLITTER_COLORS.length)], []);
+  const size = useMemo(() => Math.random() * 4 + 2, []);
+  const duration = useMemo(() => Math.random() * 2000 + 1500, []);
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: duration,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(anim, {
+          toValue: 0,
+          duration: duration,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        })
+      ])
+    ).start();
+  }, [anim, duration]);
+
+  const translateY = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -20]
+  });
+
+  const opacity = anim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [0.3, 1, 0.3]
+  });
+
+  return (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        left: initialX,
+        top: initialY,
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        backgroundColor: color,
+        opacity: opacity,
+        transform: [{ translateY }],
+        shadowColor: color,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.8,
+        shadowRadius: 4,
+      }}
+    />
+  );
+};
+
+const BackgroundGlitter = React.memo(() => {
+  // Create a fixed number of particles
+  const particles = useMemo(() => {
+    return Array.from({ length: 40 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * SCREEN_WIDTH,
+      y: Math.random() * SCREEN_HEIGHT,
+    }));
+  }, []);
+
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      {particles.map(p => (
+        <GlitterParticle key={p.id} initialX={p.x} initialY={p.y} />
+      ))}
+    </View>
+  );
+});
+
+BackgroundGlitter.displayName = 'BackgroundGlitter';
 
 export default function MindMapEditor() {
   const { id } = useLocalSearchParams();
@@ -303,6 +388,8 @@ export default function MindMapEditor() {
         </View>
       </View>
 
+      <BackgroundGlitter />
+
       <View 
         style={styles.canvasContainer}
         {...canvasPanResponder.panHandlers}
@@ -335,8 +422,9 @@ export default function MindMapEditor() {
                    y1={startY}
                    x2={endX}
                    y2={endY}
-                   stroke={isNightMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"}
+                   stroke={isNightMode ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)"}
                    strokeWidth="2"
+                   strokeDasharray="5, 5"
                  />
                );
              })}
@@ -359,7 +447,7 @@ export default function MindMapEditor() {
         </Animated.View>
       </View>
 
-      <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 20, backgroundColor: isNightMode ? "rgba(20,20,30,0.9)" : "rgba(255,255,255,0.9)" }]}>
+      <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 20, backgroundColor: isNightMode ? "rgba(20,20,30,0.95)" : "rgba(255,255,255,0.95)" }]}>
         {selectedNodeId ? (
            <View style={styles.actionRow}>
              <TouchableOpacity style={styles.actionButton} onPress={() => setIsColorModalVisible(true)}>
@@ -545,16 +633,21 @@ const DraggableNode = React.memo<DraggableNodeProps>(({ node, isSelected, onSele
     })
   ).current;
 
-  const interpolatedShadowOpacity = shadowAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.3, 0.8]
-  });
+  // Sophisticated Glow Animation
+  const glowOpacity = useRef(new Animated.Value(0.4)).current;
+  useEffect(() => {
+    if (isSelected) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowOpacity, { toValue: 0.8, duration: 1500, useNativeDriver: true }),
+          Animated.timing(glowOpacity, { toValue: 0.4, duration: 1500, useNativeDriver: true })
+        ])
+      ).start();
+    } else {
+      glowOpacity.setValue(0.4);
+    }
+  }, [isSelected, glowOpacity]);
 
-  const interpolatedShadowRadius = shadowAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [4, 12]
-  });
-  
   return (
     <Animated.View
       {...panResponder.panHandlers}
@@ -565,27 +658,52 @@ const DraggableNode = React.memo<DraggableNodeProps>(({ node, isSelected, onSele
           top: node.y,
           width: node.width || NODE_WIDTH,
           minHeight: node.height || NODE_HEIGHT,
-          backgroundColor: isNightMode ? "rgba(30,30,40,0.95)" : "#FFFFFF",
-          borderColor: isSelected ? "#FFFFFF" : node.color,
-          borderWidth: isSelected ? 3 : 1.5,
-          shadowColor: node.color,
-          shadowOpacity: interpolatedShadowOpacity,
-          shadowRadius: interpolatedShadowRadius,
           transform: [{ scale: scaleAnim }],
+          // Initial Shadow
+          shadowColor: node.color,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.5,
+          shadowRadius: 8,
+          // Background handling
+          backgroundColor: isNightMode ? '#1E1E24' : '#FFFFFF',
         }
       ]}
     >
-      <View style={[styles.nodeColorBar, { backgroundColor: node.color }]} />
-      {isSelected && (
-        <View style={[styles.nodeGlow, { backgroundColor: node.color, opacity: 0.15 }]} />
-      )}
-      <Text 
-        style={[styles.nodeText, { color: isNightMode ? "#FFF" : "#000" }]}
-        numberOfLines={3}
-        ellipsizeMode="tail"
-      >
-        {node.text}
-      </Text>
+      {/* Outer Glow Layer - Simulating sophisticated glow */}
+      <Animated.View 
+        style={[
+          StyleSheet.absoluteFill, 
+          { 
+            borderRadius: 16, 
+            backgroundColor: node.color,
+            opacity: isSelected ? 0.3 : 0.1, // Always subtle glow, stronger when selected
+            transform: [{ scale: isSelected ? 1.1 : 1.02 }],
+            zIndex: -1,
+          }
+        ]} 
+      />
+      
+      {/* Inner Gradient Border */}
+      <View style={[styles.nodeInner, { borderColor: node.color }]}>
+        <LinearGradient
+           colors={isNightMode 
+             ? ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0)'] 
+             : ['rgba(0,0,0,0.02)', 'rgba(0,0,0,0)']}
+           style={StyleSheet.absoluteFill}
+        />
+        
+        <View style={[styles.nodeHeader, { borderBottomColor: node.color + '40' }]}>
+           <View style={[styles.nodeDot, { backgroundColor: node.color }]} />
+        </View>
+
+        <Text 
+          style={[styles.nodeText, { color: isNightMode ? "#FFF" : "#000" }]}
+          numberOfLines={3}
+          ellipsizeMode="tail"
+        >
+          {node.text}
+        </Text>
+      </View>
     </Animated.View>
   );
 });
@@ -626,38 +744,37 @@ const styles = StyleSheet.create({
   },
   nodeContainer: {
     position: 'absolute',
-    borderRadius: 12,
-    padding: 10,
-    justifyContent: 'center',
+    borderRadius: 16,
+    // Note: Padding is handled in inner view to respect borders and gradients
+    elevation: 8,
+    zIndex: 10,
+  },
+  nodeInner: {
+    flex: 1,
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
+    padding: 4,
+  },
+  nodeHeader: {
+    height: 6,
+    width: '100%',
     alignItems: 'center',
-    elevation: 4,
-    shadowOffset: { width: 0, height: 2 },
+    justifyContent: 'center',
+    marginBottom: 4,
   },
-  nodeColorBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 5,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  nodeGlow: {
-    position: 'absolute',
-    top: -8,
-    left: -8,
-    right: -8,
-    bottom: -8,
-    borderRadius: 20,
-    zIndex: -1,
+  nodeDot: {
+    width: 20,
+    height: 3,
+    borderRadius: 1.5,
   },
   nodeText: {
     textAlign: 'center',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    paddingTop: 8,
     paddingHorizontal: 8,
-    lineHeight: 18,
+    paddingBottom: 8,
+    lineHeight: 20,
   },
   bottomBar: {
     position: 'absolute',
@@ -715,6 +832,11 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 24,
     alignItems: 'center',
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
   },
   modalTitle: {
     fontSize: 20,
@@ -723,12 +845,13 @@ const styles = StyleSheet.create({
   },
   modalInput: {
     width: '100%',
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: 16,
+    padding: 16,
     minHeight: 80,
     textAlignVertical: 'top',
     borderWidth: 1,
     marginBottom: 20,
+    fontSize: 16,
   },
   modalActions: {
     flexDirection: 'row',
@@ -737,20 +860,27 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
   },
   colorGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 16,
     justifyContent: 'center',
+    padding: 10,
   },
   colorOption: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    elevation: 2,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    borderWidth: 2,
+    borderColor: '#FFF',
   },
 });
