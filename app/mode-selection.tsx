@@ -8,12 +8,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { useUniverseMode, UniverseMode } from '@/contexts/UniverseModeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 
 export default function ModeSelectionScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { setMode } = useUniverseMode();
+  const { t } = useLanguage();
 
   const [selectedMode, setSelectedMode] = useState<UniverseMode>('universe');
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -170,7 +172,7 @@ export default function ModeSelectionScreen() {
                   }
                 ]}
               >
-                PICK YOUR MODE
+                {t.pickYourMode}
               </Text>
             </View>
           </View>
@@ -201,7 +203,7 @@ export default function ModeSelectionScreen() {
                     <View style={styles.previewContent}>
                       <View style={styles.previewHeader}>
                         <CircleDot color={isNightMode ? '#FFD700' : '#764ba2'} size={32} strokeWidth={2} />
-                        <Text style={[styles.modeLabel, { color: isNightMode ? '#FFD700' : '#764ba2' }]}>Universe Mode</Text>
+                        <Text style={[styles.modeLabel, { color: isNightMode ? '#FFD700' : '#764ba2' }]}>{t.universeModeTitle}</Text>
                       </View>
                       
                       {/* Mini preview of Universe UI */}
@@ -222,7 +224,7 @@ export default function ModeSelectionScreen() {
                           colors={['#FFD700', '#FDB931', '#FFD700']}
                           style={styles.selectedBadgeGradient}
                         >
-                          <Text style={[styles.selectedText, { color: '#000000' }]}>Selected</Text>
+                          <Text style={[styles.selectedText, { color: '#000000' }]}>{t.selected}</Text>
                         </LinearGradient>
                       </View>
                     )}
@@ -254,7 +256,7 @@ export default function ModeSelectionScreen() {
                     <View style={styles.previewContent}>
                       <View style={styles.previewHeader}>
                         <LayoutGrid color={isNightMode ? '#FFD700' : '#764ba2'} size={32} strokeWidth={2} />
-                        <Text style={[styles.modeLabel, { color: isNightMode ? '#FFD700' : '#764ba2' }]}>Classic Mode</Text>
+                        <Text style={[styles.modeLabel, { color: isNightMode ? '#FFD700' : '#764ba2' }]}>{t.classicModeTitle}</Text>
                       </View>
                       
                       {/* Mini preview of Classic UI */}
@@ -281,7 +283,7 @@ export default function ModeSelectionScreen() {
                           colors={['#FFD700', '#FDB931', '#FFD700']}
                           style={styles.selectedBadgeGradient}
                         >
-                          <Text style={[styles.selectedText, { color: '#000000' }]}>Selected</Text>
+                          <Text style={[styles.selectedText, { color: '#000000' }]}>{t.selected}</Text>
                         </LinearGradient>
                       </View>
                     )}
@@ -295,7 +297,7 @@ export default function ModeSelectionScreen() {
                 styles.infoText,
                 { color: isNightMode ? theme.colors.text.light : theme.colors.text.secondary }
               ]}>
-                You can switch modes anytime in Settings
+                {t.switchModesAnytime}
               </Text>
             </View>
           </View>
@@ -314,7 +316,7 @@ export default function ModeSelectionScreen() {
               >
                 <Text style={[styles.buttonText, { 
                   color: '#000000' 
-                }]}>Continue</Text>
+                }]}>{t.continue}</Text>
                 <ChevronRight color="#000000" size={20} strokeWidth={3} />
               </LinearGradient>
             </TouchableOpacity>

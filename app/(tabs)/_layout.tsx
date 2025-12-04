@@ -7,8 +7,8 @@ import * as Haptics from "expo-haptics";
 
 
 import { useUniverseMode } from "@/contexts/UniverseModeContext";
-
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function FuturisticIcon({ Icon, color, focused, size = 24 }: { Icon: any; color: string; focused: boolean; size?: number }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -210,6 +210,7 @@ const animatedStarStyles = StyleSheet.create({
 export default function TabLayout() {
   const { theme } = useTheme();
   const { mode: universeMode } = useUniverseMode();
+  const { t } = useLanguage();
   
   // Determine if theme is dark based on background color
   // Simple check: if background is black-ish
@@ -329,7 +330,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="calendly"
         options={{
-          title: "Calendar",
+          title: t.calendar,
           tabBarIcon: ({ color, focused }) => (
             <FuturisticIcon Icon={CalendarClock} color={color} focused={focused} />
           ),
@@ -344,7 +345,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="planner"
         options={{
-          title: "Planner",
+          title: t.planner,
           tabBarIcon: ({ color, focused }) => (
             <FuturisticIcon Icon={CalendarRange} color={color} focused={focused} />
           ),
@@ -364,7 +365,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="track"
         options={{
-          title: "Track",
+          title: t.track,
           tabBarIcon: ({ color, focused }) => (
             <FuturisticIcon Icon={TrendingUp} color={color} focused={focused} />
           ),
@@ -375,7 +376,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="chats"
         options={{
-          title: "Chats",
+          title: t.chats,
           tabBarIcon: ({ color, focused }) => (
             <FuturisticIcon Icon={MessageSquare} color={color} focused={focused} />
           ),
@@ -384,7 +385,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="phonebook"
         options={{
-          title: "Phonebook",
+          title: t.phonebook,
           tabBarIcon: ({ color, focused }) => (
             <FuturisticIcon Icon={Users} color={color} focused={focused} />
           ),
@@ -394,7 +395,7 @@ export default function TabLayout() {
         name="universe"
         options={{
           href: universeMode === "classic" ? null : undefined,
-          title: "Universe",
+          title: t.universe,
           tabBarIcon: ({ color, focused }) => (
             <FuturisticIcon Icon={Sparkles} color={color} focused={focused} />
           ),
@@ -403,7 +404,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Tools",
+          title: t.tools,
           tabBarIcon: ({ color, focused }) => (
             <AnimatedStarIcon color={color} focused={focused} />
           ),

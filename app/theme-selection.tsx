@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { useUniverseMode } from '@/contexts/UniverseModeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { DEFAULT_THEMES } from '@/constants/themes';
 
 
@@ -16,6 +17,7 @@ export default function ThemeSelectionScreen() {
   const insets = useSafeAreaInsets();
   const { theme, setTheme } = useTheme();
   const { mode } = useUniverseMode();
+  const { t } = useLanguage();
   const [selectedMode, setSelectedMode] = useState<'bright' | 'night'>('bright');
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -176,7 +178,7 @@ export default function ThemeSelectionScreen() {
                   }
                 ]}
               >
-                CHOOSE YOUR STYLE
+                {t.chooseYourStyle}
               </Text>
             </View>
           </View>
@@ -207,7 +209,7 @@ export default function ThemeSelectionScreen() {
                     <View style={styles.previewContent}>
                       <View style={styles.previewHeader}>
                         <Sun color={isNightMode ? '#FFD700' : '#FFD700'} size={32} strokeWidth={2} />
-                        <Text style={[styles.brightModeLabel, { color: isNightMode ? '#FFD700' : '#764ba2' }]}>Bright Mode</Text>
+                        <Text style={[styles.brightModeLabel, { color: isNightMode ? '#FFD700' : '#764ba2' }]}>{t.brightMode}</Text>
                       </View>
                       
                       {/* Mini preview of app UI */}
@@ -239,7 +241,7 @@ export default function ThemeSelectionScreen() {
                           colors={['#FFD700', '#FDB931', '#FFD700']}
                           style={styles.selectedBadgeGradient}
                         >
-                          <Text style={[styles.selectedText, { color: '#000000' }]}>Selected</Text>
+                          <Text style={[styles.selectedText, { color: '#000000' }]}>{t.selected}</Text>
                         </LinearGradient>
                       </View>
                     )}
@@ -269,7 +271,7 @@ export default function ThemeSelectionScreen() {
                     <View style={styles.previewContent}>
                       <View style={styles.previewHeader}>
                         <Moon color="#FFD700" size={32} strokeWidth={2} />
-                        <Text style={[styles.nightModeLabel, { color: '#FFD700' }]}>Night Mode</Text>
+                        <Text style={[styles.nightModeLabel, { color: '#FFD700' }]}>{t.nightModeTitle}</Text>
                       </View>
                       
                       {/* Mini preview of app UI */}
@@ -301,7 +303,7 @@ export default function ThemeSelectionScreen() {
                           colors={['#FFD700', '#FDB931', '#FFD700']}
                           style={styles.selectedBadgeGradient}
                         >
-                          <Text style={[styles.selectedText, { color: '#000000' }]}>Selected</Text>
+                          <Text style={[styles.selectedText, { color: '#000000' }]}>{t.selected}</Text>
                         </LinearGradient>
                       </View>
                     )}
@@ -315,7 +317,7 @@ export default function ThemeSelectionScreen() {
                 styles.infoText,
                 { color: isNightMode ? theme.colors.text.light : theme.colors.text.secondary }
               ]}>
-                You can change this anytime in Settings
+                {t.changeThemeAnytime}
               </Text>
             </View>
           </View>
@@ -334,7 +336,7 @@ export default function ThemeSelectionScreen() {
               >
                 <Text style={[styles.buttonText, { 
                   color: '#000000' 
-                }]}>Continue</Text>
+                }]}>{t.continue}</Text>
                 <ChevronRight color="#000000" size={20} strokeWidth={3} />
               </LinearGradient>
             </TouchableOpacity>
