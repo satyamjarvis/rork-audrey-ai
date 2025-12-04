@@ -93,6 +93,16 @@ export const STORAGE_KEYS = {
 } as const;
 
 /**
+ * Helper to check if string is valid base64
+ */
+const isValidBase64 = (str: string): boolean => {
+  if (!str || str.length === 0) return false;
+  // Base64 strings should only contain A-Z, a-z, 0-9, +, /, and = for padding
+  const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+  return base64Regex.test(str) && str.length % 4 === 0;
+};
+
+/**
  * Function to validate if data in storage is corrupted
  */
 export const isCorruptedData = (data: string | null): boolean => {
@@ -107,10 +117,17 @@ export const isCorruptedData = (data: string | null): boolean => {
   // Check for question mark corruption from unrecognized tokens
   if (trimmed === '?' || /^[?\s]+$/.test(trimmed)) return true;
   
+  // First, try to parse as JSON (unencrypted data)
   try {
     JSON.parse(data);
     return false;
   } catch {
+    // Not valid JSON - check if it's valid base64 (encrypted data)
+    if (isValidBase64(trimmed)) {
+      // Valid base64 means it's likely encrypted data, not corrupted
+      return false;
+    }
+    // Neither valid JSON nor valid base64 - corrupted
     return true;
   }
 };

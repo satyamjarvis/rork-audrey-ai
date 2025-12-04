@@ -47,14 +47,14 @@ export async function checkStorageHealth(): Promise<StorageHealthReport> {
       
       if (value === null) {
         report.missingKeys.push(key);
-        // console.log(`⚠️ Missing key: ${keyName} (${key})`);
       } else if (isCorruptedData(value)) {
         report.corruptedKeys.push(key);
-        console.error(`❌ Corrupted key: ${keyName} (${key})`);
+        // Log first 100 chars for debugging
+        const preview = value.length > 100 ? value.substring(0, 100) + '...' : value;
+        console.error(`❌ Corrupted key: ${keyName} (${key})`, `Preview: ${preview}`);
         keysToRemove.push(key);
       } else {
         report.validKeys.push(key);
-        // console.log(`✅ Valid key: ${keyName} (${key})`);
       }
     });
 
