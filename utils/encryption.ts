@@ -1,5 +1,3 @@
-import * as Crypto from 'expo-crypto';
-
 // NOTE: We cannot use SHA256 for encryption as it is a one-way hash.
 // We are switching to simple Base64 encoding for obfuscation as we don't have
 // a native encryption library available in this environment.
@@ -58,7 +56,7 @@ function safeAtob(str: string): string {
       // If decode fails, return the direct atob result
       return decoded;
     }
-  } catch (error) {
+  } catch {
     console.warn('[Encryption] safeAtob: decode failed, returning original');
     return str;
   }
@@ -102,7 +100,7 @@ export async function decrypt(encryptedText: string): Promise<string> {
     const decoded = safeAtob(encryptedText);
     console.log('[Encryption] Decoded length:', decoded?.length || 0);
     return decoded;
-  } catch (error) {
+  } catch {
     // If decoding fails, it might be plain text or the legacy hash that failed checks
     // If it's valid JSON, return it as is (migration from plain text)
     try {
@@ -136,7 +134,8 @@ export async function decryptMessage(encryptedData: EncryptedData): Promise<stri
 }
 
 // For file attachments, we need to be more careful with base64 data
-// Files are already base64 encoded, so we encode the base64 string itself
+// Files are already base64 encoded, so we should NOT double-encode them
+// We use a simple reversible transformation that preserves base64 characters
 export async function encryptFile(data: string): Promise<EncryptedData> {
   try {
     if (!data || data.length === 0) {
@@ -145,9 +144,13 @@ export async function encryptFile(data: string): Promise<EncryptedData> {
     }
     
     console.log('[Encryption] Encrypting file, data length:', data.length);
-    // For files, the data is already base64 encoded from the file picker
-    // We'll encode it again for "encryption" but mark it
-    const encrypted = await encrypt(data);
+    
+    // For files that are already base64 encoded, we just store them directly
+    // with a marker prefix to indicate they're file data (not double-encoded)
+    // This prevents the double-encoding issue that causes InvalidCharacterError
+    const marker = 'FILE_B64:';
+    const encrypted = marker + data;
+    
     console.log('[Encryption] Encrypted file length:', encrypted?.length || 0);
     return { data: encrypted, iv: '', isBase64: true };
   } catch (error) {
@@ -166,16 +169,33 @@ export async function decryptFile(encryptedData: EncryptedData): Promise<string>
     
     console.log('[Encryption] Decrypting file, data length:', encryptedData.data.length);
     
-    // Try to decrypt
-    const decrypted = await decrypt(encryptedData.data);
+    const data = encryptedData.data;
+    const marker = 'FILE_B64:';
     
-    if (!decrypted || decrypted.length === 0) {
-      console.warn('[Encryption] Decryption returned empty, returning original data');
-      return encryptedData.data;
+    // Check if this is a file with our marker prefix (new format)
+    if (data.startsWith(marker)) {
+      const decrypted = data.substring(marker.length);
+      console.log('[Encryption] Decrypted file (marker format) length:', decrypted.length);
+      return decrypted;
     }
     
-    console.log('[Encryption] Decrypted file length:', decrypted.length);
-    return decrypted;
+    // Legacy handling: try to decrypt using the old method
+    // This handles files that were encrypted with the old double-encoding method
+    try {
+      const decrypted = await decrypt(data);
+      
+      if (!decrypted || decrypted.length === 0) {
+        console.warn('[Encryption] Decryption returned empty, returning original data');
+        return data;
+      }
+      
+      console.log('[Encryption] Decrypted file (legacy format) length:', decrypted.length);
+      return decrypted;
+    } catch {
+      // If legacy decryption fails, the data might already be plain base64
+      console.warn('[Encryption] Legacy decryption failed, returning original data');
+      return data;
+    }
   } catch (error) {
     console.error('[Encryption] Error decrypting file:', error);
     // Return raw data if decryption fails - might be unencrypted or corrupted
