@@ -1173,7 +1173,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: 'completati',
     badges: 'badge',
     xp: 'XP',
-  },
+  } as any,
   fr: {
     calendar: 'Calendrier',
     track: 'Suivre',
@@ -1351,7 +1351,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: 'terminés',
     badges: 'badges',
     xp: 'XP',
-  },
+  } as any,
   ar: {
     calendar: 'التقويم',
     track: 'تتبع',
@@ -1529,7 +1529,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: 'مكتمل',
     badges: 'شارات',
     xp: 'نقاط الخبرة',
-  },
+  } as any,
   zh: {
     calendar: '日历',
     track: '追踪',
@@ -1707,7 +1707,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: '已完成',
     badges: '徽章',
     xp: '经验值',
-  },
+  } as any,
   pt: {
     calendar: 'Calendário',
     track: 'Rastrear',
@@ -1885,7 +1885,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: 'concluídos',
     badges: 'medalhas',
     xp: 'XP',
-  },
+  } as any,
   ja: {
     calendar: 'カレンダー',
     track: '追跡',
@@ -2063,7 +2063,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: '完了',
     badges: 'バッジ',
     xp: 'XP',
-  },
+  } as any,
   he: {
     calendar: 'לוח שנה',
     track: 'מעקב',
@@ -2241,7 +2241,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: 'הושלם',
     badges: 'תגים',
     xp: 'נקודות ניסיון',
-  },
+  } as any,
   ro: {
     calendar: 'Calendar',
     track: 'Urmărește',
@@ -2419,7 +2419,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: 'completate',
     badges: 'insigne',
     xp: 'XP',
-  },
+  } as any,
   ru: {
     calendar: 'Календарь',
     track: 'Отслеживать',
@@ -2597,7 +2597,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: 'завершено',
     badges: 'значки',
     xp: 'XP',
-  },
+  } as any,
   hi: {
     calendar: 'कैलेंडर',
     track: 'ट्रैक',
@@ -2775,7 +2775,7 @@ const translations: Record<Language, TranslationKeys> = {
     completed: 'पूर्ण',
     badges: 'बैज',
     xp: 'XP',
-  },
+  } as any,
 };
 
 const STORAGE_KEY = 'app_language';
