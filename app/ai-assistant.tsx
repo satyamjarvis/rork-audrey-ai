@@ -1836,7 +1836,34 @@ GUIDELINES FOR EXCELLENCE:
                 <ChevronLeft color={palette.textPrimary} size={22} strokeWidth={2.4} />
               </TouchableOpacity>
               <Text style={[styles.heroTitle, { color: palette.neonBlue }]}>AUDREY</Text>
-              <Animated.View style={{ transform: [{ scale: buttonPulse }] }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Animated.View style={{ transform: [{ scale: buttonPulse }] }}>
+                  <TouchableOpacity
+                    style={[
+                      styles.heroButton,
+                      {
+                        borderColor: "rgba(0, 217, 255, 0.3)",
+                        backgroundColor: "rgba(0, 217, 255, 0.08)",
+                        shadowColor: "#00D9FF",
+                        shadowOffset: { width: 0, height: 0 },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 6,
+                        elevation: 3,
+                      },
+                    ]}
+                    onPress={() => {
+                      if (Platform.OS !== "web") {
+                        Haptics.selectionAsync();
+                      }
+                      router.push("/automations-manager" as any);
+                    }}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Zap color="#00D9FF" size={20} strokeWidth={2} />
+                  </TouchableOpacity>
+                </Animated.View>
+
+                <Animated.View style={{ transform: [{ scale: buttonPulse }] }}>
                 <TouchableOpacity
                   style={[
                     styles.heroButton,
@@ -1856,6 +1883,7 @@ GUIDELINES FOR EXCELLENCE:
                   <Sparkles color="#00D9FF" size={20} strokeWidth={2} />
                 </TouchableOpacity>
               </Animated.View>
+              </View>
             </View>
 
             <Modal
@@ -2285,17 +2313,7 @@ GUIDELINES FOR EXCELLENCE:
                   )}
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[styles.floatingIconButton, { borderColor: palette.cardBorder }]}
-                  onPress={() => {
-                    if (Platform.OS !== "web") {
-                      Haptics.selectionAsync();
-                    }
-                    router.push("/automations-manager" as any);
-                  }}
-                >
-                  <Zap color={palette.accent} size={18} strokeWidth={2.2} />
-                </TouchableOpacity>
+
 
                 {messages.length > 0 && (
                   <TouchableOpacity
