@@ -451,10 +451,18 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
 
   try {
     console.log('[Pick File] Starting file picker, type:', type);
+    console.log('[Pick File] Platform:', Platform.OS);
+    
     const DocumentPickerModule = await import('expo-document-picker') as any;
-    const getDocumentAsync = DocumentPickerModule.getDocumentAsync;
+    const getDocumentAsync = DocumentPickerModule.getDocumentAsync || DocumentPickerModule.default?.getDocumentAsync;
 
-    let mimeType = '*/*';
+    if (!getDocumentAsync) {
+      console.error('[Pick File] getDocumentAsync not found in module');
+      Alert.alert('Error', 'File picker is not available on this device.');
+      return null;
+    }
+
+    let mimeType: string | string[] = '*/*';
     
     if (type === 'image') {
       mimeType = 'image/*';
@@ -463,7 +471,15 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
     } else if (type === 'audio') {
       mimeType = 'audio/*';
     } else if (type === 'document') {
-      mimeType = 'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      mimeType = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'text/plain',
+        'text/csv',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      ];
     }
     
     console.log('[Pick File] Opening picker with mimeType:', mimeType);

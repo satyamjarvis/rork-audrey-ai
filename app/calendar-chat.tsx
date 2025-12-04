@@ -41,7 +41,7 @@ import {
 } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
-import * as DocumentPicker from "expo-document-picker";
+
 import { Audio } from "expo-av";
 
 import { useChat, type FileAttachment, DEFAULT_THEME } from "@/contexts/ChatContext";
