@@ -42,10 +42,10 @@ export interface ChatTheme {
 }
 
 export const DEFAULT_THEME: ChatTheme = {
-  id: 'default',
+  id: 'gradient-ios-aurora',
   type: 'gradient',
-  colors: ["#0a0a0f", "#1a0a1f", "#2a0a2f", "#1a0a1f", "#0a0a0f"],
-  name: 'Default Cosmic'
+  colors: ['#2E3192', '#1BFFFF'],
+  name: 'Aurora'
 };
 
 const CHAT_MESSAGES_KEY = "@chat_messages";

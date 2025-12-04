@@ -111,7 +111,7 @@ export default function ChatThemeModal({
                 style={[
                   styles.tab,
                   activeTab === tab.id && styles.activeTab,
-                  activeTab === tab.id && { borderBottomColor: isNightMode ? '#FFD700' : '#000' }
+                  activeTab === tab.id && { borderBottomColor: isNightMode ? '#007AFF' : '#007AFF' }
                 ]}
                 onPress={() => {
                   if (Platform.OS !== 'web') {
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   selectedPreview: {
-    borderColor: '#FFD700',
+    borderColor: '#007AFF',
   },
   previewContent: {
     flex: 1,
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#FFD700',
+    backgroundColor: '#007AFF',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
