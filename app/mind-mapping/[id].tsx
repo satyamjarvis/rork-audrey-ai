@@ -12,11 +12,14 @@ import {
   Alert,
   Modal,
   Easing,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import Svg, { Line } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
+import { captureRef } from 'react-native-view-shot';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { 
   ArrowLeft, 
   Plus, 
@@ -35,7 +38,6 @@ import {
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import * as Sharing from 'expo-sharing';
 
 import { useMindMap, MindMap, Node, Edge } from '@/contexts/MindMapContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -171,6 +173,7 @@ export default function MindMapEditor() {
 
   const { sendFileAttachment } = useChat();
   const { calendars } = useCalendar();
+  const snapshotRef = useRef<View>(null);
 
   const nodePositions = useRef<Map<string, { x: number; y: number }>>(new Map());
   const lastGestures = useRef<Map<string, { dx: number; dy: number }>>(new Map());
@@ -489,56 +492,47 @@ export default function MindMapEditor() {
     setIsExporting(true);
     setExportFormat('jpg');
     
-    try {
-      if (Platform.OS !== 'web') {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
-      
-      const textContent = generateMindMapText();
-      
-      if (Platform.OS === 'web') {
-        const blob = new Blob([textContent], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${map.title.replace(/[^a-z0-9]/gi, '_')}_mindmap.txt`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        Alert.alert('Success', 'Mind map exported as text file');
-      } else {
-        const canShare = await Sharing.isAvailableAsync();
-        if (canShare) {
-          Alert.alert(
-            'Share Mind Map',
-            textContent.slice(0, 500) + '...',
-            [
-              { text: 'Copy to Clipboard', onPress: async () => {
-                try {
-                  const Clipboard = await import('expo-clipboard');
-                  await Clipboard.setStringAsync(textContent);
-                  Alert.alert('Success', 'Mind map copied to clipboard!');
-                } catch {
-                  Alert.alert('Info', 'Mind map exported successfully');
-                }
-              }},
-              { text: 'OK' }
-            ]
-          );
-        } else {
-          Alert.alert('Success', 'Mind map exported');
+    // Allow React to render the snapshot view
+    setTimeout(async () => {
+      try {
+        if (Platform.OS !== 'web') {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
+        
+        const uri = await captureRef(snapshotRef, {
+          format: 'jpg',
+          quality: 0.9,
+          result: 'tmpfile'
+        });
+
+        if (Platform.OS === 'web') {
+           // Web support for download
+           const link = document.createElement('a');
+           link.href = uri;
+           link.download = `${map.title.replace(/[^a-z0-9]/gi, '_')}.jpg`;
+           document.body.appendChild(link);
+           link.click();
+           document.body.removeChild(link);
+        } else {
+          if (await Sharing.isAvailableAsync()) {
+            await Sharing.shareAsync(uri, {
+              mimeType: 'image/jpeg',
+              dialogTitle: 'Share Mind Map'
+            });
+          } else {
+            Alert.alert("Saved", "Image saved to temporary storage");
+          }
+        }
+      } catch (error) {
+        console.error('Export error:', error);
+        Alert.alert('Error', 'Failed to export mind map image');
+      } finally {
+        setIsExporting(false);
+        setExportFormat(null);
+        setIsShareModalVisible(false);
       }
-    } catch (error) {
-      console.error('Export error:', error);
-      Alert.alert('Error', 'Failed to export mind map');
-    } finally {
-      setIsExporting(false);
-      setExportFormat(null);
-      setIsShareModalVisible(false);
-    }
-  }, [map, generateMindMapText]);
+    }, 500);
+  }, [map]);
 
   const exportAsPDF = useCallback(async () => {
     if (!map) return;
@@ -546,57 +540,84 @@ export default function MindMapEditor() {
     setIsExporting(true);
     setExportFormat('pdf');
     
-    try {
-      if (Platform.OS !== 'web') {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
-      
-      const textContent = generateMindMapText();
-      const fileName = `${map.title.replace(/[^a-z0-9]/gi, '_')}_mindmap.txt`;
-      
-      if (Platform.OS === 'web') {
-        const blob = new Blob([textContent], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        Alert.alert('Success', 'Mind map exported as text file');
-      } else {
-        const canShare = await Sharing.isAvailableAsync();
-        if (canShare) {
-          Alert.alert(
-            'Export Mind Map',
-            `Document: ${fileName}\n\n${textContent.slice(0, 300)}...`,
-            [
-              { text: 'Copy to Clipboard', onPress: async () => {
-                try {
-                  const Clipboard = await import('expo-clipboard');
-                  await Clipboard.setStringAsync(textContent);
-                  Alert.alert('Success', 'Mind map copied to clipboard!');
-                } catch {
-                  Alert.alert('Info', 'Document exported successfully');
-                }
-              }},
-              { text: 'OK' }
-            ]
-          );
-        } else {
-          Alert.alert('Success', 'Document exported');
+    setTimeout(async () => {
+      try {
+        if (Platform.OS !== 'web') {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
+        
+        // Capture image first
+        const imageUri = await captureRef(snapshotRef, {
+          format: 'jpg',
+          quality: 0.8,
+          result: 'base64' // Get base64 for embedding in HTML
+        });
+
+        const html = `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                body {
+                  margin: 0;
+                  padding: 20px;
+                  background-color: ${isNightMode ? '#0a0a0f' : '#ffffff'};
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  min-height: 100vh;
+                  font-family: sans-serif;
+                }
+                img {
+                  max-width: 100%;
+                  height: auto;
+                  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                  border-radius: 8px;
+                }
+                .footer {
+                  margin-top: 20px;
+                  color: #888;
+                  font-size: 12px;
+                }
+              </style>
+            </head>
+            <body>
+              <img src="data:image/jpeg;base64,${imageUri}" />
+              <div class="footer">Generated by Rork App</div>
+            </body>
+          </html>
+        `;
+
+        if (Platform.OS === 'web') {
+           const printWindow = window.open('', '_blank');
+           if (printWindow) {
+             printWindow.document.write(html);
+             printWindow.document.close();
+             printWindow.print();
+           }
+        } else {
+          const { uri: pdfUri } = await Print.printToFileAsync({ html });
+          if (await Sharing.isAvailableAsync()) {
+            await Sharing.shareAsync(pdfUri, {
+              UTI: 'com.adobe.pdf',
+              mimeType: 'application/pdf',
+              dialogTitle: 'Share Mind Map PDF'
+            });
+          } else {
+            Alert.alert("Saved", "PDF saved");
+          }
+        }
+      } catch (error) {
+        console.error('Export error:', error);
+        Alert.alert('Error', 'Failed to export mind map PDF');
+      } finally {
+        setIsExporting(false);
+        setExportFormat(null);
+        setIsShareModalVisible(false);
       }
-    } catch (error) {
-      console.error('Export error:', error);
-      Alert.alert('Error', 'Failed to export mind map');
-    } finally {
-      setIsExporting(false);
-      setExportFormat(null);
-      setIsShareModalVisible(false);
-    }
-  }, [map, generateMindMapText]);
+    }, 500);
+  }, [map, isNightMode]);
 
   const shareToChat = useCallback(async (calendarId: string) => {
     if (!map) return;
@@ -677,6 +698,28 @@ export default function MindMapEditor() {
           <TouchableOpacity onPress={() => setScale(s => Math.max(s / 1.2, 0.3))} style={styles.toolButton}>
             <ZoomOut color={theme.colors.text.primary} size={20} />
           </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Snapshot Render View - Hidden but rendered for capture */}
+      <View 
+        style={{ 
+          position: 'absolute', 
+          zIndex: -100, 
+          opacity: 0, // Keep it invisible but rendered
+          left: 0,
+          top: 0
+        }} 
+        pointerEvents="none"
+      >
+        <View collapsable={false} ref={snapshotRef}>
+          <MindMapSnapshot 
+            nodes={nodes} 
+            edges={edges} 
+            theme={theme} 
+            isNightMode={isNightMode} 
+            title={map.title} 
+          />
         </View>
       </View>
 
@@ -1475,3 +1518,179 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const MindMapSnapshot = React.memo(({ nodes, edges, theme, isNightMode, title }: {
+  nodes: Node[];
+  edges: Edge[];
+  theme: any;
+  isNightMode: boolean;
+  title: string;
+}) => {
+  // Calculate bounding box including padding
+  const bounds = useMemo(() => {
+    if (nodes.length === 0) return { x: 0, y: 0, width: 800, height: 600 };
+    
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+
+    nodes.forEach(node => {
+      minX = Math.min(minX, node.x);
+      maxX = Math.max(maxX, node.x + (node.width || NODE_WIDTH));
+      minY = Math.min(minY, node.y);
+      maxY = Math.max(maxY, node.y + (node.height || NODE_HEIGHT));
+    });
+
+    const padding = 100; // Generous padding
+    const width = maxX - minX + (padding * 2);
+    const height = maxY - minY + (padding * 2);
+
+    return {
+      x: minX - padding,
+      y: minY - padding,
+      width: Math.max(width, 800), // Minimum width
+      height: Math.max(height, 600) // Minimum height
+    };
+  }, [nodes]);
+
+  return (
+    <View style={{
+      width: bounds.width,
+      height: bounds.height,
+      backgroundColor: isNightMode ? '#0a0a0f' : '#ffffff',
+    }}>
+      <LinearGradient
+        colors={isNightMode 
+          ? ["#0a0a0f", "#1a0a1f", "#101015"] 
+          : theme.gradients.background as any
+        }
+        style={StyleSheet.absoluteFill}
+      />
+      
+      {/* Grid Pattern Background */}
+      <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+         <Line x1="0" y1="0" x2={bounds.width} y2={bounds.height} stroke="transparent" />
+         {/* Could add grid lines here if desired */}
+      </Svg>
+
+      <View style={{ flex: 1 }}>
+        <Svg style={StyleSheet.absoluteFill}>
+           {edges.map(edge => {
+             const source = nodes.find(n => n.id === edge.sourceId);
+             const target = nodes.find(n => n.id === edge.targetId);
+             if (!source || !target) return null;
+
+             const startX = source.x - bounds.x + (source.width || NODE_WIDTH) / 2;
+             const startY = source.y - bounds.y + (source.height || NODE_HEIGHT) / 2;
+             const endX = target.x - bounds.x + (target.width || NODE_WIDTH) / 2;
+             const endY = target.y - bounds.y + (target.height || NODE_HEIGHT) / 2;
+
+             return (
+               <Line
+                 key={edge.id}
+                 x1={startX}
+                 y1={startY}
+                 x2={endX}
+                 y2={endY}
+                 stroke={isNightMode ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)"}
+                 strokeWidth="2"
+                 strokeDasharray="5, 5"
+               />
+             );
+           })}
+        </Svg>
+
+        {nodes.map(node => (
+           <View
+             key={node.id}
+             style={{
+               position: 'absolute',
+               left: node.x - bounds.x,
+               top: node.y - bounds.y,
+               width: node.width || NODE_WIDTH,
+               minHeight: node.height || NODE_HEIGHT,
+               borderRadius: 16,
+               backgroundColor: isNightMode ? '#1E1E24' : '#FFFFFF',
+               shadowColor: node.color,
+               shadowOffset: { width: 0, height: 4 },
+               shadowOpacity: 0.5,
+               shadowRadius: 8,
+               elevation: 4,
+             }}
+           >
+             {/* Replicating DraggableNode look but static */}
+             <View style={{
+               flex: 1,
+               borderRadius: 16,
+               borderWidth: 1,
+               overflow: 'hidden',
+               padding: 4,
+               borderColor: node.color
+             }}>
+               <LinearGradient
+                  colors={isNightMode 
+                    ? ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0)'] 
+                    : ['rgba(0,0,0,0.02)', 'rgba(0,0,0,0)']}
+                  style={StyleSheet.absoluteFill}
+               />
+               <View style={{
+                 height: 6,
+                 width: '100%',
+                 alignItems: 'center',
+                 justifyContent: 'center',
+                 marginBottom: 4,
+                 borderBottomWidth: 1,
+                 borderBottomColor: node.color + '40'
+               }}>
+                  <View style={{ width: 20, height: 3, borderRadius: 1.5, backgroundColor: node.color }} />
+               </View>
+               <Text style={{
+                 textAlign: 'center',
+                 fontSize: 14,
+                 fontWeight: '600',
+                 paddingHorizontal: 8,
+                 paddingBottom: 8,
+                 lineHeight: 20,
+                 color: isNightMode ? "#FFF" : "#000"
+               }}>
+                 {node.text}
+               </Text>
+             </View>
+           </View>
+        ))}
+      </View>
+
+      {/* Header / Title */}
+      <View style={{ position: 'absolute', top: 40, left: 0, right: 0, alignItems: 'center' }}>
+        <Text style={{ 
+          fontSize: 32, 
+          fontWeight: '800', 
+          color: theme.colors.text.primary,
+          textShadowColor: isNightMode ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)',
+          textShadowOffset: { width: 0, height: 2 },
+          textShadowRadius: 4
+        }}>
+          {title}
+        </Text>
+      </View>
+
+      {/* Footer / Watermark */}
+      <View style={{ position: 'absolute', bottom: 30, right: 40, alignItems: 'flex-end' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: theme.colors.primary }} />
+          <Text style={{ 
+            fontSize: 14, 
+            fontWeight: '600', 
+            color: theme.colors.text.secondary,
+            opacity: 0.8
+          }}>
+            Created with Rork
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+});
+
+MindMapSnapshot.displayName = 'MindMapSnapshot';
