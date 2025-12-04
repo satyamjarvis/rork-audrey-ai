@@ -70,6 +70,7 @@ import { useAffirmations } from "@/contexts/AffirmationsContext";
 import { useMorningHabits } from "@/contexts/MorningHabitsContext";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 import { useChat } from "@/contexts/ChatContext";
+import { useAudreyTimer } from "@/contexts/AudreyTimerContext";
 import KeyboardDismissButton from "@/components/KeyboardDismissButton";
 import { encrypt, decrypt } from "@/utils/encryption";
 
@@ -106,6 +107,21 @@ export default function AIAssistantScreen() {
   const { language } = useLanguage();
   const { sendMessage: sendChatMessage, getMessagesForCalendar } = useChat();
   const { calendars } = useCalendar();
+  const { 
+    timers, 
+    automations, 
+    createTimer, 
+    createPomodoroTimer,
+    startTimer, 
+    pauseTimer, 
+    resetTimer, 
+    deleteTimer,
+    createAutomation,
+    toggleAutomation,
+    deleteAutomation,
+    getActiveTimer,
+    formatTime,
+  } = useAudreyTimer();
   const languageMeta = LANGUAGE_DISPLAY_NAMES[language] ?? LANGUAGE_DISPLAY_NAMES.en;
   const assistantLanguageLabel =
     languageMeta.native === languageMeta.english
@@ -741,6 +757,392 @@ GUIDELINES FOR EXCELLENCE:
           }).join('\n');
 
           return `📱 Available Chats:\n\n${chatList}\n\nYou can send messages to any of these chats!`;
+        },
+      }),
+
+      createCountdownTimer: createRorkTool({
+        description: "Create a countdown timer that counts down from a specified duration. Use for focused work sessions, cooking, exercise, or any timed activity.",
+        zodSchema: z.object({
+          name: z.string().describe("Name of the timer (e.g., 'Focus Session', 'Cooking Timer')"),
+          minutes: z.number().describe("Duration in minutes"),
+          seconds: z.number().optional().describe("Additional seconds (0-59)"),
+          notifyOnComplete: z.boolean().optional().describe("Show notification when timer completes (default: true)"),
+          speakOnComplete: z.boolean().optional().describe("Audrey speaks when timer completes (default: true)"),
+          autoRestart: z.boolean().optional().describe("Automatically restart the timer when it completes"),
+        }),
+        async execute(input) {
+          const totalSeconds = (input.minutes * 60) + (input.seconds || 0);
+          await createTimer(input.name, "countdown", totalSeconds, {
+            notifyOnComplete: input.notifyOnComplete ?? true,
+            speakOnComplete: input.speakOnComplete ?? true,
+            autoRestart: input.autoRestart ?? false,
+          });
+
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          }
+
+          return `⏱️ Timer "${input.name}" created for ${input.minutes} minute(s)${input.seconds ? ` and ${input.seconds} second(s)` : ''}. Say "start timer" to begin!`;
+        },
+      }),
+
+      createStopwatch: createRorkTool({
+        description: "Create a stopwatch that counts up from zero. Use for tracking elapsed time.",
+        zodSchema: z.object({
+          name: z.string().describe("Name of the stopwatch (e.g., 'Study Time', 'Exercise')"),
+        }),
+        async execute(input) {
+          await createTimer(input.name, "stopwatch", 0, {
+            notifyOnComplete: false,
+            speakOnComplete: false,
+          });
+
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          }
+
+          return `⏱️ Stopwatch "${input.name}" created. Say "start timer" to begin tracking!`;
+        },
+      }),
+
+      createPomodoroSession: createRorkTool({
+        description: "Create a Pomodoro timer for focused productivity. Alternates between work and break periods.",
+        zodSchema: z.object({
+          name: z.string().describe("Name of the Pomodoro session (e.g., 'Deep Work', 'Study Session')"),
+          workMinutes: z.number().optional().describe("Work duration in minutes (default: 25)"),
+          breakMinutes: z.number().optional().describe("Short break duration in minutes (default: 5)"),
+          longBreakMinutes: z.number().optional().describe("Long break duration in minutes (default: 15)"),
+          sessionsBeforeLongBreak: z.number().optional().describe("Number of work sessions before long break (default: 4)"),
+          autoRestart: z.boolean().optional().describe("Automatically start next session"),
+        }),
+        async execute(input) {
+          const workMins = input.workMinutes ?? 25;
+          const breakMins = input.breakMinutes ?? 5;
+          const longBreakMins = input.longBreakMinutes ?? 15;
+          
+          await createPomodoroTimer(input.name, {
+            workDuration: workMins * 60,
+            breakDuration: breakMins * 60,
+            longBreakDuration: longBreakMins * 60,
+            sessionsBeforeLongBreak: input.sessionsBeforeLongBreak ?? 4,
+            autoRestart: input.autoRestart ?? false,
+          });
+
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          }
+
+          return `🍅 Pomodoro "${input.name}" created! ${workMins}min work / ${breakMins}min break / ${longBreakMins}min long break. Say "start timer" to begin!`;
+        },
+      }),
+
+      startTimerByName: createRorkTool({
+        description: "Start a timer by its name. If multiple timers exist, starts the most recently created one matching the name.",
+        zodSchema: z.object({
+          name: z.string().optional().describe("Name of the timer to start. If not provided, starts the most recent timer."),
+        }),
+        async execute(input) {
+          let targetTimer = timers[timers.length - 1];
+          
+          if (input.name) {
+            const found = timers.find(t => 
+              t.name.toLowerCase().includes(input.name!.toLowerCase())
+            );
+            if (found) targetTimer = found;
+          }
+
+          if (!targetTimer) {
+            return "❌ No timers found. Create a timer first!";
+          }
+
+          await startTimer(targetTimer.id);
+
+          if (Platform.OS !== "web") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
+
+          const timeDisplay = targetTimer.type === "stopwatch" 
+            ? "counting up" 
+            : formatTime(targetTimer.remaining);
+
+          return `▶️ Timer "${targetTimer.name}" started! ${targetTimer.type === "stopwatch" ? "Counting up..." : `Time remaining: ${timeDisplay}`}`;
+        },
+      }),
+
+      pauseTimerByName: createRorkTool({
+        description: "Pause a running timer by its name.",
+        zodSchema: z.object({
+          name: z.string().optional().describe("Name of the timer to pause. If not provided, pauses the active timer."),
+        }),
+        async execute(input) {
+          let targetTimer = getActiveTimer();
+          
+          if (input.name) {
+            const found = timers.find(t => 
+              t.name.toLowerCase().includes(input.name!.toLowerCase()) && t.status === "running"
+            );
+            if (found) targetTimer = found;
+          }
+
+          if (!targetTimer) {
+            return "❌ No running timer found.";
+          }
+
+          await pauseTimer(targetTimer.id);
+
+          if (Platform.OS !== "web") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }
+
+          return `⏸️ Timer "${targetTimer.name}" paused at ${formatTime(targetTimer.remaining)}.`;
+        },
+      }),
+
+      resetTimerByName: createRorkTool({
+        description: "Reset a timer to its original duration.",
+        zodSchema: z.object({
+          name: z.string().optional().describe("Name of the timer to reset. If not provided, resets the active timer."),
+        }),
+        async execute(input) {
+          let targetTimer = getActiveTimer() || timers[timers.length - 1];
+          
+          if (input.name) {
+            const found = timers.find(t => 
+              t.name.toLowerCase().includes(input.name!.toLowerCase())
+            );
+            if (found) targetTimer = found;
+          }
+
+          if (!targetTimer) {
+            return "❌ No timer found to reset.";
+          }
+
+          await resetTimer(targetTimer.id);
+
+          if (Platform.OS !== "web") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }
+
+          return `🔄 Timer "${targetTimer.name}" has been reset.`;
+        },
+      }),
+
+      deleteTimerByName: createRorkTool({
+        description: "Delete a timer permanently.",
+        zodSchema: z.object({
+          name: z.string().describe("Name of the timer to delete"),
+        }),
+        async execute(input) {
+          const targetTimer = timers.find(t => 
+            t.name.toLowerCase().includes(input.name.toLowerCase())
+          );
+
+          if (!targetTimer) {
+            return `❌ Timer "${input.name}" not found.`;
+          }
+
+          await deleteTimer(targetTimer.id);
+
+          if (Platform.OS !== "web") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
+
+          return `🗑️ Timer "${targetTimer.name}" has been deleted.`;
+        },
+      }),
+
+      listTimers: createRorkTool({
+        description: "List all timers with their current status.",
+        zodSchema: z.object({}),
+        async execute() {
+          if (timers.length === 0) {
+            return "📭 No timers created yet. Ask me to create a timer, stopwatch, or Pomodoro session!";
+          }
+
+          const timerList = timers.map((t, index) => {
+            const statusEmoji = t.status === "running" ? "▶️" : t.status === "paused" ? "⏸️" : t.status === "completed" ? "✅" : "⏹️";
+            const typeEmoji = t.type === "pomodoro" ? "🍅" : t.type === "stopwatch" ? "⏱️" : "⏰";
+            const timeStr = t.type === "stopwatch" 
+              ? formatTime(t.remaining) + " elapsed"
+              : formatTime(t.remaining) + " remaining";
+            
+            return `${index + 1}. ${typeEmoji} ${t.name} ${statusEmoji}\n   ${timeStr}`;
+          }).join('\n\n');
+
+          return `⏱️ Your Timers:\n\n${timerList}`;
+        },
+      }),
+
+      getTimerStatus: createRorkTool({
+        description: "Get the current status of a specific timer or the active timer.",
+        zodSchema: z.object({
+          name: z.string().optional().describe("Name of the timer. If not provided, shows the active timer."),
+        }),
+        async execute(input) {
+          let targetTimer = getActiveTimer();
+          
+          if (input.name) {
+            const found = timers.find(t => 
+              t.name.toLowerCase().includes(input.name!.toLowerCase())
+            );
+            if (found) targetTimer = found;
+          }
+
+          if (!targetTimer) {
+            return "❌ No timer found. Create one or specify a timer name.";
+          }
+
+          const statusEmoji = targetTimer.status === "running" ? "▶️" : targetTimer.status === "paused" ? "⏸️" : targetTimer.status === "completed" ? "✅" : "⏹️";
+          const typeLabel = targetTimer.type === "pomodoro" ? "Pomodoro" : targetTimer.type === "stopwatch" ? "Stopwatch" : "Timer";
+          
+          let statusMessage = `${statusEmoji} ${typeLabel}: "${targetTimer.name}"\n`;
+          statusMessage += `Status: ${targetTimer.status}\n`;
+          statusMessage += targetTimer.type === "stopwatch" 
+            ? `Elapsed: ${formatTime(targetTimer.remaining)}`
+            : `Remaining: ${formatTime(targetTimer.remaining)}`;
+
+          if (targetTimer.pomodoroConfig) {
+            const phase = targetTimer.pomodoroConfig.isBreak ? "Break" : "Work";
+            statusMessage += `\nPhase: ${phase} (Session ${targetTimer.pomodoroConfig.currentSession + 1})`;
+          }
+
+          return statusMessage;
+        },
+      }),
+
+      createAutomatedReminder: createRorkTool({
+        description: "Create an automated reminder or action that triggers at a specific time or when a timer completes.",
+        zodSchema: z.object({
+          name: z.string().describe("Name of the automation"),
+          trigger: z.enum(["time", "daily", "weekly", "timer_complete"]).describe("When to trigger: 'time' for one-time, 'daily' for every day, 'weekly' for specific days, 'timer_complete' when a timer finishes"),
+          time: z.string().optional().describe("Time in HH:MM format (24-hour) for time-based triggers"),
+          daysOfWeek: z.array(z.number()).optional().describe("Days of week (0=Sunday, 6=Saturday) for weekly triggers"),
+          timerName: z.string().optional().describe("Name of timer for timer_complete trigger"),
+          actionType: z.enum(["speak", "notify", "reminder", "affirmation"]).describe("What action to take"),
+          message: z.string().optional().describe("Message to speak or show"),
+        }),
+        async execute(input) {
+          let triggerConfig: any = {};
+
+          if (input.trigger === "time" || input.trigger === "daily") {
+            if (!input.time) {
+              return "❌ Time is required for time-based automation. Please provide time in HH:MM format.";
+            }
+            triggerConfig.time = input.time;
+          }
+
+          if (input.trigger === "weekly") {
+            if (!input.time || !input.daysOfWeek || input.daysOfWeek.length === 0) {
+              return "❌ Time and days of week are required for weekly automation.";
+            }
+            triggerConfig.time = input.time;
+            triggerConfig.dayOfWeek = input.daysOfWeek;
+          }
+
+          if (input.trigger === "timer_complete") {
+            if (!input.timerName) {
+              return "❌ Timer name is required for timer_complete automation.";
+            }
+            const linkedTimer = timers.find(t => 
+              t.name.toLowerCase().includes(input.timerName!.toLowerCase())
+            );
+            if (!linkedTimer) {
+              return `❌ Timer "${input.timerName}" not found.`;
+            }
+            triggerConfig.timerId = linkedTimer.id;
+          }
+
+          await createAutomation(
+            input.name,
+            input.trigger,
+            triggerConfig,
+            {
+              type: input.actionType,
+              message: input.message,
+            }
+          );
+
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          }
+
+          const triggerDesc = input.trigger === "daily" ? `daily at ${input.time}` :
+            input.trigger === "weekly" ? `weekly at ${input.time}` :
+            input.trigger === "timer_complete" ? `when "${input.timerName}" completes` :
+            `at ${input.time}`;
+
+          return `⚡ Automation "${input.name}" created! Will ${input.actionType} ${triggerDesc}.`;
+        },
+      }),
+
+      listAutomations: createRorkTool({
+        description: "List all automations.",
+        zodSchema: z.object({}),
+        async execute() {
+          if (automations.length === 0) {
+            return "📭 No automations created yet. Ask me to create a reminder or automated action!";
+          }
+
+          const autoList = automations.map((a, index) => {
+            const statusEmoji = a.enabled ? "✅" : "❌";
+            const triggerDesc = a.trigger === "daily" ? `Daily at ${a.triggerConfig.time}` :
+              a.trigger === "weekly" ? `Weekly at ${a.triggerConfig.time}` :
+              a.trigger === "timer_complete" ? "On timer complete" :
+              `At ${a.triggerConfig.time}`;
+            
+            return `${index + 1}. ${statusEmoji} ${a.name}\n   Trigger: ${triggerDesc}\n   Action: ${a.action.type}`;
+          }).join('\n\n');
+
+          return `⚡ Your Automations:\n\n${autoList}`;
+        },
+      }),
+
+      toggleAutomationByName: createRorkTool({
+        description: "Enable or disable an automation.",
+        zodSchema: z.object({
+          name: z.string().describe("Name of the automation to toggle"),
+        }),
+        async execute(input) {
+          const automation = automations.find(a => 
+            a.name.toLowerCase().includes(input.name.toLowerCase())
+          );
+
+          if (!automation) {
+            return `❌ Automation "${input.name}" not found.`;
+          }
+
+          await toggleAutomation(automation.id);
+
+          if (Platform.OS !== "web") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }
+
+          const newState = automation.enabled ? "disabled" : "enabled";
+          return `⚡ Automation "${automation.name}" has been ${newState}.`;
+        },
+      }),
+
+      deleteAutomationByName: createRorkTool({
+        description: "Delete an automation permanently.",
+        zodSchema: z.object({
+          name: z.string().describe("Name of the automation to delete"),
+        }),
+        async execute(input) {
+          const automation = automations.find(a => 
+            a.name.toLowerCase().includes(input.name.toLowerCase())
+          );
+
+          if (!automation) {
+            return `❌ Automation "${input.name}" not found.`;
+          }
+
+          await deleteAutomation(automation.id);
+
+          if (Platform.OS !== "web") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
+
+          return `🗑️ Automation "${automation.name}" has been deleted.`;
         },
       }),
     },

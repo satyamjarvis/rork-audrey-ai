@@ -44,6 +44,7 @@ import { WellnessCheckProvider } from "@/contexts/WellnessCheckContext";
 import { LearnContext as LearnProvider } from "@/contexts/LearnContext";
 import { MindMapProvider } from "@/contexts/MindMapContext";
 import { AppBackgroundProvider } from "@/contexts/AppBackgroundContext";
+import { AudreyTimerProvider } from "@/contexts/AudreyTimerContext";
 
 
 SplashScreen.preventAutoHideAsync().catch((error) => {
@@ -100,7 +101,9 @@ const AppProviders = ({ children }: AppProvidersProps) => (
                                                       <LearnProvider>
                                                         <NotesProvider>
                                                           <MindMapProvider>
-                                                            <ChatProvider>{children}</ChatProvider>
+                                                            <AudreyTimerProvider>
+                                                              <ChatProvider>{children}</ChatProvider>
+                                                            </AudreyTimerProvider>
                                                           </MindMapProvider>
                                                         </NotesProvider>
                                                       </LearnProvider>
