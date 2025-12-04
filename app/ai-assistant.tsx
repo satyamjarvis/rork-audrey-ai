@@ -70,6 +70,7 @@ import { useAudreyMemory } from "@/contexts/AudreyMemoryContext";
 import { useAffirmations } from "@/contexts/AffirmationsContext";
 import { useMorningHabits } from "@/contexts/MorningHabitsContext";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { useChat } from "@/contexts/ChatContext";
 import KeyboardDismissButton from "@/components/KeyboardDismissButton";
 import { encrypt, decrypt } from "@/utils/encryption";
 
@@ -104,6 +105,8 @@ export default function AIAssistantScreen() {
 
   const { habits } = useMorningHabits();
   const { language } = useLanguage();
+  const { sendMessage: sendChatMessage, getMessagesForCalendar } = useChat();
+  const { calendars } = useCalendar();
   const languageMeta = LANGUAGE_DISPLAY_NAMES[language] ?? LANGUAGE_DISPLAY_NAMES.en;
   const assistantLanguageLabel =
     languageMeta.native === languageMeta.english
@@ -673,6 +676,70 @@ GUIDELINES FOR EXCELLENCE:
           });
 
           return `📚 Personalized Learning Plan:\n\n${learningPlan}`;
+        },
+      }),
+
+      sendMessageToChat: createRorkTool({
+        description: "Send a message to a calendar chat on behalf of Audrey (the AI assistant). Use this to communicate with users through the messaging system.",
+        zodSchema: z.object({
+          calendarName: z.string().optional().describe("Name of the calendar/chat to send the message to. If not provided, will use the first available calendar."),
+          message: z.string().describe("The message content to send"),
+          isImportant: z.boolean().optional().describe("Whether this is an important message (adds emphasis)"),
+        }),
+        async execute(input) {
+          try {
+            let targetCalendar = calendars[0];
+            
+            if (input.calendarName) {
+              const found = calendars.find(
+                cal => cal.name.toLowerCase().includes(input.calendarName!.toLowerCase())
+              );
+              if (found) {
+                targetCalendar = found;
+              }
+            }
+
+            if (!targetCalendar) {
+              return "❌ No calendars available to send messages to. Please create a calendar first.";
+            }
+
+            const messageContent = input.isImportant 
+              ? `⭐ ${input.message}` 
+              : input.message;
+
+            await sendChatMessage(
+              targetCalendar.id,
+              `🤖 Audrey: ${messageContent}`,
+              "audrey@assistant"
+            );
+
+            if (Platform.OS !== "web") {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }
+
+            return `✅ Message sent to "${targetCalendar.name}" chat successfully!`;
+          } catch (error) {
+            console.error("[AI Assistant] Error sending chat message:", error);
+            return "❌ Failed to send message. Please try again.";
+          }
+        },
+      }),
+
+      listAvailableChats: createRorkTool({
+        description: "List all available calendar chats that Audrey can send messages to",
+        zodSchema: z.object({}),
+        async execute() {
+          if (calendars.length === 0) {
+            return "No calendars available. Create a calendar to start chatting!";
+          }
+
+          const chatList = calendars.map((cal, index) => {
+            const messages = getMessagesForCalendar(cal.id);
+            const lastMessage = messages[messages.length - 1];
+            return `${index + 1}. ${cal.name} (${messages.length} messages)${lastMessage ? ` - Last active: ${new Date(lastMessage.timestamp).toLocaleDateString()}` : ''}`;
+          }).join('\n');
+
+          return `📱 Available Chats:\n\n${chatList}\n\nYou can send messages to any of these chats!`;
         },
       }),
     },
