@@ -1174,6 +1174,16 @@ GUIDELINES FOR EXCELLENCE:
                             </Text>
                           </View>
                         </View>
+
+                        <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
+                          <Brain color="#FB923C" size={24} />
+                          <View style={styles.featureText}>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>Intelligent Analysis</Text>
+                            <Text style={[styles.featureDesc, { color: palette.subtext }]}>
+                              Analyze attached files, photos, and documents for deep insights.
+                            </Text>
+                          </View>
+                        </View>
                       </View>
                       
                       <View style={{ height: 40 }} />
