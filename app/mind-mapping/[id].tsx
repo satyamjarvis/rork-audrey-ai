@@ -11,7 +11,8 @@ import {
   Platform,
   Alert,
   Modal,
-  Easing
+  Easing,
+  ScrollView
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import Svg, { Line } from 'react-native-svg';
@@ -23,13 +24,23 @@ import {
   Palette, 
   Type, 
   ZoomIn,
-  ZoomOut
+  ZoomOut,
+  Share2,
+  MessageCircle,
+  Download,
+  FileImage,
+  FileText,
+  X,
+  Check
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import * as Sharing from 'expo-sharing';
 
 import { useMindMap, MindMap, Node, Edge } from '@/contexts/MindMapContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useChat } from '@/contexts/ChatContext';
+import { useCalendar } from '@/contexts/CalendarContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -153,6 +164,13 @@ export default function MindMapEditor() {
 
   const [isColorModalVisible, setIsColorModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false);
+  const [isSelectChatModalVisible, setIsSelectChatModalVisible] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportFormat, setExportFormat] = useState<'jpg' | 'pdf' | null>(null);
+
+  const { sendFileAttachment } = useChat();
+  const { calendars } = useCalendar();
 
   const nodePositions = useRef<Map<string, { x: number; y: number }>>(new Map());
   const lastGestures = useRef<Map<string, { dx: number; dy: number }>>(new Map());
@@ -396,6 +414,203 @@ export default function MindMapEditor() {
     }
   }, [selectedNodeId]);
 
+  const generateMindMapText = useCallback(() => {
+    if (!map) return '';
+    
+    let text = `Mind Map: ${map.title}\n`;
+    text += `Created: ${new Date(map.createdAt).toLocaleDateString()}\n`;
+    text += `Updated: ${new Date(map.updatedAt).toLocaleDateString()}\n\n`;
+    text += `Nodes (${nodes.length}):\n`;
+    text += '─'.repeat(40) + '\n\n';
+    
+    const rootNodes = nodes.filter(n => n.type === 'root');
+    const childMap = new Map<string, Node[]>();
+    
+    edges.forEach(edge => {
+      const children = childMap.get(edge.sourceId) || [];
+      const child = nodes.find(n => n.id === edge.targetId);
+      if (child) children.push(child);
+      childMap.set(edge.sourceId, children);
+    });
+    
+    const printNode = (node: Node, indent: number = 0): string => {
+      const prefix = indent === 0 ? '●' : '├──';
+      let result = ' '.repeat(indent * 3) + prefix + ' ' + node.text + '\n';
+      const children = childMap.get(node.id) || [];
+      children.forEach(child => {
+        result += printNode(child, indent + 1);
+      });
+      return result;
+    };
+    
+    rootNodes.forEach(root => {
+      text += printNode(root);
+    });
+    
+    const orphanNodes = nodes.filter(n => 
+      n.type !== 'root' && !edges.some(e => e.targetId === n.id)
+    );
+    if (orphanNodes.length > 0) {
+      text += '\nUnconnected Ideas:\n';
+      orphanNodes.forEach(node => {
+        text += '  • ' + node.text + '\n';
+      });
+    }
+    
+    return text;
+  }, [map, nodes, edges]);
+
+  const exportAsImage = useCallback(async () => {
+    if (!map) return;
+    
+    setIsExporting(true);
+    setExportFormat('jpg');
+    
+    try {
+      if (Platform.OS !== 'web') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      
+      const textContent = generateMindMapText();
+      
+      if (Platform.OS === 'web') {
+        const blob = new Blob([textContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${map.title.replace(/[^a-z0-9]/gi, '_')}_mindmap.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        Alert.alert('Success', 'Mind map exported as text file');
+      } else {
+        const canShare = await Sharing.isAvailableAsync();
+        if (canShare) {
+          Alert.alert(
+            'Share Mind Map',
+            textContent.slice(0, 500) + '...',
+            [
+              { text: 'Copy to Clipboard', onPress: async () => {
+                try {
+                  const Clipboard = await import('expo-clipboard');
+                  await Clipboard.setStringAsync(textContent);
+                  Alert.alert('Success', 'Mind map copied to clipboard!');
+                } catch {
+                  Alert.alert('Info', 'Mind map exported successfully');
+                }
+              }},
+              { text: 'OK' }
+            ]
+          );
+        } else {
+          Alert.alert('Success', 'Mind map exported');
+        }
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      Alert.alert('Error', 'Failed to export mind map');
+    } finally {
+      setIsExporting(false);
+      setExportFormat(null);
+      setIsShareModalVisible(false);
+    }
+  }, [map, generateMindMapText]);
+
+  const exportAsPDF = useCallback(async () => {
+    if (!map) return;
+    
+    setIsExporting(true);
+    setExportFormat('pdf');
+    
+    try {
+      if (Platform.OS !== 'web') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      
+      const textContent = generateMindMapText();
+      const fileName = `${map.title.replace(/[^a-z0-9]/gi, '_')}_mindmap.txt`;
+      
+      if (Platform.OS === 'web') {
+        const blob = new Blob([textContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        Alert.alert('Success', 'Mind map exported as text file');
+      } else {
+        const canShare = await Sharing.isAvailableAsync();
+        if (canShare) {
+          Alert.alert(
+            'Export Mind Map',
+            `Document: ${fileName}\n\n${textContent.slice(0, 300)}...`,
+            [
+              { text: 'Copy to Clipboard', onPress: async () => {
+                try {
+                  const Clipboard = await import('expo-clipboard');
+                  await Clipboard.setStringAsync(textContent);
+                  Alert.alert('Success', 'Mind map copied to clipboard!');
+                } catch {
+                  Alert.alert('Info', 'Document exported successfully');
+                }
+              }},
+              { text: 'OK' }
+            ]
+          );
+        } else {
+          Alert.alert('Success', 'Document exported');
+        }
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      Alert.alert('Error', 'Failed to export mind map');
+    } finally {
+      setIsExporting(false);
+      setExportFormat(null);
+      setIsShareModalVisible(false);
+    }
+  }, [map, generateMindMapText]);
+
+  const shareToChat = useCallback(async (calendarId: string) => {
+    if (!map) return;
+    
+    setIsExporting(true);
+    
+    try {
+      if (Platform.OS !== 'web') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      
+      const textContent = generateMindMapText();
+      const messageText = `📊 Shared Mind Map: ${map.title}`;
+      
+      await sendFileAttachment(
+        calendarId,
+        textContent,
+        `${map.title.replace(/[^a-z0-9]/gi, '_')}_mindmap.txt`,
+        messageText,
+        'me',
+        false,
+        'mindmap',
+        map.id,
+        { title: map.title, nodeCount: nodes.length }
+      );
+      
+      Alert.alert('Success', 'Mind map shared to chat!');
+      setIsSelectChatModalVisible(false);
+      setIsShareModalVisible(false);
+    } catch (error) {
+      console.error('Share to chat error:', error);
+      Alert.alert('Error', 'Failed to share mind map to chat');
+    } finally {
+      setIsExporting(false);
+    }
+  }, [map, nodes, generateMindMapText, sendFileAttachment]);
+
   if (!map) return (
     <View style={[styles.container, { backgroundColor: isNightMode ? "#000" : "#FFF" }]}>
        <Text style={{color: isNightMode ? "#FFF" : "#000"}}>Loading...</Text>
@@ -422,6 +637,17 @@ export default function MindMapEditor() {
         </Text>
 
         <View style={styles.toolGroup}>
+          <TouchableOpacity 
+            onPress={() => {
+              if (Platform.OS !== 'web') {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }
+              setIsShareModalVisible(true);
+            }} 
+            style={styles.toolButton}
+          >
+            <Share2 color={theme.colors.text.primary} size={20} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => setScale(s => Math.min(s * 1.2, 3))} style={styles.toolButton}>
             <ZoomIn color={theme.colors.text.primary} size={20} />
           </TouchableOpacity>
@@ -583,6 +809,187 @@ export default function MindMapEditor() {
                  <Text style={{ color: theme.colors.text.primary }}>Cancel</Text>
              </TouchableOpacity>
            </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={isShareModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsShareModalVisible(false)}
+      >
+        <View style={styles.shareModalOverlay}>
+          <View style={[
+            styles.shareModalContent,
+            { backgroundColor: isNightMode ? "#1E1E24" : "#FFFFFF" }
+          ]}>
+            <View style={styles.shareModalHeader}>
+              <Text style={[styles.shareModalTitle, { color: theme.colors.text.primary }]}>
+                Share Mind Map
+              </Text>
+              <TouchableOpacity 
+                onPress={() => setIsShareModalVisible(false)}
+                style={styles.shareCloseButton}
+              >
+                <X size={24} color={theme.colors.text.primary} />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={[styles.shareSubtitle, { color: theme.colors.text.secondary }]}>
+              {map?.title}
+            </Text>
+
+            <View style={styles.shareOptionsContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.shareOption,
+                  { backgroundColor: isNightMode ? 'rgba(255,215,0,0.1)' : 'rgba(102,126,234,0.1)' }
+                ]}
+                onPress={() => setIsSelectChatModalVisible(true)}
+                disabled={isExporting}
+              >
+                <View style={[
+                  styles.shareOptionIcon,
+                  { backgroundColor: isNightMode ? 'rgba(255,215,0,0.2)' : 'rgba(102,126,234,0.2)' }
+                ]}>
+                  <MessageCircle size={24} color={isNightMode ? '#FFD700' : '#667EEA'} />
+                </View>
+                <Text style={[styles.shareOptionTitle, { color: theme.colors.text.primary }]}>
+                  Share to Chat
+                </Text>
+                <Text style={[styles.shareOptionDesc, { color: theme.colors.text.secondary }]}>
+                  Send to a calendar chat
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.shareOption,
+                  { backgroundColor: isNightMode ? 'rgba(0,255,127,0.1)' : 'rgba(76,175,80,0.1)' }
+                ]}
+                onPress={exportAsImage}
+                disabled={isExporting}
+              >
+                <View style={[
+                  styles.shareOptionIcon,
+                  { backgroundColor: isNightMode ? 'rgba(0,255,127,0.2)' : 'rgba(76,175,80,0.2)' }
+                ]}>
+                  {isExporting && exportFormat === 'jpg' ? (
+                    <Animated.View style={{ transform: [{ rotate: '45deg' }] }}>
+                      <Download size={24} color={isNightMode ? '#00FF7F' : '#4CAF50'} />
+                    </Animated.View>
+                  ) : (
+                    <FileImage size={24} color={isNightMode ? '#00FF7F' : '#4CAF50'} />
+                  )}
+                </View>
+                <Text style={[styles.shareOptionTitle, { color: theme.colors.text.primary }]}>
+                  {isExporting && exportFormat === 'jpg' ? 'Exporting...' : 'Export as Image'}
+                </Text>
+                <Text style={[styles.shareOptionDesc, { color: theme.colors.text.secondary }]}>
+                  Save as text file with structure
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.shareOption,
+                  { backgroundColor: isNightMode ? 'rgba(255,105,180,0.1)' : 'rgba(233,30,99,0.1)' }
+                ]}
+                onPress={exportAsPDF}
+                disabled={isExporting}
+              >
+                <View style={[
+                  styles.shareOptionIcon,
+                  { backgroundColor: isNightMode ? 'rgba(255,105,180,0.2)' : 'rgba(233,30,99,0.2)' }
+                ]}>
+                  {isExporting && exportFormat === 'pdf' ? (
+                    <Animated.View style={{ transform: [{ rotate: '45deg' }] }}>
+                      <Download size={24} color={isNightMode ? '#FF69B4' : '#E91E63'} />
+                    </Animated.View>
+                  ) : (
+                    <FileText size={24} color={isNightMode ? '#FF69B4' : '#E91E63'} />
+                  )}
+                </View>
+                <Text style={[styles.shareOptionTitle, { color: theme.colors.text.primary }]}>
+                  {isExporting && exportFormat === 'pdf' ? 'Exporting...' : 'Export as Document'}
+                </Text>
+                <Text style={[styles.shareOptionDesc, { color: theme.colors.text.secondary }]}>
+                  Save as shareable document
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={isSelectChatModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setIsSelectChatModalVisible(false)}
+      >
+        <View style={styles.shareModalOverlay}>
+          <View style={[
+            styles.shareModalContent,
+            { backgroundColor: isNightMode ? "#1E1E24" : "#FFFFFF", maxHeight: SCREEN_HEIGHT * 0.7 }
+          ]}>
+            <View style={styles.shareModalHeader}>
+              <TouchableOpacity 
+                onPress={() => setIsSelectChatModalVisible(false)}
+                style={styles.shareBackButton}
+              >
+                <ArrowLeft size={24} color={theme.colors.text.primary} />
+              </TouchableOpacity>
+              <Text style={[styles.shareModalTitle, { color: theme.colors.text.primary, flex: 1, textAlign: 'center' }]}>
+                Select Chat
+              </Text>
+              <View style={{ width: 40 }} />
+            </View>
+
+            <ScrollView style={styles.chatListContainer} showsVerticalScrollIndicator={false}>
+              {calendars.length === 0 ? (
+                <View style={styles.emptyChatState}>
+                  <MessageCircle size={48} color={theme.colors.text.secondary} />
+                  <Text style={[styles.emptyChatText, { color: theme.colors.text.secondary }]}>
+                    No chats available
+                  </Text>
+                </View>
+              ) : (
+                calendars.map((calendar) => (
+                  <TouchableOpacity
+                    key={calendar.id}
+                    style={[
+                      styles.chatItem,
+                      { backgroundColor: isNightMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }
+                    ]}
+                    onPress={() => shareToChat(calendar.id)}
+                    disabled={isExporting}
+                  >
+                    <View style={[styles.chatItemAvatar, { backgroundColor: calendar.color + '30' }]}>
+                      <MessageCircle size={20} color={calendar.color} />
+                    </View>
+                    <View style={styles.chatItemInfo}>
+                      <Text style={[styles.chatItemName, { color: theme.colors.text.primary }]}>
+                        {calendar.name}
+                      </Text>
+                      <Text style={[styles.chatItemDesc, { color: theme.colors.text.secondary }]}>
+                        {calendar.isShared ? `Shared with ${calendar.sharedWith.length} people` : 'Private chat'}
+                      </Text>
+                    </View>
+                    {isExporting ? (
+                      <View style={styles.chatItemCheck}>
+                        <Download size={20} color={theme.colors.primary} />
+                      </View>
+                    ) : (
+                      <View style={[styles.chatItemArrow, { backgroundColor: theme.colors.primary + '20' }]}>
+                        <Check size={16} color={theme.colors.primary} />
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                ))
+              )}
+            </ScrollView>
+          </View>
         </View>
       </Modal>
     </View>
@@ -925,5 +1332,121 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     borderWidth: 2,
     borderColor: '#FFF',
+  },
+  shareModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'flex-end',
+  },
+  shareModalContent: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    padding: 24,
+    paddingBottom: 40,
+    elevation: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+  },
+  shareModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  shareModalTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+  },
+  shareCloseButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
+  shareBackButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
+  shareSubtitle: {
+    fontSize: 14,
+    marginBottom: 24,
+  },
+  shareOptionsContainer: {
+    gap: 12,
+  },
+  shareOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    gap: 14,
+  },
+  shareOptionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shareOptionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+  },
+  shareOptionDesc: {
+    fontSize: 12,
+    position: 'absolute',
+    bottom: 12,
+    left: 78,
+  },
+  chatListContainer: {
+    maxHeight: 400,
+  },
+  emptyChatState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    gap: 12,
+  },
+  emptyChatText: {
+    fontSize: 16,
+  },
+  chatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 14,
+    marginBottom: 10,
+    gap: 12,
+  },
+  chatItemAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chatItemInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  chatItemName: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  chatItemDesc: {
+    fontSize: 12,
+  },
+  chatItemCheck: {
+    padding: 8,
+  },
+  chatItemArrow: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
