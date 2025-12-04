@@ -18,7 +18,7 @@ export default function ThemeSelectionScreen() {
   const { theme, setTheme } = useTheme();
   const { mode } = useUniverseMode();
   const { t } = useLanguage();
-  const [selectedMode, setSelectedMode] = useState<'bright' | 'night'>('bright');
+  const [selectedMode, setSelectedMode] = useState<'bright' | 'night'>(theme.id === 'night-mode' ? 'night' : 'bright');
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const brightScaleAnim = useRef(new Animated.Value(1)).current;
@@ -26,8 +26,8 @@ export default function ThemeSelectionScreen() {
   const planetMotion = useRef(new Animated.Value(0)).current;
 
   const isNightMode = theme.id === 'night-mode';
-  const brightTheme = DEFAULT_THEMES.find(theme => theme.id === 'bright') || DEFAULT_THEMES[0];
-  const nightTheme = DEFAULT_THEMES.find(theme => theme.id === 'night') || DEFAULT_THEMES[1];
+  const brightTheme = DEFAULT_THEMES.find(theme => theme.id === 'track-gradient') || DEFAULT_THEMES[0];
+  const nightTheme = DEFAULT_THEMES.find(theme => theme.id === 'night-mode') || DEFAULT_THEMES[1];
 
   useEffect(() => {
     Animated.parallel([
