@@ -8,7 +8,6 @@ import {
   Image,
   ScrollView,
   Alert,
-  Share,
   Platform,
   Dimensions,
 } from "react-native";
@@ -18,15 +17,12 @@ import {
   X,
   Download,
   FileText,
-  Image as ImageIcon,
   Video,
-  File,
   Lock,
   Eye,
   AlertCircle,
   BarChart3,
   ExternalLink,
-  Calendar,
   CheckSquare,
   StickyNote,
   Network,
@@ -37,8 +33,9 @@ import { router } from "expo-router";
 import * as XLSX from "xlsx";
 import type { Attachment } from "@/contexts/CalendarContext";
 import { useStatistics, Tracker, SpreadsheetColumn, SpreadsheetRow } from "@/contexts/StatisticsContext";
+import { downloadAttachmentToDevice, getMimeTypeFromFileName } from "@/utils/attachmentHelpers";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 interface AttachmentPreviewModalProps {
   visible: boolean;
@@ -120,31 +117,26 @@ export default function AttachmentPreviewModal({
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
+    console.log('[AttachmentPreview] Starting download for:', attachment.name);
+    console.log('[AttachmentPreview] File type:', attachment.type);
+    console.log('[AttachmentPreview] File data length:', fileData?.length);
+
     try {
-      if (Platform.OS === "web") {
-        const byteCharacters = atob(fileData);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: attachment.type });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = attachment.name;
-        link.click();
-        URL.revokeObjectURL(url);
-        Alert.alert("Success", "File downloaded successfully");
-      } else {
-        await Share.share({
-          message: fileData,
-          title: attachment.name,
-        });
+      const mimeType = attachment.type || getMimeTypeFromFileName(attachment.name);
+      
+      const success = await downloadAttachmentToDevice({
+        fileName: attachment.name,
+        fileData: fileData,
+        fileType: mimeType,
+        showSuccessAlert: true,
+      });
+
+      if (!success) {
+        console.error('[AttachmentPreview] Download returned false');
       }
     } catch (error) {
-      console.error("Error downloading attachment:", error);
-      Alert.alert("Error", "Failed to download file");
+      console.error("[AttachmentPreview] Error downloading attachment:", error);
+      Alert.alert("Error", "Failed to download file. Please try again.");
     }
   };
 

@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  Share,
   Keyboard,
   FlatList,
   Modal,
@@ -48,6 +47,7 @@ import { Audio } from "expo-av";
 import { useChat, type FileAttachment, DEFAULT_THEME } from "@/contexts/ChatContext";
 import { useCalendar } from "@/contexts/CalendarContext";
 import colors from "@/constants/colors";
+import { downloadAttachmentToDevice, getMimeTypeFromFileName } from "@/utils/attachmentHelpers";
 import { useTheme } from "@/contexts/ThemeContext";
 import EmojiPickerModal from "@/components/EmojiPickerModal";
 import FontStyleModal from "@/components/FontStyleModal";
@@ -809,28 +809,29 @@ export default function CalendarChatScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
+    console.log('[CalendarChat] Starting download for:', message.attachment.fileName);
+
     try {
       const fileData = await downloadAttachment(message.attachment, calendarId, messageId);
       const fileName = message.attachment.fileName;
+      const mimeType = message.attachment.fileType || getMimeTypeFromFileName(fileName);
 
-      if (Platform.OS === "web") {
-        const blob = new Blob([fileData], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = fileName;
-        link.click();
-        URL.revokeObjectURL(url);
-        Alert.alert("Success", "File downloaded successfully");
-      } else {
-        await Share.share({
-          message: fileData,
-          title: fileName,
-        });
+      console.log('[CalendarChat] File data retrieved, length:', fileData?.length);
+      console.log('[CalendarChat] MIME type:', mimeType);
+
+      const success = await downloadAttachmentToDevice({
+        fileName: fileName,
+        fileData: fileData,
+        fileType: mimeType,
+        showSuccessAlert: true,
+      });
+
+      if (!success) {
+        console.error('[CalendarChat] Download returned false');
       }
     } catch (error) {
-      console.error("Error downloading attachment:", error);
-      Alert.alert("Error", "Failed to download file");
+      console.error("[CalendarChat] Error downloading attachment:", error);
+      Alert.alert("Error", "Failed to download file. Please try again.");
     }
   };
 
