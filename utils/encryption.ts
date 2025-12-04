@@ -37,6 +37,17 @@ function safeBtoa(str: string): string {
 // Safe atob that handles unicode
 function safeAtob(str: string): string {
   try {
+    if (!str || str.length === 0) {
+      console.warn('[Encryption] safeAtob: empty string');
+      return '';
+    }
+    
+    // Validate base64 format first
+    if (!isValidBase64(str)) {
+      console.warn('[Encryption] safeAtob: invalid base64 format, returning original');
+      return str;
+    }
+    
     const decoded = atob(str);
     // Try to decode URI component for unicode support
     try {
@@ -48,7 +59,7 @@ function safeAtob(str: string): string {
       return decoded;
     }
   } catch (error) {
-    console.error('[Encryption] safeAtob error:', error);
+    console.warn('[Encryption] safeAtob: decode failed, returning original');
     return str;
   }
 }
@@ -68,12 +79,22 @@ export async function encrypt(text: string): Promise<string> {
 
 export async function decrypt(encryptedText: string): Promise<string> {
   try {
+    if (!encryptedText || encryptedText.length === 0) {
+      return '';
+    }
+    
     // Check if it's a SHA256 hash (legacy corrupted data)
     // SHA256 hash is 64 characters of hex (0-9, a-f)
     const isHash = /^[a-f0-9]{64}$/i.test(encryptedText);
     if (isHash) {
       console.warn('[Encryption] Detected legacy hash data, treating as corrupted/empty');
       throw new Error('Cannot decrypt legacy hash data');
+    }
+
+    // Check if it's valid base64 before attempting decode
+    if (!isValidBase64(encryptedText)) {
+      console.warn('[Encryption] Not valid base64, treating as plain text');
+      return encryptedText;
     }
 
     console.log('[Encryption] Decrypting text, length:', encryptedText?.length || 0);
@@ -88,7 +109,7 @@ export async function decrypt(encryptedText: string): Promise<string> {
       JSON.parse(encryptedText);
       return encryptedText;
     } catch {
-      // If it's not valid JSON and failed decode, throw
+      // If it's not valid JSON and failed decode, return original
       console.warn('[Encryption] Failed to decrypt data, returning original');
       return encryptedText;
     }
