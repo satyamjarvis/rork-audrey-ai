@@ -262,11 +262,18 @@ export default function MindMapEditor() {
     };
   }, [getBounds]);
 
+  const panSensitivity = 0.25;
+  const canvasPosition = useRef({ x: translateX, y: translateY });
+
+  useEffect(() => {
+    canvasPosition.current = { x: translateX, y: translateY };
+  }, [translateX, translateY]);
+
   const canvasPanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => true,
       onMoveShouldSetPanResponder: (evt, gestureState) => {
-        return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
+        return Math.abs(gestureState.dx) > 8 || Math.abs(gestureState.dy) > 8;
       },
       onPanResponderGrant: () => {
         isPanning.current = true;
@@ -274,8 +281,16 @@ export default function MindMapEditor() {
       },
       onPanResponderMove: (evt, gestureState) => {
         if (isPanning.current) {
-          const newX = lastTranslate.current.x + gestureState.dx;
-          const newY = lastTranslate.current.y + gestureState.dy;
+          const targetX = lastTranslate.current.x + gestureState.dx * panSensitivity;
+          const targetY = lastTranslate.current.y + gestureState.dy * panSensitivity;
+          
+          const currentX = canvasPosition.current.x;
+          const currentY = canvasPosition.current.y;
+          const interpolationFactor = 0.3;
+          
+          const newX = currentX + (targetX - currentX) * interpolationFactor;
+          const newY = currentY + (targetY - currentY) * interpolationFactor;
+          
           const constrained = constrainTranslation(newX, newY);
           setTranslateX(constrained.x);
           setTranslateY(constrained.y);
@@ -299,7 +314,7 @@ export default function MindMapEditor() {
     
     lastGestures.current.set(nodeId, { dx, dy });
 
-    const dragSensitivity = 0.6;
+    const dragSensitivity = 0.15;
 
     setNodes(prev => prev.map(n => {
       if (n.id === nodeId) {
@@ -307,7 +322,7 @@ export default function MindMapEditor() {
         const targetY = n.y + (deltaDy / scale) * dragSensitivity;
         
         const currentPos = nodePositions.current.get(nodeId) || { x: n.x, y: n.y };
-        const smoothingFactor = 0.7;
+        const smoothingFactor = 0.25;
         const newX = currentPos.x + (targetX - currentPos.x) * smoothingFactor;
         const newY = currentPos.y + (targetY - currentPos.y) * smoothingFactor;
         
@@ -1066,7 +1081,9 @@ const DraggableNode = React.memo<DraggableNodeProps>(({ node, isSelected, onSele
         onSelectRef.current();
       },
       onPanResponderMove: (evt, gestureState) => {
-        onDragRef.current(gestureState.dx, gestureState.dy);
+        const smoothedDx = gestureState.dx * 0.4;
+        const smoothedDy = gestureState.dy * 0.4;
+        onDragRef.current(smoothedDx, smoothedDy);
       },
       onPanResponderRelease: () => {
         isDragging.current = false;
