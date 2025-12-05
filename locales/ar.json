@@ -554,6 +554,75 @@
     "url": "الرابط",
     "secureNotes": "ملاحظات آمنة"
   },
+  "calendarManager": {
+    "title": "مدير التقويمات",
+    "calendarsCount": "{count} تقويمات",
+    "yourCalendars": "تقويماتك",
+    "features": "المميزات",
+    "stats": {
+      "total": "الإجمالي",
+      "shared": "مشتركة",
+      "personal": "شخصية",
+      "users": "المستخدمون"
+    },
+    "badges": {
+      "shared": "مشترك",
+      "users": "{count} مستخدمين",
+      "colorTag": "علامة اللون"
+    },
+    "featureCards": {
+      "encrypted": "مشفر",
+      "encryptionDesc": "تشفير AES-256",
+      "smartSync": "مزامنة ذكية",
+      "syncDesc": "مزامنة تلقائية",
+      "collaborate": "تعاون",
+      "collaborateDesc": "تحديثات فورية",
+      "smartPlans": "خطط ذكية",
+      "plansDesc": "تخطيط بالذكاء الاصطناعي"
+    },
+    "footer": "ابق منظماً ومنتجاً",
+    "createModal": {
+      "title": "إنشاء تقويم",
+      "nameLabel": "اسم التقويم",
+      "namePlaceholder": "عمل، شخصي، عائلة...",
+      "sharedLabel": "إنشاء كتقويم مشترك",
+      "submit": "إنشاء التقويم",
+      "errorName": "الرجاء إدخال اسم التقويم"
+    },
+    "shareModal": {
+      "title": "مشاركة التقويم",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "emailLabel": "عنوان البريد الإلكتروني",
+      "emailPlaceholder": "user@example.com",
+      "phoneLabel": "رقم الهاتف",
+      "phonePlaceholder": "+966 50 123 4567",
+      "emailInfo": "سيتلقون دعوة لعرض وإدارة هذا التقويم",
+      "smsInfo": "سيتم إرسال رسالة نصية مع رابط التطبيق للانضمام لهذا التقويم",
+      "submit": "إرسال الدعوة",
+      "errorEmail": "الرجاء إدخال عنوان بريد إلكتروني",
+      "errorValidEmail": "الرجاء إدخال عنوان بريد إلكتروني صحيح",
+      "errorPhone": "الرجاء إدخال رقم هاتف",
+      "errorValidPhone": "الرجاء إدخال رقم هاتف صحيح",
+      "invitationSent": "تم إرسال الدعوة",
+      "sentTo": "تم إرسال دعوة إلى {email}",
+      "smsSentTo": "تم إرسال دعوة عبر SMS إلى {phone}"
+    },
+    "settingsModal": {
+      "title": "الإعدادات",
+      "permissionsTitle": "صلاحيات المرفقات",
+      "permissionsDesc": "تحكم في كيفية تفاعل المستخدمين المشتركين مع المرفقات",
+      "allowDownload": "السماح بالتحميل",
+      "allowDownloadDesc": "يمكن للمستخدمين العرض والتحميل",
+      "viewOnly": "عرض فقط",
+      "viewOnlyDesc": "يمكن للمستخدمين العرض فقط",
+      "save": "حفظ الإعدادات"
+    },
+    "deleteAlert": {
+      "title": "حذف التقويم",
+      "message": "هل أنت متأكد أنك تريد حذف \"{name}\"؟"
+    }
+  },
   "metrics": {
     "metrics": "المقاييس",
     "dashboard": "لوحة التحكم",

@@ -554,6 +554,75 @@
     "url": "URL",
     "secureNotes": "Notes Sécurisées"
   },
+  "calendarManager": {
+    "title": "Gestionnaire de Calendriers",
+    "calendarsCount": "{count} calendriers",
+    "yourCalendars": "Vos Calendriers",
+    "features": "Fonctionnalités",
+    "stats": {
+      "total": "Total",
+      "shared": "Partagés",
+      "personal": "Personnels",
+      "users": "Utilisateurs"
+    },
+    "badges": {
+      "shared": "PARTAGÉ",
+      "users": "{count} UTILISATEURS",
+      "colorTag": "Étiquette de Couleur"
+    },
+    "featureCards": {
+      "encrypted": "Chiffré",
+      "encryptionDesc": "Chiffrement AES-256",
+      "smartSync": "Synchronisation Intelligente",
+      "syncDesc": "Synchronisation automatique",
+      "collaborate": "Collaborer",
+      "collaborateDesc": "Mises à jour en temps réel",
+      "smartPlans": "Plans Intelligents",
+      "plansDesc": "Planification par IA"
+    },
+    "footer": "Restez organisé et productif",
+    "createModal": {
+      "title": "Créer un Calendrier",
+      "nameLabel": "Nom du Calendrier",
+      "namePlaceholder": "Travail, Personnel, Famille...",
+      "sharedLabel": "Créer comme calendrier partagé",
+      "submit": "Créer le Calendrier",
+      "errorName": "Veuillez entrer un nom de calendrier"
+    },
+    "shareModal": {
+      "title": "Partager le Calendrier",
+      "email": "Email",
+      "phone": "Téléphone",
+      "emailLabel": "Adresse Email",
+      "emailPlaceholder": "utilisateur@exemple.com",
+      "phoneLabel": "Numéro de Téléphone",
+      "phonePlaceholder": "+33 6 12 34 56 78",
+      "emailInfo": "Ils recevront une invitation pour voir et gérer ce calendrier",
+      "smsInfo": "Un SMS avec le lien de l'app sera envoyé pour rejoindre ce calendrier",
+      "submit": "Envoyer l'Invitation",
+      "errorEmail": "Veuillez entrer une adresse email",
+      "errorValidEmail": "Veuillez entrer une adresse email valide",
+      "errorPhone": "Veuillez entrer un numéro de téléphone",
+      "errorValidPhone": "Veuillez entrer un numéro de téléphone valide",
+      "invitationSent": "Invitation Envoyée",
+      "sentTo": "Une invitation a été envoyée à {email}",
+      "smsSentTo": "Une invitation SMS a été envoyée à {phone}"
+    },
+    "settingsModal": {
+      "title": "Paramètres",
+      "permissionsTitle": "Permissions des Pièces Jointes",
+      "permissionsDesc": "Contrôlez comment les utilisateurs partagés peuvent interagir avec les pièces jointes",
+      "allowDownload": "Autoriser le Téléchargement",
+      "allowDownloadDesc": "Les utilisateurs peuvent voir et télécharger",
+      "viewOnly": "Lecture Seule",
+      "viewOnlyDesc": "Les utilisateurs peuvent uniquement voir",
+      "save": "Enregistrer les Paramètres"
+    },
+    "deleteAlert": {
+      "title": "Supprimer le Calendrier",
+      "message": "Êtes-vous sûr de vouloir supprimer \"{name}\" ?"
+    }
+  },
   "metrics": {
     "metrics": "Métriques",
     "dashboard": "Tableau de Bord",

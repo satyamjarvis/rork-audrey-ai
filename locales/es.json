@@ -659,6 +659,75 @@
       "monochrome": "Monocromático"
     }
   },
+  "calendarManager": {
+    "title": "Gestor de Calendarios",
+    "calendarsCount": "{count} calendarios",
+    "yourCalendars": "Tus Calendarios",
+    "features": "Características",
+    "stats": {
+      "total": "Total",
+      "shared": "Compartidos",
+      "personal": "Personales",
+      "users": "Usuarios"
+    },
+    "badges": {
+      "shared": "COMPARTIDO",
+      "users": "{count} USUARIOS",
+      "colorTag": "Etiqueta de Color"
+    },
+    "featureCards": {
+      "encrypted": "Encriptado",
+      "encryptionDesc": "Encriptación AES-256",
+      "smartSync": "Sincronización Inteligente",
+      "syncDesc": "Sincronización automática",
+      "collaborate": "Colaborar",
+      "collaborateDesc": "Actualizaciones en tiempo real",
+      "smartPlans": "Planes Inteligentes",
+      "plansDesc": "Planificación con IA"
+    },
+    "footer": "Mantente organizado y productivo",
+    "createModal": {
+      "title": "Crear Calendario",
+      "nameLabel": "Nombre del Calendario",
+      "namePlaceholder": "Trabajo, Personal, Familia...",
+      "sharedLabel": "Crear como calendario compartido",
+      "submit": "Crear Calendario",
+      "errorName": "Por favor ingresa un nombre de calendario"
+    },
+    "shareModal": {
+      "title": "Compartir Calendario",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "emailLabel": "Correo Electrónico",
+      "emailPlaceholder": "usuario@ejemplo.com",
+      "phoneLabel": "Número de Teléfono",
+      "phonePlaceholder": "+1 234 567 8900",
+      "emailInfo": "Recibirán una invitación para ver y gestionar este calendario",
+      "smsInfo": "Se enviará un SMS con el enlace de la app para unirse a este calendario",
+      "submit": "Enviar Invitación",
+      "errorEmail": "Por favor ingresa un correo electrónico",
+      "errorValidEmail": "Por favor ingresa un correo electrónico válido",
+      "errorPhone": "Por favor ingresa un número de teléfono",
+      "errorValidPhone": "Por favor ingresa un número de teléfono válido",
+      "invitationSent": "Invitación Enviada",
+      "sentTo": "Se ha enviado una invitación a {email}",
+      "smsSentTo": "Se ha enviado una invitación por SMS a {phone}"
+    },
+    "settingsModal": {
+      "title": "Configuración",
+      "permissionsTitle": "Permisos de Adjuntos",
+      "permissionsDesc": "Controla cómo los usuarios compartidos pueden interactuar con los adjuntos",
+      "allowDownload": "Permitir Descarga",
+      "allowDownloadDesc": "Los usuarios pueden ver y descargar",
+      "viewOnly": "Solo Ver",
+      "viewOnlyDesc": "Los usuarios solo pueden ver",
+      "save": "Guardar Configuración"
+    },
+    "deleteAlert": {
+      "title": "Eliminar Calendario",
+      "message": "¿Estás seguro de que quieres eliminar \"{name}\"?"
+    }
+  },
   "learn": {
     "title": "Aprender y Crecer",
     "subtitle": "Expande tu mente con cursos guiados por expertos",

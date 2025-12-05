@@ -554,6 +554,75 @@
     "url": "URL",
     "secureNotes": "Notas Seguras"
   },
+  "calendarManager": {
+    "title": "Gerenciador de Calendários",
+    "calendarsCount": "{count} calendários",
+    "yourCalendars": "Seus Calendários",
+    "features": "Recursos",
+    "stats": {
+      "total": "Total",
+      "shared": "Compartilhados",
+      "personal": "Pessoais",
+      "users": "Usuários"
+    },
+    "badges": {
+      "shared": "COMPARTILHADO",
+      "users": "{count} USUÁRIOS",
+      "colorTag": "Etiqueta de Cor"
+    },
+    "featureCards": {
+      "encrypted": "Criptografado",
+      "encryptionDesc": "Criptografia AES-256",
+      "smartSync": "Sincronização Inteligente",
+      "syncDesc": "Sincronização automática",
+      "collaborate": "Colaborar",
+      "collaborateDesc": "Atualizações em tempo real",
+      "smartPlans": "Planos Inteligentes",
+      "plansDesc": "Planejamento com IA"
+    },
+    "footer": "Mantenha-se organizado e produtivo",
+    "createModal": {
+      "title": "Criar Calendário",
+      "nameLabel": "Nome do Calendário",
+      "namePlaceholder": "Trabalho, Pessoal, Família...",
+      "sharedLabel": "Criar como calendário compartilhado",
+      "submit": "Criar Calendário",
+      "errorName": "Por favor, insira um nome de calendário"
+    },
+    "shareModal": {
+      "title": "Compartilhar Calendário",
+      "email": "Email",
+      "phone": "Telefone",
+      "emailLabel": "Endereço de Email",
+      "emailPlaceholder": "usuario@exemplo.com",
+      "phoneLabel": "Número de Telefone",
+      "phonePlaceholder": "+55 11 99999 9999",
+      "emailInfo": "Eles receberão um convite para visualizar e gerenciar este calendário",
+      "smsInfo": "Um SMS com o link do app será enviado para participar deste calendário",
+      "submit": "Enviar Convite",
+      "errorEmail": "Por favor, insira um endereço de email",
+      "errorValidEmail": "Por favor, insira um endereço de email válido",
+      "errorPhone": "Por favor, insira um número de telefone",
+      "errorValidPhone": "Por favor, insira um número de telefone válido",
+      "invitationSent": "Convite Enviado",
+      "sentTo": "Um convite foi enviado para {email}",
+      "smsSentTo": "Um convite por SMS foi enviado para {phone}"
+    },
+    "settingsModal": {
+      "title": "Configurações",
+      "permissionsTitle": "Permissões de Anexos",
+      "permissionsDesc": "Controle como os usuários compartilhados podem interagir com os anexos",
+      "allowDownload": "Permitir Download",
+      "allowDownloadDesc": "Usuários podem visualizar e baixar",
+      "viewOnly": "Apenas Visualização",
+      "viewOnlyDesc": "Usuários podem apenas visualizar",
+      "save": "Salvar Configurações"
+    },
+    "deleteAlert": {
+      "title": "Excluir Calendário",
+      "message": "Tem certeza de que deseja excluir \"{name}\"?"
+    }
+  },
   "metrics": {
     "metrics": "Métricas",
     "dashboard": "Painel",

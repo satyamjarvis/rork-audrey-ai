@@ -554,6 +554,75 @@
     "url": "网址",
     "secureNotes": "安全笔记"
   },
+  "calendarManager": {
+    "title": "日历管理器",
+    "calendarsCount": "{count} 个日历",
+    "yourCalendars": "您的日历",
+    "features": "功能特性",
+    "stats": {
+      "total": "总计",
+      "shared": "共享",
+      "personal": "个人",
+      "users": "用户"
+    },
+    "badges": {
+      "shared": "共享",
+      "users": "{count} 位用户",
+      "colorTag": "颜色标签"
+    },
+    "featureCards": {
+      "encrypted": "加密",
+      "encryptionDesc": "AES-256 加密",
+      "smartSync": "智能同步",
+      "syncDesc": "自动同步",
+      "collaborate": "协作",
+      "collaborateDesc": "实时更新",
+      "smartPlans": "智能计划",
+      "plansDesc": "AI 驱动规划"
+    },
+    "footer": "保持有序和高效",
+    "createModal": {
+      "title": "创建日历",
+      "nameLabel": "日历名称",
+      "namePlaceholder": "工作、个人、家庭...",
+      "sharedLabel": "创建为共享日历",
+      "submit": "创建日历",
+      "errorName": "请输入日历名称"
+    },
+    "shareModal": {
+      "title": "分享日历",
+      "email": "邮箱",
+      "phone": "电话",
+      "emailLabel": "电子邮箱地址",
+      "emailPlaceholder": "user@example.com",
+      "phoneLabel": "电话号码",
+      "phonePlaceholder": "+86 138 0000 0000",
+      "emailInfo": "他们将收到查看和管理此日历的邀请",
+      "smsInfo": "将发送带有应用链接的短信以加入此日历",
+      "submit": "发送邀请",
+      "errorEmail": "请输入电子邮箱地址",
+      "errorValidEmail": "请输入有效的电子邮箱地址",
+      "errorPhone": "请输入电话号码",
+      "errorValidPhone": "请输入有效的电话号码",
+      "invitationSent": "邀请已发送",
+      "sentTo": "已向 {email} 发送邀请",
+      "smsSentTo": "已向 {phone} 发送短信邀请"
+    },
+    "settingsModal": {
+      "title": "设置",
+      "permissionsTitle": "附件权限",
+      "permissionsDesc": "控制共享用户如何与附件交互",
+      "allowDownload": "允许下载",
+      "allowDownloadDesc": "用户可以查看和下载",
+      "viewOnly": "仅查看",
+      "viewOnlyDesc": "用户只能查看",
+      "save": "保存设置"
+    },
+    "deleteAlert": {
+      "title": "删除日历",
+      "message": "您确定要删除 \"{name}\" 吗？"
+    }
+  },
   "metrics": {
     "metrics": "指标",
     "dashboard": "仪表板",
