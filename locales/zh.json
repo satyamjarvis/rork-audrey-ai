@@ -174,7 +174,15 @@
     "tomorrowsIntentions": "明天的意图",
     "setGoalsForTomorrow": "设定明天的目标",
     "dailyHealthAssessment": "每日健康评估",
-    "takeYourTime": "慢慢来。不着急。"
+    "takeYourTime": "慢慢来。不着急。",
+    "quotes": {
+      "quote1": "当星星开始闪耀，让你的灵魂找到平静。",
+      "quote2": "夜晚低语着休息和重生的秘密。",
+      "quote3": "在宁静中，我们找到明天的魔力。",
+      "quote4": "让今天的旅程像月光一样沉淀在平静的水面上。",
+      "quote5": "梦想是平静心灵书写的诗歌。",
+      "quote6": "月亮提醒我们：即使是黑暗也有它的光芒。"
+    }
   },
   "settings": {
     "toolsAndSettings": "工具和设置",

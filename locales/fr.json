@@ -174,7 +174,15 @@
     "tomorrowsIntentions": "Intentions pour Demain",
     "setGoalsForTomorrow": "Fixez des objectifs pour demain",
     "dailyHealthAssessment": "Évaluation de santé quotidienne",
-    "takeYourTime": "Prenez votre temps. Pas de précipitation."
+    "takeYourTime": "Prenez votre temps. Pas de précipitation.",
+    "quotes": {
+      "quote1": "Quand les étoiles commencent à briller, laissez votre âme trouver la paix.",
+      "quote2": "La nuit murmure des secrets de repos et de renouveau.",
+      "quote3": "Dans le silence, nous trouvons la magie de demain.",
+      "quote4": "Laissez le voyage d'aujourd'hui se déposer comme le clair de lune sur des eaux calmes.",
+      "quote5": "Les rêves sont la poésie écrite par un cœur paisible.",
+      "quote6": "La lune nous rappelle : même l'obscurité a sa lumière."
+    }
   },
   "settings": {
     "toolsAndSettings": "Outils et Paramètres",

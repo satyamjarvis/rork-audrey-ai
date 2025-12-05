@@ -174,7 +174,15 @@
     "tomorrowsIntentions": "Intenções para Amanhã",
     "setGoalsForTomorrow": "Defina metas para amanhã",
     "dailyHealthAssessment": "Avaliação diária de saúde",
-    "takeYourTime": "Leve seu tempo. Não há pressa."
+    "takeYourTime": "Leve seu tempo. Não há pressa.",
+    "quotes": {
+      "quote1": "Quando as estrelas começam a brilhar, deixe sua alma encontrar a paz.",
+      "quote2": "A noite sussurra segredos de descanso e renovação.",
+      "quote3": "Na quietude, encontramos a magia do amanhã.",
+      "quote4": "Deixe a jornada de hoje se acomodar como o luar em águas calmas.",
+      "quote5": "Os sonhos são a poesia escrita por um coração em paz.",
+      "quote6": "A lua nos lembra: até a escuridão tem seu brilho."
+    }
   },
   "settings": {
     "toolsAndSettings": "Ferramentas e Configurações",

@@ -182,7 +182,15 @@
     "tomorrowsIntentions": "Tomorrow's Intentions",
     "setGoalsForTomorrow": "Set goals for tomorrow",
     "dailyHealthAssessment": "Daily health assessment",
-    "takeYourTime": "Take your time. There's no rush."
+    "takeYourTime": "Take your time. There's no rush.",
+    "quotes": {
+      "quote1": "As the stars begin to shine, let your soul find peace.",
+      "quote2": "The night whispers secrets of rest and renewal.",
+      "quote3": "In stillness, we find the magic of tomorrow.",
+      "quote4": "Let today's journey settle like moonlight on calm waters.",
+      "quote5": "Dreams are the poetry written by a peaceful heart.",
+      "quote6": "The moon reminds us: even darkness has its glow."
+    }
   },
   "settings": {
     "toolsAndSettings": "Tools & Settings",

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -24,6 +24,7 @@ import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import AppBackgroundWrapper from "@/components/AppBackgroundWrapper";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -38,6 +39,7 @@ type FeatureCard = {
 
 export default function NightScreen() {
   const insets = useSafeAreaInsets();
+  const { translations } = useLanguage();
   const scaleAnims = useRef<{ [key: string]: Animated.Value }>({}).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -45,16 +47,20 @@ export default function NightScreen() {
   const starsRotate = useRef(new Animated.Value(0)).current;
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  
+  const nightQuotes = (translations.night as { quotes?: { quote1?: string; quote2?: string; quote3?: string; quote4?: string; quote5?: string; quote6?: string } }).quotes;
+  
+  const eveningQuotes = useMemo(() => [
+    nightQuotes?.quote1 || "As the stars begin to shine, let your soul find peace.",
+    nightQuotes?.quote2 || "The night whispers secrets of rest and renewal.",
+    nightQuotes?.quote3 || "In stillness, we find the magic of tomorrow.",
+    nightQuotes?.quote4 || "Let today's journey settle like moonlight on calm waters.",
+    nightQuotes?.quote5 || "Dreams are the poetry written by a peaceful heart.",
+    nightQuotes?.quote6 || "The moon reminds us: even darkness has its glow.",
+  ], [nightQuotes]);
+  
   const [eveningQuote] = useState(() => {
-    const quotes = [
-      "As the stars begin to shine, let your soul find peace.",
-      "The night whispers secrets of rest and renewal.",
-      "In stillness, we find the magic of tomorrow.",
-      "Let today's journey settle like moonlight on calm waters.",
-      "Dreams are the poetry written by a peaceful heart.",
-      "The moon reminds us: even darkness has its glow.",
-    ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
+    return eveningQuotes[Math.floor(Math.random() * eveningQuotes.length)];
   });
 
   const starPositions = useMemo(() => {
@@ -113,56 +119,56 @@ export default function NightScreen() {
     ).start();
   }, [fadeAnim, slideAnim, moonPulse, starsRotate]);
 
-  const features: FeatureCard[] = [
+  const features: FeatureCard[] = useMemo(() => [
     {
       id: "journal",
-      title: "Moments of Gratitude",
-      description: "Capture your thoughts",
+      title: translations.night.momentsOfGratitude,
+      description: translations.night.captureYourThoughts,
       icon: BookOpen,
       gradient: ["#4a148c", "#6a1b9a"] as const,
       route: "/gratitude-moments",
     },
     {
       id: "mood",
-      title: "How I'm Feeling",
-      description: "Check in with your emotions",
+      title: translations.night.howImFeeling,
+      description: translations.night.checkInWithEmotions,
       icon: Smile,
       gradient: ["#283593", "#3949ab"] as const,
       route: "/how-am-i-feeling",
     },
     {
       id: "dreamlog",
-      title: "Dream Journal",
-      description: "Capture your dreams",
+      title: translations.night.dreamJournal,
+      description: translations.night.captureYourDreams,
       icon: Cloud,
       gradient: ["#4527a0", "#5e35b1"] as const,
       route: "/dream-journal",
     },
     {
       id: "meditation",
-      title: "Sleep Meditation",
-      description: "Peaceful rest sounds",
+      title: translations.night.sleepMeditation,
+      description: translations.night.peacefulRestSounds,
       icon: Music,
       gradient: ["#6a1b9a", "#8e24aa"] as const,
       route: "/sleep-meditation",
     },
     {
       id: "tomorrow",
-      title: "Tomorrow's Intentions",
-      description: "Set goals for tomorrow",
+      title: translations.night.tomorrowsIntentions,
+      description: translations.night.setGoalsForTomorrow,
       icon: Sunset,
       gradient: ["#ad1457", "#c2185b"] as const,
       route: "/tomorrows-intentions",
     },
     {
       id: "wellness",
-      title: "Wellness Check",
-      description: "Daily health assessment",
+      title: translations.morning.wellnessCheck,
+      description: translations.night.dailyHealthAssessment,
       icon: Moon,
       gradient: ["#1a237e", "#283593"] as const,
       route: "/wellness-check",
     },
-  ];
+  ], [translations]);
 
   const getScaleAnim = (id: string) => {
     if (!scaleAnims[id]) {
@@ -198,12 +204,12 @@ export default function NightScreen() {
     }
   };
 
-  const getGreeting = () => {
+  const getGreeting = useCallback(() => {
     const hour = currentTime.getHours();
-    if (hour >= 18 && hour < 21) return "Good Evening";
-    if (hour >= 21 || hour < 3) return "Good Night";
-    return "Rest Well";
-  };
+    if (hour >= 18 && hour < 21) return translations.night.goodEvening;
+    if (hour >= 21 || hour < 3) return translations.night.goodNight;
+    return translations.night.restWell;
+  }, [currentTime, translations]);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -282,7 +288,7 @@ export default function NightScreen() {
                     <View style={styles.quoteHeader}>
                       <Moon color="#f4e4c1" size={18} strokeWidth={2} />
                       <Text style={styles.quoteLabel}>
-                        Tonight&apos;s Reflection
+                        {translations.night.tonightsReflection}
                       </Text>
                     </View>
                     <Text style={styles.quoteText}>
@@ -296,7 +302,7 @@ export default function NightScreen() {
                     <View style={styles.quoteHeader}>
                       <Moon color="#f4e4c1" size={18} strokeWidth={2} />
                       <Text style={styles.quoteLabel}>
-                        Tonight&apos;s Reflection
+                        {translations.night.tonightsReflection}
                       </Text>
                     </View>
                     <Text style={styles.quoteText}>
@@ -307,7 +313,7 @@ export default function NightScreen() {
               )}
 
               <Text style={styles.sectionTitle}>
-                Evening Rituals
+                {translations.night.eveningRituals}
               </Text>
             </Animated.View>
 
@@ -319,7 +325,7 @@ export default function NightScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Take your time. There&apos;s no rush.
+                {translations.night.takeYourTime}
               </Text>
             </Animated.View>
           </ScrollView>

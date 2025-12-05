@@ -182,7 +182,15 @@
     "tomorrowsIntentions": "Intenciones para Mañana",
     "setGoalsForTomorrow": "Establece metas para mañana",
     "dailyHealthAssessment": "Evaluación de salud diaria",
-    "takeYourTime": "Tómate tu tiempo. No hay prisa."
+    "takeYourTime": "Tómate tu tiempo. No hay prisa.",
+    "quotes": {
+      "quote1": "Cuando las estrellas comienzan a brillar, deja que tu alma encuentre la paz.",
+      "quote2": "La noche susurra secretos de descanso y renovación.",
+      "quote3": "En la quietud, encontramos la magia del mañana.",
+      "quote4": "Deja que el viaje de hoy se asiente como la luz de la luna en aguas tranquilas.",
+      "quote5": "Los sueños son la poesía escrita por un corazón en paz.",
+      "quote6": "La luna nos recuerda: incluso la oscuridad tiene su brillo."
+    }
   },
   "settings": {
     "toolsAndSettings": "Herramientas y Ajustes",
