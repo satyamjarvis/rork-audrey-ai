@@ -1063,7 +1063,7 @@ export default function SolaraScreen() {
                         </View>
                         <TextInput
                           style={[styles.textInput, { backgroundColor: modalColors.inputBg, borderColor: modalColors.inputBorder, color: modalColors.text }]}
-                          placeholder="e.g., 2:00 PM"
+                          placeholder={translations.calendar.timePlaceholder}
                           placeholderTextColor={isNightMode ? FUTURISTIC_COLORS.text.light : '#999'}
                           value={eventTime}
                           onChangeText={setEventTime}

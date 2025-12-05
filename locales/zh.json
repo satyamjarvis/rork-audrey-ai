@@ -95,7 +95,8 @@
     "september": "九月",
     "october": "十月",
     "november": "十一月",
-    "december": "十二月"
+    "december": "十二月",
+    "timePlaceholder": "例如：下午2:00"
   },
   "language": {
     "selectLanguage": "选择语言",

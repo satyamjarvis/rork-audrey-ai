@@ -95,7 +95,8 @@
     "september": "September",
     "october": "October",
     "november": "November",
-    "december": "December"
+    "december": "December",
+    "timePlaceholder": "e.g., 2:00 PM"
   },
   "language": {
     "selectLanguage": "Select Language",
