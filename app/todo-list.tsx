@@ -37,6 +37,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, Stack } from "expo-router";
 
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import KeyboardDismissButton from "@/components/KeyboardDismissButton";
 import QuickPressable from "@/components/QuickPressable";
 import { useTodoList, Priority, TodoCategory, TodoItem } from "@/contexts/TodoListContext";
@@ -71,18 +72,27 @@ const BRIGHT_MODE_CATEGORY_COLORS: Record<TodoCategory, string> = {
   other: "#C9CCD5",
 };
 
-const CATEGORY_LABELS: Record<TodoCategory, string> = {
-  personal: "Personal",
-  work: "Work",
-  shopping: "Shopping",
-  health: "Health",
-  other: "Other",
-};
+
 
 export default function TodoListScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { translations } = useLanguage();
   const { todos, addTodo, updateTodo, deleteTodo, toggleTodoComplete, isLoading } = useTodoList();
+
+  const CATEGORY_LABELS: Record<TodoCategory, string> = useMemo(() => ({
+    personal: translations.todo.personal,
+    work: translations.todo.work,
+    shopping: translations.todo.shopping,
+    health: translations.todo.health,
+    other: translations.todo.other,
+  }), [translations]);
+
+  const PRIORITY_LABELS: Record<Priority, string> = useMemo(() => ({
+    low: translations.todo.low,
+    medium: translations.todo.medium,
+    high: translations.todo.high,
+  }), [translations]);
 
   const isNightMode = useMemo(() => {
     return theme.name.toLowerCase().includes('night') || 
@@ -210,7 +220,7 @@ export default function TodoListScreen() {
 
   const handleAddTodo = useCallback(async () => {
     if (!todoTitle.trim()) {
-      Alert.alert("Error", "Please enter a todo title");
+      Alert.alert(translations.todo.errorTitle, translations.todo.pleaseEnterTodoTitle);
       return;
     }
 
@@ -248,7 +258,7 @@ export default function TodoListScreen() {
 
   const handleUpdateTodo = useCallback(async () => {
     if (!todoTitle.trim() || !todoToEdit) {
-      Alert.alert("Error", "Please enter a todo title");
+      Alert.alert(translations.todo.errorTitle, translations.todo.pleaseEnterTodoTitle);
       return;
     }
 
@@ -271,10 +281,10 @@ export default function TodoListScreen() {
   }, [todoTitle, todoToEdit, todoDescription, todoCategory, todoPriority, todoDueDate, todoTags, updateTodo, resetForm]);
 
   const handleDeleteTodo = useCallback((todoId: string) => {
-    Alert.alert("Delete Todo", "Are you sure you want to delete this todo?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(translations.todo.deleteConfirmTitle, translations.todo.deleteConfirmMessage, [
+      { text: translations.common.cancel, style: "cancel" },
       {
-        text: "Delete",
+        text: translations.common.delete,
         style: "destructive",
         onPress: async () => {
           if (Platform.OS !== "web") {
@@ -284,7 +294,7 @@ export default function TodoListScreen() {
         },
       },
     ]);
-  }, [deleteTodo]);
+  }, [deleteTodo, translations]);
 
   const handleToggleComplete = useCallback(async (todoId: string) => {
     if (Platform.OS !== "web") {
@@ -402,11 +412,11 @@ export default function TodoListScreen() {
                 <Text style={styles.metaBadgeText}>{CATEGORY_LABELS[todo.category]}</Text>
               </View>
               <View style={[styles.metaBadge, { backgroundColor: priorityColor }]}>
-                <Text style={styles.metaBadgeText}>{todo.priority.toUpperCase()}</Text>
+                <Text style={styles.metaBadgeText}>{PRIORITY_LABELS[todo.priority].toUpperCase()}</Text>
               </View>
               {isOverdue && (
                 <View style={[styles.metaBadge, { backgroundColor: "#E74C3C" }]}>
-                  <Text style={styles.metaBadgeText}>OVERDUE</Text>
+                  <Text style={styles.metaBadgeText}>{translations.todo.overdue}</Text>
                 </View>
               )}
             </View>
@@ -415,7 +425,7 @@ export default function TodoListScreen() {
               <View style={styles.dueDateRow}>
                 <Calendar color={colors.textSecondary} size={12} />
                 <Text style={[styles.dueDateText, { color: colors.textSecondary }]}>
-                  Due: {new Date(todo.dueDate).toLocaleDateString()}
+                  {translations.todo.due}: {new Date(todo.dueDate).toLocaleDateString()}
                 </Text>
               </View>
             )}
@@ -461,7 +471,7 @@ export default function TodoListScreen() {
       <View style={styles.container}>
         <LinearGradient colors={gradientColors} style={styles.gradient}>
           <View style={styles.loadingContainer}>
-            <Text style={[styles.loadingText, { color: colors.primary }]}>Loading todos...</Text>
+            <Text style={[styles.loadingText, { color: colors.primary }]}>{translations.todo.loadingTodos}</Text>
           </View>
         </LinearGradient>
       </View>
@@ -530,8 +540,8 @@ export default function TodoListScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Todo List</Text>
-                  <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>{todos.length} tasks total</Text>
+                  <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>{translations.todo.todoList}</Text>
+                  <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>{todos.length} {translations.todo.tasksTotal}</Text>
                 </View>
               </View>
               <Animated.View style={{ transform: [{ rotate: starsRotateInterpolate }] }}>
@@ -559,22 +569,22 @@ export default function TodoListScreen() {
                           <View style={styles.statItem}>
                             <Target color={colors.primary} size={24} />
                             <Text style={[styles.statValue, { color: colors.primary }]}>{stats.total}</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Total</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{translations.todo.total}</Text>
                           </View>
                           <View style={styles.statItem}>
                             <CheckCircle2 color="#30CFD0" size={24} />
                             <Text style={[styles.statValue, { color: "#30CFD0" }]}>{stats.completed}</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Done</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{translations.todo.done}</Text>
                           </View>
                           <View style={styles.statItem}>
                             <Circle color="#FFB84D" size={24} />
                             <Text style={[styles.statValue, { color: "#FFB84D" }]}>{stats.pending}</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Pending</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{translations.todo.pending}</Text>
                           </View>
                           <View style={styles.statItem}>
                             <TrendingUp color="#FA709A" size={24} />
                             <Text style={[styles.statValue, { color: "#FA709A" }]}>{stats.completionRate}%</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Rate</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{translations.todo.rate}</Text>
                           </View>
                         </View>
                       </View>
@@ -586,22 +596,22 @@ export default function TodoListScreen() {
                           <View style={styles.statItem}>
                             <Target color={colors.primary} size={24} />
                             <Text style={[styles.statValue, { color: colors.primary }]}>{stats.total}</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Total</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{translations.todo.total}</Text>
                           </View>
                           <View style={styles.statItem}>
                             <CheckCircle2 color="#30CFD0" size={24} />
                             <Text style={[styles.statValue, { color: "#30CFD0" }]}>{stats.completed}</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Done</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{translations.todo.done}</Text>
                           </View>
                           <View style={styles.statItem}>
                             <Circle color="#FFB84D" size={24} />
                             <Text style={[styles.statValue, { color: "#FFB84D" }]}>{stats.pending}</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Pending</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{translations.todo.pending}</Text>
                           </View>
                           <View style={styles.statItem}>
                             <TrendingUp color="#FA709A" size={24} />
                             <Text style={[styles.statValue, { color: "#FA709A" }]}>{stats.completionRate}%</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Rate</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{translations.todo.rate}</Text>
                           </View>
                         </View>
                       </View>
@@ -622,7 +632,7 @@ export default function TodoListScreen() {
                       activeOpacity={0.7}
                     >
                       <Filter color={colors.primary} size={16} />
-                      <Text style={[styles.filterText, { color: colors.primary }]}>Filters</Text>
+                      <Text style={[styles.filterText, { color: colors.primary }]}>{translations.todo.filters}</Text>
                     </TouchableOpacity>
                     
                     {(filterCategory || filterPriority || !showCompleted) && (
@@ -634,7 +644,7 @@ export default function TodoListScreen() {
                                 style={styles.activeFilterChip}
                                 onPress={() => setShowCompleted(true)}
                               >
-                                <Text style={styles.activeFilterText}>Hiding Completed</Text>
+                                <Text style={styles.activeFilterText}>{translations.todo.hidingCompleted}</Text>
                                 <X color="#FFFFFF" size={12} />
                               </TouchableOpacity>
                             )}
@@ -666,16 +676,16 @@ export default function TodoListScreen() {
               ListEmptyComponent={
                 <View style={styles.emptyState}>
                   <CheckSquare color={colors.secondary} size={64} strokeWidth={1.5} />
-                  <Text style={[styles.emptyTitle, { color: colors.primary }]}>No Todos Yet</Text>
+                  <Text style={[styles.emptyTitle, { color: colors.primary }]}>{translations.todo.noTodosYet}</Text>
                   <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-                    Start organizing your tasks by adding your first todo
+                    {translations.todo.startOrganizing}
                   </Text>
                 </View>
               }
               ListFooterComponent={
                 <View style={{ marginTop: 24 }}>
                   <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-                    Stay organized and productive
+                    {translations.todo.stayOrganized}
                   </Text>
                 </View>
               }
@@ -701,7 +711,7 @@ export default function TodoListScreen() {
           <ScrollView contentContainerStyle={styles.modalScrollContent} bounces={false}>
             <View style={[styles.modalContent, { backgroundColor: isNightMode ? "#1a0a1f" : theme.colors.cardBackground, paddingBottom: insets.bottom + 20 }]}>
               <View style={styles.modalHeader}>
-                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{editModalVisible ? "Edit Todo" : "New Todo"}</Text>
+                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{editModalVisible ? translations.todo.editTodo : translations.todo.newTodo}</Text>
                 <View style={styles.modalHeaderActions}>
                   <KeyboardDismissButton color={theme.colors.text.primary} size={20} />
                   <QuickPressable onPress={() => { setAddModalVisible(false); setEditModalVisible(false); }}>
@@ -711,10 +721,10 @@ export default function TodoListScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>Todo Title *</Text>
+                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>{translations.todo.todoTitleRequired}</Text>
                 <TextInput
                   style={[styles.textInput, { color: isNightMode ? "#FFD700" : theme.colors.text.primary, backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.1)" : theme.colors.background, borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : theme.colors.border }]}
-                  placeholder="e.g., Buy groceries"
+                  placeholder={translations.todo.enterTodoTitle}
                   placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                   value={todoTitle}
                   onChangeText={setTodoTitle}
@@ -723,10 +733,10 @@ export default function TodoListScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>Description</Text>
+                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>{translations.todo.description}</Text>
                 <TextInput
                   style={[styles.textInput, styles.textArea, { color: isNightMode ? "#FFD700" : theme.colors.text.primary, backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.1)" : theme.colors.background, borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : theme.colors.border }]}
-                  placeholder="Add details..."
+                  placeholder={translations.todo.addDetails}
                   placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                   value={todoDescription}
                   onChangeText={setTodoDescription}
@@ -736,7 +746,7 @@ export default function TodoListScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>Category</Text>
+                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>{translations.todo.category}</Text>
                 <View style={styles.categoryGrid}>
                   {(Object.keys(CATEGORY_LABELS) as TodoCategory[]).map((cat) => (
                     <TouchableOpacity
@@ -756,7 +766,7 @@ export default function TodoListScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>Priority</Text>
+                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>{translations.todo.priority}</Text>
                 <View style={styles.priorityGrid}>
                   {(Object.keys(PRIORITY_COLORS) as Priority[]).map((pri) => (
                     <TouchableOpacity
@@ -768,7 +778,7 @@ export default function TodoListScreen() {
                       onPress={() => setTodoPriority(pri)}
                     >
                       <Text style={[styles.priorityChipText, { color: todoPriority === pri ? "#FFFFFF" : theme.colors.text.secondary }, todoPriority === pri && styles.priorityChipTextActive]}>
-                        {pri.charAt(0).toUpperCase() + pri.slice(1)}
+                        {PRIORITY_LABELS[pri]}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -776,10 +786,10 @@ export default function TodoListScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>Due Date (Optional)</Text>
+                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>{translations.todo.dueDateOptional}</Text>
                 <TextInput
                   style={[styles.textInput, { color: isNightMode ? "#FFD700" : theme.colors.text.primary, backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.1)" : theme.colors.background, borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : theme.colors.border }]}
-                  placeholder="YYYY-MM-DD"
+                  placeholder={translations.todo.dueDatePlaceholder}
                   placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                   value={todoDueDate}
                   onChangeText={setTodoDueDate}
@@ -787,10 +797,10 @@ export default function TodoListScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>Tags (comma separated)</Text>
+                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>{translations.todo.tagsCommaSeparated}</Text>
                 <TextInput
                   style={[styles.textInput, { color: isNightMode ? "#FFD700" : theme.colors.text.primary, backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.1)" : theme.colors.background, borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : theme.colors.border }]}
-                  placeholder="e.g., urgent, home, weekend"
+                  placeholder={translations.todo.tagsPlaceholder}
                   placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                   value={todoTags}
                   onChangeText={setTodoTags}
@@ -802,7 +812,7 @@ export default function TodoListScreen() {
                 onPress={editModalVisible ? handleUpdateTodo : handleAddTodo}
               >
                 <LinearGradient colors={["#d946ef", "#a855f7"]} style={styles.submitButtonGradient}>
-                  <Text style={styles.submitButtonText}>{editModalVisible ? "Update Todo" : "Create Todo"}</Text>
+                  <Text style={styles.submitButtonText}>{editModalVisible ? translations.todo.updateTodo : translations.todo.createTodo}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -816,7 +826,7 @@ export default function TodoListScreen() {
             <View style={styles.modalHeader}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                 <Filter color={theme.colors.primary} size={22} />
-                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Filters</Text>
+                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{translations.todo.filters}</Text>
               </View>
               <View style={styles.modalHeaderActions}>
                 <KeyboardDismissButton color={theme.colors.text.primary} size={20} />
@@ -827,26 +837,26 @@ export default function TodoListScreen() {
             </View>
 
             <View style={styles.settingsGroup}>
-              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>Visibility</Text>
+              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>{translations.todo.visibility}</Text>
               <TouchableOpacity
                 style={[styles.toggleOption, { backgroundColor: showCompleted ? theme.colors.primary : (isNightMode ? "rgba(255, 215, 0, 0.1)" : theme.colors.background) }]}
                 onPress={() => setShowCompleted(!showCompleted)}
               >
                 <Text style={[styles.toggleOptionText, { color: showCompleted ? "#FFFFFF" : theme.colors.text.secondary }]}>
-                  Show Completed Tasks
+                  {translations.todo.showCompletedTasks}
                 </Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.settingsGroup}>
-              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>Filter by Category</Text>
+              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>{translations.todo.filterByCategory}</Text>
               <View style={styles.categoryGrid}>
                 <TouchableOpacity
                   style={[styles.categoryChip, !filterCategory && { backgroundColor: theme.colors.primary }]}
                   onPress={() => setFilterCategory(null)}
                 >
                   <Text style={[styles.categoryChipText, { color: !filterCategory ? "#FFFFFF" : theme.colors.text.secondary }, !filterCategory && styles.categoryChipTextActive]}>
-                    All
+                    {translations.todo.all}
                   </Text>
                 </TouchableOpacity>
                 {(Object.keys(CATEGORY_LABELS) as TodoCategory[]).map((cat) => (
@@ -867,14 +877,14 @@ export default function TodoListScreen() {
             </View>
 
             <View style={styles.settingsGroup}>
-              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>Filter by Priority</Text>
+              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>{translations.todo.filterByPriority}</Text>
               <View style={styles.priorityGrid}>
                 <TouchableOpacity
                   style={[styles.priorityChip, !filterPriority && { backgroundColor: theme.colors.primary }]}
                   onPress={() => setFilterPriority(null)}
                 >
                   <Text style={[styles.priorityChipText, { color: !filterPriority ? "#FFFFFF" : theme.colors.text.secondary }, !filterPriority && styles.priorityChipTextActive]}>
-                    All
+                    {translations.todo.all}
                   </Text>
                 </TouchableOpacity>
                 {(Object.keys(PRIORITY_COLORS) as Priority[]).map((pri) => (
@@ -887,7 +897,7 @@ export default function TodoListScreen() {
                     onPress={() => setFilterPriority(pri)}
                   >
                     <Text style={[styles.priorityChipText, { color: filterPriority === pri ? "#FFFFFF" : theme.colors.text.secondary }, filterPriority === pri && styles.priorityChipTextActive]}>
-                      {pri.charAt(0).toUpperCase() + pri.slice(1)}
+                      {PRIORITY_LABELS[pri]}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -899,7 +909,7 @@ export default function TodoListScreen() {
               onPress={() => setSettingsModalVisible(false)}
             >
               <LinearGradient colors={["#d946ef", "#a855f7"]} style={styles.closeSettingsButtonGradient}>
-                <Text style={styles.closeSettingsButtonText}>Done</Text>
+                <Text style={styles.closeSettingsButtonText}>{translations.common.done}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
