@@ -16,7 +16,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Brain, Play, Lock, Star, Clock, Users, TrendingUp, Award, BookOpen, Target, Zap, ArrowLeft, X, Plus, Edit3, Check, Camera, Image as ImageIcon, Upload, Hourglass } from "lucide-react-native";
+import { Brain, Play, Lock, Star, Clock, Users, TrendingUp, Award, BookOpen, Target, Zap, ArrowLeft, X, Plus, Edit3, Check, Camera, Image as ImageIcon, Upload, Hourglass, Link, Globe } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { Video, ResizeMode, Audio } from "expo-av";
@@ -42,6 +42,8 @@ type VideoItem = {
   description?: string;
   previewType?: 'still' | 'loop' | 'custom';
   customThumbnail?: string;
+  isUrlVideo?: boolean;
+  originalUrl?: string;
 };
 
 type CourseCategory = {
@@ -69,6 +71,11 @@ export default function LearnScreen() {
   const [isSaving, setIsSaving] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(true);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [showUrlModal, setShowUrlModal] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const [urlTitle, setUrlTitle] = useState("");
+  const [urlDescription, setUrlDescription] = useState("");
+  const [urlCategoryId, setUrlCategoryId] = useState<string | null>(null);
   
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const sandFallAnim = useRef(new Animated.Value(0)).current;
@@ -605,6 +612,94 @@ export default function LearnScreen() {
     }
   };
 
+  const convertGoogleDriveUrl = (url: string): string => {
+    // Handle various Google Drive URL formats
+    // Format 1: https://drive.google.com/file/d/FILE_ID/view
+    // Format 2: https://drive.google.com/open?id=FILE_ID
+    // Format 3: https://drive.google.com/uc?id=FILE_ID
+    // Format 4: https://drive.google.com/uc?export=download&id=FILE_ID
+    
+    let fileId = '';
+    
+    // Try to extract file ID from /d/ format
+    const dMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (dMatch) {
+      fileId = dMatch[1];
+    }
+    
+    // Try to extract from id= parameter
+    if (!fileId) {
+      const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (idMatch) {
+        fileId = idMatch[1];
+      }
+    }
+    
+    if (fileId) {
+      // Return direct download URL
+      return `https://drive.google.com/uc?export=download&id=${fileId}`;
+    }
+    
+    // If not a Google Drive URL, return as is
+    return url;
+  };
+
+  const handleOpenUrlModal = (categoryId: string) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    setUrlCategoryId(categoryId);
+    setUrlInput("");
+    setUrlTitle("");
+    setUrlDescription("");
+    setShowUrlModal(true);
+  };
+
+  const handleAddUrlVideo = async () => {
+    if (!urlCategoryId || !urlInput.trim()) {
+      Alert.alert("Error", "Please enter a valid URL");
+      return;
+    }
+
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+
+    setIsSaving(true);
+
+    try {
+      const videoIdForSave = `url_video_${Date.now()}`;
+      const processedUrl = convertGoogleDriveUrl(urlInput.trim());
+      
+      const newVideo: VideoItem = {
+        id: videoIdForSave,
+        title: urlTitle.trim() || "Video from URL",
+        duration: "--:--",
+        thumbnail: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80",
+        videoUrl: processedUrl,
+        isLocked: false,
+        description: urlDescription.trim() || "Video added from URL",
+        isUrlVideo: true,
+        originalUrl: urlInput.trim(),
+      };
+
+      await addVideo(urlCategoryId, newVideo);
+      
+      setShowUrlModal(false);
+      setUrlInput("");
+      setUrlTitle("");
+      setUrlDescription("");
+      setUrlCategoryId(null);
+      
+      Alert.alert("Success", "Video added from URL!");
+    } catch (error) {
+      console.error("Error adding URL video:", error);
+      Alert.alert("Error", "Failed to add video. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleBack = () => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -1040,34 +1135,65 @@ export default function LearnScreen() {
                     </View>
                   </View>
                 ))}
-                <TouchableOpacity
-                  style={[styles.addVideoButton, {
-                    backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.1)" : "rgba(199, 21, 133, 0.1)",
-                    borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
-                  }]}
-                  onPress={() => handlePickVideo(selectedCategory.id)}
-                  activeOpacity={0.8}
-                >
-                  <LinearGradient
-                    colors={isNightMode 
-                      ? ["rgba(255, 215, 0, 0.15)", "rgba(255, 20, 147, 0.15)"]
-                      : ["rgba(199, 21, 133, 0.15)", "rgba(157, 78, 221, 0.15)"]
-                    }
-                    style={styles.addVideoGradient}
+                <View style={styles.addVideoOptionsRow}>
+                  <TouchableOpacity
+                    style={[styles.addVideoButton, styles.addVideoButtonHalf, {
+                      backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.1)" : "rgba(199, 21, 133, 0.1)",
+                      borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                    }]}
+                    onPress={() => handlePickVideo(selectedCategory.id)}
+                    activeOpacity={0.8}
                   >
-                    <View style={[styles.addVideoIconContainer, {
-                      backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.2)" : "rgba(199, 21, 133, 0.2)",
-                    }]}>
-                      <Plus color={isNightMode ? "#FFD700" : "#C71585"} size={28} strokeWidth={3} />
-                    </View>
-                    <Text style={[styles.addVideoTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
-                      Add Video
-                    </Text>
-                    <Text style={[styles.addVideoSubtitle, { color: isNightMode ? "#888888" : theme.colors.text.secondary }]}>
-                      Upload a new video to this category
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
+                    <LinearGradient
+                      colors={isNightMode 
+                        ? ["rgba(255, 215, 0, 0.15)", "rgba(255, 20, 147, 0.15)"]
+                        : ["rgba(199, 21, 133, 0.15)", "rgba(157, 78, 221, 0.15)"]
+                      }
+                      style={styles.addVideoGradient}
+                    >
+                      <View style={[styles.addVideoIconContainer, {
+                        backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.2)" : "rgba(199, 21, 133, 0.2)",
+                      }]}>
+                        <Upload color={isNightMode ? "#FFD700" : "#C71585"} size={24} strokeWidth={2.5} />
+                      </View>
+                      <Text style={[styles.addVideoTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                        Upload File
+                      </Text>
+                      <Text style={[styles.addVideoSubtitle, { color: isNightMode ? "#888888" : theme.colors.text.secondary }]}>
+                        From device
+                      </Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.addVideoButton, styles.addVideoButtonHalf, {
+                      backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.1)" : "rgba(199, 21, 133, 0.1)",
+                      borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                    }]}
+                    onPress={() => handleOpenUrlModal(selectedCategory.id)}
+                    activeOpacity={0.8}
+                  >
+                    <LinearGradient
+                      colors={isNightMode 
+                        ? ["rgba(255, 215, 0, 0.15)", "rgba(255, 20, 147, 0.15)"]
+                        : ["rgba(199, 21, 133, 0.15)", "rgba(157, 78, 221, 0.15)"]
+                      }
+                      style={styles.addVideoGradient}
+                    >
+                      <View style={[styles.addVideoIconContainer, {
+                        backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.2)" : "rgba(199, 21, 133, 0.2)",
+                      }]}>
+                        <Link color={isNightMode ? "#FFD700" : "#C71585"} size={24} strokeWidth={2.5} />
+                      </View>
+                      <Text style={[styles.addVideoTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                        Add URL
+                      </Text>
+                      <Text style={[styles.addVideoSubtitle, { color: isNightMode ? "#888888" : theme.colors.text.secondary }]}>
+                        Google Drive link
+                      </Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
               </View>
             </ScrollView>
           </View>
@@ -1397,6 +1523,138 @@ export default function LearnScreen() {
                       Save Settings
                     </Text>
                   </TouchableOpacity>
+                </View>
+              </LinearGradient>
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {showUrlModal && (
+        <Modal
+          visible={true}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowUrlModal(false)}
+        >
+          <View style={styles.editModalOverlay}>
+            <View style={[styles.editModalContent, {
+              backgroundColor: isNightMode ? "#1a0a1f" : "#FFFFFF",
+            }]}>
+              <LinearGradient
+                colors={isNightMode 
+                  ? ["rgba(80, 40, 100, 0.95)", "rgba(60, 20, 80, 0.95)"]
+                  : [theme.colors.primary + "15", theme.colors.secondary + "15"]
+                }
+                style={styles.editModalGradient}
+              >
+                <View style={styles.editModalHeader}>
+                  <View style={styles.urlModalTitleRow}>
+                    <Globe color={isNightMode ? "#FFD700" : "#C71585"} size={24} strokeWidth={2.5} />
+                    <Text style={[styles.editModalTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                      Add Video from URL
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => setShowUrlModal(false)}
+                    style={styles.editModalCloseButton}
+                    activeOpacity={0.7}
+                  >
+                    <X color={isNightMode ? "#FFD700" : "#C71585"} size={24} strokeWidth={2.5} />
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.editModalForm}>
+                  <View style={styles.editInputGroup}>
+                    <Text style={[styles.editInputLabel, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                      Video URL *
+                    </Text>
+                    <TextInput
+                      value={urlInput}
+                      onChangeText={setUrlInput}
+                      style={[styles.editInput, {
+                        backgroundColor: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+                        borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                        color: isNightMode ? "#FFFFFF" : theme.colors.text.primary,
+                      }]}
+                      placeholder="https://drive.google.com/file/d/..."
+                      placeholderTextColor={isNightMode ? "#888888" : "#999999"}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      keyboardType="url"
+                    />
+                    <Text style={[styles.urlHint, { color: isNightMode ? "#888888" : "#999999" }]}>
+                      Supports Google Drive share links
+                    </Text>
+                  </View>
+
+                  <View style={styles.editInputGroup}>
+                    <Text style={[styles.editInputLabel, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                      Title
+                    </Text>
+                    <TextInput
+                      value={urlTitle}
+                      onChangeText={setUrlTitle}
+                      style={[styles.editInput, {
+                        backgroundColor: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+                        borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                        color: isNightMode ? "#FFFFFF" : theme.colors.text.primary,
+                      }]}
+                      placeholder="Enter video title"
+                      placeholderTextColor={isNightMode ? "#888888" : "#999999"}
+                      maxLength={100}
+                    />
+                  </View>
+
+                  <View style={styles.editInputGroup}>
+                    <Text style={[styles.editInputLabel, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                      Description
+                    </Text>
+                    <TextInput
+                      value={urlDescription}
+                      onChangeText={setUrlDescription}
+                      style={[styles.editTextArea, {
+                        backgroundColor: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+                        borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                        color: isNightMode ? "#FFFFFF" : theme.colors.text.primary,
+                      }]}
+                      placeholder="Enter video description"
+                      placeholderTextColor={isNightMode ? "#888888" : "#999999"}
+                      multiline
+                      numberOfLines={3}
+                      maxLength={200}
+                      textAlignVertical="top"
+                    />
+                  </View>
+
+                  <View style={styles.editModalButtons}>
+                    <TouchableOpacity
+                      style={[styles.editModalButton, styles.editModalCancelButton, {
+                        borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                      }]}
+                      onPress={() => setShowUrlModal(false)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.editModalButtonText, { color: isNightMode ? "#FFD700" : "#C71585" }]}>
+                        Cancel
+                      </Text>
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity
+                      style={[styles.editModalButton, {
+                        backgroundColor: isNightMode ? "#FFD700" : "#C71585",
+                        opacity: urlInput.trim() ? 1 : 0.5,
+                      }]}
+                      onPress={handleAddUrlVideo}
+                      activeOpacity={0.7}
+                      disabled={!urlInput.trim()}
+                    >
+                      <Plus color={isNightMode ? "#000000" : "#FFFFFF"} size={20} strokeWidth={2.5} />
+                      <Text style={[styles.editModalButtonText, { color: isNightMode ? "#000000" : "#FFFFFF" }]}>
+                        Add Video
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </LinearGradient>
             </View>
@@ -1995,6 +2253,26 @@ const styles = StyleSheet.create({
     flexDirection: "row" as const,
     gap: 8,
     flex: 1,
+  },
+  addVideoOptionsRow: {
+    flexDirection: "row" as const,
+    gap: 12,
+    marginTop: 8,
+  },
+  addVideoButtonHalf: {
+    flex: 1,
+    marginTop: 0,
+  },
+  urlModalTitleRow: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 10,
+  },
+  urlHint: {
+    fontSize: 12,
+    fontWeight: "500" as const,
+    marginTop: 4,
+    marginLeft: 4,
   },
   editModalOverlay: {
     flex: 1,

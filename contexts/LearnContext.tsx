@@ -13,6 +13,8 @@ type VideoItem = {
   description?: string;
   previewType?: 'still' | 'loop' | 'custom';
   customThumbnail?: string;
+  isUrlVideo?: boolean;
+  originalUrl?: string;
 };
 
 type CourseCategory = {
