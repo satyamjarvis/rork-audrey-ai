@@ -27,6 +27,8 @@ import { Stack, useRouter } from "expo-router";
 
 import { useAffirmations } from "@/contexts/AffirmationsContext";
 
+import { useTranslation } from "@/contexts/LanguageContext";
+
 const { width } = Dimensions.get("window");
 
 type AffirmationEntry = {
@@ -37,6 +39,10 @@ type AffirmationEntry = {
 
 export default function MorningAffirmationsScreen() {
   const router = useRouter();
+  const { translations } = useTranslation();
+  const t = translations.morning.affirmationsPage;
+  const common = translations.common;
+  
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -68,17 +74,12 @@ export default function MorningAffirmationsScreen() {
     });
   }, []);
 
-  const [affirmationQuote] = useState(() => {
-    const quotes = [
-      "Today is full of endless possibilities.",
-      "I am powerful, confident, and capable.",
-      "Every morning is a new beginning.",
-      "I radiate positivity and light.",
-      "I am grateful for this beautiful day.",
-      "My potential is limitless.",
-    ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
+  const [quoteKey] = useState(() => {
+    const keys = ["1", "2", "3", "4", "5", "6"] as const;
+    return keys[Math.floor(Math.random() * keys.length)];
   });
+  
+  const affirmationQuote = t.quotes[quoteKey as keyof typeof t.quotes];
 
   const sunRayPositions = useMemo(() => {
     return Array.from({ length: 25 }, () => ({
@@ -312,7 +313,7 @@ export default function MorningAffirmationsScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>Morning Affirmations</Text>
+                  <Text style={styles.headerTitle}>{t.title}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -335,7 +336,7 @@ export default function MorningAffirmationsScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#FF8C42" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Inspiration</Text>
+                      <Text style={styles.quoteLabel}>{t.todaysInspiration}</Text>
                     </View>
                     <Text style={styles.quoteText}>{affirmationQuote}</Text>
                   </View>
@@ -345,7 +346,7 @@ export default function MorningAffirmationsScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#FF8C42" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Inspiration</Text>
+                      <Text style={styles.quoteLabel}>{t.todaysInspiration}</Text>
                     </View>
                     <Text style={styles.quoteText}>{affirmationQuote}</Text>
                   </View>
@@ -353,9 +354,9 @@ export default function MorningAffirmationsScreen() {
               )}
 
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Empower Your Day</Text>
+                <Text style={styles.sectionTitle}>{t.empowerYourDay}</Text>
                 <Text style={styles.sectionSubtitle}>
-                  What affirmations will guide you today?
+                  {t.whatAffirmations}
                 </Text>
               </View>
             </Animated.View>
@@ -373,7 +374,7 @@ export default function MorningAffirmationsScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Plus color="#FFFFFF" size={24} strokeWidth={2.5} />
-                  <Text style={styles.addButtonText}>Add Affirmation</Text>
+                  <Text style={styles.addButtonText}>{t.addAffirmation}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             )}
@@ -384,7 +385,7 @@ export default function MorningAffirmationsScreen() {
                   <View style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="I am..."
+                      placeholder={t.inputPlaceholder}
                       placeholderTextColor="rgba(102, 81, 45, 0.5)"
                       value={newEntry}
                       onChangeText={setNewEntry}
@@ -400,7 +401,7 @@ export default function MorningAffirmationsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{common.cancel}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -411,7 +412,7 @@ export default function MorningAffirmationsScreen() {
                           colors={["#FF8C42", "#FFA500"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{common.save}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -420,7 +421,7 @@ export default function MorningAffirmationsScreen() {
                   <BlurView intensity={15} tint="light" style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="I am..."
+                      placeholder={t.inputPlaceholder}
                       placeholderTextColor="rgba(102, 81, 45, 0.5)"
                       value={newEntry}
                       onChangeText={setNewEntry}
@@ -436,7 +437,7 @@ export default function MorningAffirmationsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{common.cancel}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -447,7 +448,7 @@ export default function MorningAffirmationsScreen() {
                           colors={["#FF8C42", "#FFA500"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{common.save}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -541,10 +542,10 @@ export default function MorningAffirmationsScreen() {
                     fillOpacity={0.3}
                   />
                   <Text style={styles.emptyStateText}>
-                    Start your empowering journey
+                    {t.startJourney}
                   </Text>
                   <Text style={styles.emptyStateSubtext}>
-                    Tap &ldquo;Add Affirmation&rdquo; to begin
+                    {t.tapToAdd}
                   </Text>
                 </View>
               )}
@@ -552,7 +553,7 @@ export default function MorningAffirmationsScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Positive affirmations create powerful transformations
+                {t.footer}
               </Text>
             </Animated.View>
           </ScrollView>

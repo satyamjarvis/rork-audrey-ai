@@ -156,6 +156,25 @@
     "wellnessCheck": "Wellness Check",
     "tuneIntoYourEnergy": "Tune into your energy",
     "embraceTheLight": "Embrace the light. Own your day.",
+    "affirmationsPage": {
+      "title": "Morning Affirmations",
+      "todaysInspiration": "Today's Inspiration",
+      "empowerYourDay": "Empower Your Day",
+      "whatAffirmations": "What affirmations will guide you today?",
+      "addAffirmation": "Add Affirmation",
+      "startJourney": "Start your empowering journey",
+      "tapToAdd": "Tap \"Add Affirmation\" to begin",
+      "footer": "Positive affirmations create powerful transformations",
+      "inputPlaceholder": "I am...",
+      "quotes": {
+        "1": "Today is full of endless possibilities.",
+        "2": "I am powerful, confident, and capable.",
+        "3": "Every morning is a new beginning.",
+        "4": "I radiate positivity and light.",
+        "5": "I am grateful for this beautiful day.",
+        "6": "My potential is limitless."
+      }
+    },
     "meditationPage": {
       "title": "Morning Meditation",
       "todaysReminder": "Today's Reminder",
