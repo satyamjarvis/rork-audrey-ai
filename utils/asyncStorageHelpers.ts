@@ -3,6 +3,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const DEFAULT_TIMEOUT = 10000;
 const MAX_RETRIES = 3;
 
+function isValidBase64(str: string): boolean {
+  if (!str || str.length === 0) return false;
+  const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+  return base64Regex.test(str) && str.length % 4 === 0;
+}
+
 export function isValidJSON(str: string | null): boolean {
   if (!str || str.trim() === '' || str === 'undefined' || str === 'null') {
     return false;
@@ -27,7 +33,7 @@ export function isValidJSON(str: string | null): boolean {
       trimmed.startsWith('object') || 
       trimmed === 'object' || 
       /^object\s*Object/.test(trimmed) ||
-      trimmed.startsWith('o') && trimmed.length < 10) {
+      (trimmed.startsWith('o') && trimmed.length < 10)) {
     console.error('[AsyncStorage] Detected object stringification issue:', trimmed.substring(0, 50));
     return false;
   }
@@ -38,35 +44,33 @@ export function isValidJSON(str: string | null): boolean {
     return false;
   }
   
-  // Check for hex strings that look like numbers but aren't valid JSON numbers
-  // Valid JSON number: -?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?
-  // If it starts with a digit but has letters other than e/E, it's corrupted (likely a hash)
-  if (/^[0-9]/.test(trimmed) && /[a-zA-Z]/.test(trimmed) && !/^-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?$/.test(trimmed)) {
-    console.error('[AsyncStorage] Detected invalid number format (likely hex/hash):', trimmed.substring(0, 50));
-    return false;
-  }
-  
   // Check for other common non-JSON strings
   if (trimmed === 'NaN' || trimmed === 'Infinity' || trimmed === '-Infinity') {
     return false;
   }
   
-  // Check if it starts with a lowercase letter followed by non-JSON chars (like "object")
-  if (/^[a-z]/.test(trimmed) && !trimmed.startsWith('true') && !trimmed.startsWith('false') && !trimmed.startsWith('null')) {
-    console.error('[AsyncStorage] Detected non-JSON string starting with lowercase:', trimmed.substring(0, 50));
-    return false;
-  }
-  
-  // Must start with valid JSON characters
+  // Must start with valid JSON characters OR be valid base64 (encrypted data)
   const firstChar = trimmed[0];
-  if (!firstChar || (firstChar !== '{' && firstChar !== '[' && firstChar !== '"' && !/[0-9\-tf]/.test(firstChar))) {
+  const isJsonStart = firstChar === '{' || firstChar === '[' || firstChar === '"' || /[0-9\-tf]/.test(firstChar);
+  
+  if (!isJsonStart) {
+    // Check if it's valid base64 (encrypted data)
+    if (isValidBase64(trimmed)) {
+      console.log('[AsyncStorage] Detected valid base64 encoded data');
+      return true;
+    }
     console.error('[AsyncStorage] Invalid first character:', firstChar, 'Full:', trimmed.substring(0, 50));
     return false;
   }
   
   // Additional check: valid JSON must also end with proper characters
   const lastChar = trimmed[trimmed.length - 1];
-  if (!lastChar || (lastChar !== '}' && lastChar !== ']' && lastChar !== '"' && !/[0-9esE]/.test(lastChar))) {
+  if (!lastChar || (lastChar !== '}' && lastChar !== ']' && lastChar !== '"' && lastChar !== '=' && !/[0-9esE]/.test(lastChar))) {
+    // Check if it might be valid base64 ending with padding
+    if (isValidBase64(trimmed)) {
+      console.log('[AsyncStorage] Detected valid base64 encoded data');
+      return true;
+    }
     console.error('[AsyncStorage] Invalid last character:', lastChar, 'Full:', trimmed.substring(0, 50));
     return false;
   }
@@ -75,6 +79,11 @@ export function isValidJSON(str: string | null): boolean {
     JSON.parse(str);
     return true;
   } catch (e: any) {
+    // JSON parse failed, but check if it's valid base64 (encrypted data)
+    if (isValidBase64(trimmed)) {
+      console.log('[AsyncStorage] Not valid JSON but valid base64, likely encrypted data');
+      return true;
+    }
     console.error('[AsyncStorage] JSON.parse failed:', e?.message || e, 'Data preview:', trimmed.substring(0, 100).replace(/[\x00-\x1F\x80-\xFF]/g, '?'));
     return false;
   }
@@ -201,8 +210,15 @@ export async function clearCorruptedKeys(): Promise<void> {
       try {
         const value = await AsyncStorage.getItem(key);
         if (value) {
-          // Check for various corruption patterns
           const trimmedValue = value.trim();
+          
+          // Skip if it's valid base64 (encrypted data)
+          if (isValidBase64(trimmedValue)) {
+            console.log(`[AsyncStorage] Key ${key} is valid base64 (encrypted), skipping`);
+            continue;
+          }
+          
+          // Check for various corruption patterns
           const isCorrupted = 
             // Check for binary data and question mark corruption
             (/[\x00-\x08\x0B\x0C\x0E-\x1F\x80-\xFF]/.test(value) || value.includes('�') || 
@@ -218,9 +234,7 @@ export async function clearCorruptedKeys(): Promise<void> {
             (trimmedValue.startsWith('o') && trimmedValue.length < 10) ||
             // Check for SHA256 hash
             /^[a-f0-9]{64}$/i.test(trimmedValue) ||
-            // Check if starts with lowercase letter (like "object") but not json keywords
-            (/^[a-z]/.test(trimmedValue) && !trimmedValue.startsWith('true') && !trimmedValue.startsWith('false') && !trimmedValue.startsWith('null')) ||
-            // Check for strings that are too short to be valid JSON
+            // Check for strings that are too short to be valid JSON or base64
             (trimmedValue.length > 0 && trimmedValue.length < 2 && trimmedValue !== '0' && trimmedValue !== '1') ||
             // Check for empty or EOF
             (trimmedValue === '');

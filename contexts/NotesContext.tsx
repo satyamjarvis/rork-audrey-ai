@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import createContextHook from "@nkzw/create-context-hook";
-import { isValidJSON } from "@/utils/asyncStorageHelpers";
 import { encrypt, decrypt } from "@/utils/encryption";
 
 export type DrawingStroke = {
@@ -40,23 +39,28 @@ export const [NotesProvider, useNotes] = createContextHook(() => {
       setIsLoading(true);
       const notesData = await AsyncStorage.getItem(NOTES_KEY);
       
-      if (notesData) {
-        if (!isValidJSON(notesData)) {
-          console.log("Invalid or empty notes data, initializing fresh");
-          await AsyncStorage.removeItem(NOTES_KEY);
-          setNotes([]);
-          return;
-        }
-        
+      if (notesData && notesData.trim()) {
         try {
           let parsedNotes;
+          
+          // First try to decrypt (handles base64 encoded data)
           try {
             const decryptedData = await decrypt(notesData);
             parsedNotes = JSON.parse(decryptedData);
             console.log("🔓 Notes decrypted successfully");
-          } catch {
-            parsedNotes = JSON.parse(notesData);
-            console.log("⚠️ Loaded unencrypted notes, will encrypt on next save");
+          } catch (decryptError) {
+            // Decryption failed, try to parse as plain JSON
+            try {
+              parsedNotes = JSON.parse(notesData);
+              console.log("⚠️ Loaded unencrypted notes, will encrypt on next save");
+            } catch {
+              // Both decryption and JSON parse failed - data is corrupted
+              console.error("Failed to decrypt or parse notes data:", decryptError);
+              console.error("Data preview:", notesData.substring(0, 100));
+              await AsyncStorage.removeItem(NOTES_KEY);
+              setNotes([]);
+              return;
+            }
           }
           
           if (!Array.isArray(parsedNotes)) {
