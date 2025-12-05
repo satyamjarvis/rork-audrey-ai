@@ -26,6 +26,7 @@ import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { useMeditation, MeditationType } from "@/contexts/MeditationContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -48,6 +49,7 @@ const meditationTypeColors: Record<MeditationType, [string, string]> = {
 export default function MorningMeditationScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { translate } = useLanguage();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const sunPulse = useRef(new Animated.Value(1)).current;
@@ -77,17 +79,24 @@ export default function MorningMeditationScreen() {
     });
   }, []);
 
-  const [meditationQuote] = useState(() => {
-    const quotes = [
-      "Begin each day with a grateful heart and peaceful mind.",
-      "Breathe in calm, breathe out stress.",
-      "Your morning sets the tone for your entire day.",
-      "Find peace within, and radiate light outward.",
-      "Each breath is a new beginning.",
-      "Awaken your spirit with mindful presence.",
-    ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
-  });
+  const meditationQuote = useMemo(() => {
+    const quoteIndex = Math.floor(Math.random() * 6) + 1;
+    const key = `morning.meditationPage.quotes.${quoteIndex}`;
+    const translated = translate(key);
+    // Fallback if translation returns key (though we just added them)
+    if (translated === key) {
+        const fallbacks = [
+            "Begin each day with a grateful heart and peaceful mind.",
+            "Breathe in calm, breathe out stress.",
+            "Your morning sets the tone for your entire day.",
+            "Find peace within, and radiate light outward.",
+            "Each breath is a new beginning.",
+            "Awaken your spirit with mindful presence.",
+        ];
+        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    }
+    return translated;
+  }, [translate]);
 
   const filteredMeditations = useMemo(() => {
     if (selectedFilter === "all") return meditations;
@@ -356,7 +365,7 @@ export default function MorningMeditationScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>Morning Meditation</Text>
+                  <Text style={styles.headerTitle}>{translate('morning.meditationPage.title')}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -379,7 +388,7 @@ export default function MorningMeditationScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#f59e0b" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Reminder</Text>
+                      <Text style={styles.quoteLabel}>{translate('morning.meditationPage.todaysReminder')}</Text>
                     </View>
                     <Text style={styles.quoteText}>{meditationQuote}</Text>
                   </View>
@@ -389,7 +398,7 @@ export default function MorningMeditationScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#f59e0b" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Reminder</Text>
+                      <Text style={styles.quoteLabel}>{translate('morning.meditationPage.todaysReminder')}</Text>
                     </View>
                     <Text style={styles.quoteText}>{meditationQuote}</Text>
                   </View>
@@ -399,18 +408,18 @@ export default function MorningMeditationScreen() {
               <View style={styles.statsRow}>
                 <View style={styles.statCard}>
                   <Text style={styles.statValue}>{totalMinutesToday}</Text>
-                  <Text style={styles.statLabel}>Minutes Today</Text>
+                  <Text style={styles.statLabel}>{translate('morning.meditationPage.minutesToday')}</Text>
                 </View>
                 <View style={styles.statCard}>
                   <Text style={styles.statValue}>{completedToday.length}</Text>
-                  <Text style={styles.statLabel}>Sessions</Text>
+                  <Text style={styles.statLabel}>{translate('morning.meditationPage.sessions')}</Text>
                 </View>
               </View>
 
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Guided Meditations</Text>
+                <Text style={styles.sectionTitle}>{translate('morning.meditationPage.guidedMeditations')}</Text>
                 <Text style={styles.sectionSubtitle}>
-                  Choose a meditation to start your day
+                  {translate('morning.meditationPage.chooseMeditation')}
                 </Text>
               </View>
             </Animated.View>
@@ -435,7 +444,7 @@ export default function MorningMeditationScreen() {
                     selectedFilter === "all" && styles.filterButtonTextActive,
                   ]}
                 >
-                  All
+                  {translate('morning.meditationPage.filters.all')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -452,7 +461,7 @@ export default function MorningMeditationScreen() {
                     selectedFilter === "breathing" && styles.filterButtonTextActive,
                   ]}
                 >
-                  Breathing
+                  {translate('morning.meditationPage.filters.breathing')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -469,7 +478,7 @@ export default function MorningMeditationScreen() {
                     selectedFilter === "body-scan" && styles.filterButtonTextActive,
                   ]}
                 >
-                  Body Scan
+                  {translate('morning.meditationPage.filters.bodyScan')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -486,7 +495,7 @@ export default function MorningMeditationScreen() {
                     selectedFilter === "visualization" && styles.filterButtonTextActive,
                   ]}
                 >
-                  Visualization
+                  {translate('morning.meditationPage.filters.visualization')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -503,7 +512,7 @@ export default function MorningMeditationScreen() {
                     selectedFilter === "mindfulness" && styles.filterButtonTextActive,
                   ]}
                 >
-                  Mindfulness
+                  {translate('morning.meditationPage.filters.mindfulness')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -520,7 +529,7 @@ export default function MorningMeditationScreen() {
                     selectedFilter === "loving-kindness" && styles.filterButtonTextActive,
                   ]}
                 >
-                  Loving-Kindness
+                  {translate('morning.meditationPage.filters.lovingKindness')}
                 </Text>
               </TouchableOpacity>
             </ScrollView>
@@ -530,6 +539,12 @@ export default function MorningMeditationScreen() {
                 const IconComponent = meditationTypeIcons[meditation.type];
                 const isCompleted = completedToday.includes(meditation.id);
                 const isPlaying = playingMeditationId === meditation.id;
+                
+                // Dynamic translation for meditation content
+                const titleKey = `morning.meditations.${meditation.id}.title`;
+                const descriptionKey = `morning.meditations.${meditation.id}.description`;
+                const title = translate(titleKey) !== titleKey ? translate(titleKey) : meditation.title;
+                const description = translate(descriptionKey) !== descriptionKey ? translate(descriptionKey) : meditation.description;
 
                 return (
                   <Animated.View key={meditation.id} style={styles.meditationCard}>
@@ -556,9 +571,9 @@ export default function MorningMeditationScreen() {
                             />
                           </TouchableOpacity>
                         </View>
-                        <Text style={styles.meditationTitle}>{meditation.title}</Text>
+                        <Text style={styles.meditationTitle}>{title}</Text>
                         <Text style={styles.meditationDescription}>
-                          {meditation.description}
+                          {description}
                         </Text>
                         <View style={styles.meditationFooter}>
                           <View style={styles.meditationDuration}>
@@ -585,7 +600,7 @@ export default function MorningMeditationScreen() {
                                 <Play color="#FFFFFF" size={18} strokeWidth={2.5} />
                               )}
                               <Text style={styles.startButtonText}>
-                                {isCompleted ? "Completed" : isPlaying ? "Playing" : "Start"}
+                                {isCompleted ? translate('morning.meditationPage.actions.completed') : isPlaying ? translate('morning.meditationPage.actions.playing') : translate('morning.meditationPage.actions.start')}
                               </Text>
                             </LinearGradient>
                           </TouchableOpacity>
@@ -614,9 +629,9 @@ export default function MorningMeditationScreen() {
                             />
                           </TouchableOpacity>
                         </View>
-                        <Text style={styles.meditationTitle}>{meditation.title}</Text>
+                        <Text style={styles.meditationTitle}>{title}</Text>
                         <Text style={styles.meditationDescription}>
-                          {meditation.description}
+                          {description}
                         </Text>
                         <View style={styles.meditationFooter}>
                           <View style={styles.meditationDuration}>
@@ -643,7 +658,7 @@ export default function MorningMeditationScreen() {
                                 <Play color="#FFFFFF" size={18} strokeWidth={2.5} />
                               )}
                               <Text style={styles.startButtonText}>
-                                {isCompleted ? "Completed" : isPlaying ? "Playing" : "Start"}
+                                {isCompleted ? translate('morning.meditationPage.actions.completed') : isPlaying ? translate('morning.meditationPage.actions.playing') : translate('morning.meditationPage.actions.start')}
                               </Text>
                             </LinearGradient>
                           </TouchableOpacity>
@@ -664,10 +679,10 @@ export default function MorningMeditationScreen() {
                     fillOpacity={0.1}
                   />
                   <Text style={styles.emptyStateText}>
-                    No meditations found
+                    {translate('morning.meditationPage.noMeditationsFound')}
                   </Text>
                   <Text style={styles.emptyStateSubtext}>
-                    Try a different filter
+                    {translate('morning.meditationPage.tryDifferentFilter')}
                   </Text>
                 </View>
               )}
@@ -675,7 +690,7 @@ export default function MorningMeditationScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Begin each day with mindfulness and intention
+                {translate('morning.meditationPage.footer')}
               </Text>
             </Animated.View>
           </ScrollView>
@@ -912,6 +927,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
+    paddingRight: 8,
   },
   meditationDurationText: {
     fontSize: 14,

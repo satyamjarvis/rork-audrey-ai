@@ -156,6 +156,84 @@
     "wellnessCheck": "Wellness Check",
     "tuneIntoYourEnergy": "Tune into your energy",
     "embraceTheLight": "Embrace the light. Own your day.",
+    "meditationPage": {
+      "title": "Morning Meditation",
+      "todaysReminder": "Today's Reminder",
+      "minutesToday": "Minutes Today",
+      "sessions": "Sessions",
+      "guidedMeditations": "Guided Meditations",
+      "chooseMeditation": "Choose a meditation to start your day",
+      "noMeditationsFound": "No meditations found",
+      "tryDifferentFilter": "Try a different filter",
+      "footer": "Begin each day with mindfulness and intention",
+      "filters": {
+        "all": "All",
+        "breathing": "Breathing",
+        "bodyScan": "Body Scan",
+        "visualization": "Visualization",
+        "mindfulness": "Mindfulness",
+        "lovingKindness": "Loving-Kindness"
+      },
+      "actions": {
+        "start": "Start",
+        "playing": "Playing",
+        "completed": "Completed"
+      },
+      "quotes": {
+        "1": "Begin each day with a grateful heart and peaceful mind.",
+        "2": "Breathe in calm, breathe out stress.",
+        "3": "Your morning sets the tone for your entire day.",
+        "4": "Find peace within, and radiate light outward.",
+        "5": "Each breath is a new beginning.",
+        "6": "Awaken your spirit with mindful presence."
+      }
+    },
+    "meditations": {
+      "1": {
+        "title": "Morning Breath",
+        "description": "Start with simple breathing exercises to center yourself"
+      },
+      "2": {
+        "title": "Body Scan Awakening",
+        "description": "Gentle body scan to connect with your physical presence"
+      },
+      "3": {
+        "title": "Gratitude Visualization",
+        "description": "Visualize the day ahead with gratitude and positivity"
+      },
+      "4": {
+        "title": "Mindful Awareness",
+        "description": "Cultivate present-moment awareness for the day ahead"
+      },
+      "5": {
+        "title": "Loving-Kindness Practice",
+        "description": "Send compassion to yourself and others"
+      },
+      "6": {
+        "title": "Quick Centering",
+        "description": "Fast 3-minute breathing practice for busy mornings"
+      },
+      "7": {
+        "title": "Deep Body Relaxation",
+        "description": "Release tension from head to toe"
+      },
+      "8": {
+        "title": "Energy Visualization",
+        "description": "Visualize positive energy flowing through your body"
+      },
+      "9": {
+        "title": "Extended Mindfulness",
+        "description": "Deep mindfulness practice for experienced meditators"
+      },
+      "10": {
+        "title": "Self-Compassion",
+        "description": "Practice kindness and acceptance toward yourself"
+      },
+      "11": {
+        "title": "5 Minute Breathing",
+        "description": "A focused 5-minute breathing practice to center yourself."
+      }
+    },
     "quotes": {
       "quote1": "Rise with the sun, shine with purpose.",
       "quote2": "Today is a blank canvas—paint it gold.",
