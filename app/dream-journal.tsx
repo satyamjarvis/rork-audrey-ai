@@ -24,6 +24,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -35,6 +36,8 @@ type DreamEntry = {
 
 export default function DreamJournalScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -64,17 +67,8 @@ export default function DreamJournalScreen() {
     });
   }, []);
 
-  const [dreamQuote] = useState(() => {
-    const quotes = [
-      "Dreams are illustrations from the book your soul is writing.",
-      "In dreams, we enter a world that's entirely our own.",
-      "The future belongs to those who believe in the beauty of their dreams.",
-      "Dreams are the whispers of your subconscious mind.",
-      "Every dream is a doorway to another dimension.",
-      "Let your dreams guide you to your deepest truths.",
-    ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
-  });
+  const [quoteIndex] = useState(() => Math.floor(Math.random() * 6) + 1);
+  const dreamQuote = t(`dreamJournal.quotes.${quoteIndex}`);
 
   const starPositions = useMemo(() => {
     return Array.from({ length: 25 }, () => ({
@@ -213,7 +207,7 @@ export default function DreamJournalScreen() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString(language, {
       hour: "numeric",
       minute: "2-digit",
     });
@@ -308,7 +302,7 @@ export default function DreamJournalScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>Dream Journal</Text>
+                  <Text style={styles.headerTitle}>{t('dreamJournal.title')}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -331,7 +325,7 @@ export default function DreamJournalScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Moon color="#a8c5e8" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Dream Wisdom</Text>
+                      <Text style={styles.quoteLabel}>{t('dreamJournal.dreamWisdom')}</Text>
                     </View>
                     <Text style={styles.quoteText}>{dreamQuote}</Text>
                   </View>
@@ -341,7 +335,7 @@ export default function DreamJournalScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Moon color="#a8c5e8" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Dream Wisdom</Text>
+                      <Text style={styles.quoteLabel}>{t('dreamJournal.dreamWisdom')}</Text>
                     </View>
                     <Text style={styles.quoteText}>{dreamQuote}</Text>
                   </View>
@@ -349,9 +343,9 @@ export default function DreamJournalScreen() {
               )}
 
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Capture Your Dreams</Text>
+                <Text style={styles.sectionTitle}>{t('dreamJournal.sectionTitle')}</Text>
                 <Text style={styles.sectionSubtitle}>
-                  What dreams visited you last night?
+                  {t('dreamJournal.sectionSubtitle')}
                 </Text>
               </View>
             </Animated.View>
@@ -369,7 +363,7 @@ export default function DreamJournalScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Plus color="#FFFFFF" size={24} strokeWidth={2.5} />
-                  <Text style={styles.addButtonText}>Add Dream</Text>
+                  <Text style={styles.addButtonText}>{t('dreamJournal.addDream')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             )}
@@ -380,7 +374,7 @@ export default function DreamJournalScreen() {
                   <View style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="Describe your dream..."
+                      placeholder={t('dreamJournal.inputPlaceholder')}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={newEntry}
                       onChangeText={setNewEntry}
@@ -396,7 +390,7 @@ export default function DreamJournalScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -407,7 +401,7 @@ export default function DreamJournalScreen() {
                           colors={["#4a5fc1", "#7b68ee"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{t('common.save')}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -416,7 +410,7 @@ export default function DreamJournalScreen() {
                   <BlurView intensity={20} tint="dark" style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="Describe your dream..."
+                      placeholder={t('dreamJournal.inputPlaceholder')}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={newEntry}
                       onChangeText={setNewEntry}
@@ -432,7 +426,7 @@ export default function DreamJournalScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -443,7 +437,7 @@ export default function DreamJournalScreen() {
                           colors={["#4a5fc1", "#7b68ee"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{t('common.save')}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -472,7 +466,7 @@ export default function DreamJournalScreen() {
                           />
                         </Animated.View>
                         <Text style={styles.entryTime}>
-                          {entry.timestamp.toLocaleString("en-US", {
+                          {entry.timestamp.toLocaleString(language, {
                             month: "short",
                             day: "numeric",
                             hour: "numeric",
@@ -506,7 +500,7 @@ export default function DreamJournalScreen() {
                           />
                         </Animated.View>
                         <Text style={styles.entryTime}>
-                          {entry.timestamp.toLocaleString("en-US", {
+                          {entry.timestamp.toLocaleString(language, {
                             month: "short",
                             day: "numeric",
                             hour: "numeric",
@@ -537,10 +531,10 @@ export default function DreamJournalScreen() {
                     fillOpacity={0.1}
                   />
                   <Text style={styles.emptyStateText}>
-                    Begin your dream journey
+                    {t('dreamJournal.emptyTitle')}
                   </Text>
                   <Text style={styles.emptyStateSubtext}>
-                    Tap &ldquo;Add Dream&rdquo; to start
+                    {t('dreamJournal.emptySubtitle')}
                   </Text>
                 </View>
               )}
@@ -548,7 +542,7 @@ export default function DreamJournalScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Dreams are the touchstones of our character
+                {t('dreamJournal.footer')}
               </Text>
             </Animated.View>
           </ScrollView>

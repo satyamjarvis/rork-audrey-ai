@@ -1162,5 +1162,24 @@
       "poor": "Poor",
       "terrible": "Terrible"
     }
+  },
+  "dreamJournal": {
+    "title": "Dream Journal",
+    "dreamWisdom": "Dream Wisdom",
+    "sectionTitle": "Capture Your Dreams",
+    "sectionSubtitle": "What dreams visited you last night?",
+    "addDream": "Add Dream",
+    "inputPlaceholder": "Describe your dream...",
+    "emptyTitle": "Begin your dream journey",
+    "emptySubtitle": "Tap “Add Dream” to start",
+    "footer": "Dreams are the touchstones of our character",
+    "quotes": {
+      "1": "Dreams are illustrations from the book your soul is writing.",
+      "2": "In dreams, we enter a world that's entirely our own.",
+      "3": "The future belongs to those who believe in the beauty of their dreams.",
+      "4": "Dreams are the whispers of your subconscious mind.",
+      "5": "Every dream is a doorway to another dimension.",
+      "6": "Let your dreams guide you to your deepest truths."
+    }
   }
 }
