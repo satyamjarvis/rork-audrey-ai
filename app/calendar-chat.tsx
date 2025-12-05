@@ -1396,7 +1396,7 @@ export default function CalendarChatScreen() {
                           </Text>
                         </View>
                       )}
-                      {messageText.includes("🎤VOICE_MSG🎤") && !message.attachment ? (
+                      {messageText && messageText.includes("🎤VOICE_MSG🎤") && !message.attachment ? (
                         <TouchableOpacity
                           style={[
                             styles.voiceMessageContainer,
@@ -1415,7 +1415,7 @@ export default function CalendarChatScreen() {
                             {playingMessageId === message.id ? "Playing..." : "Tap to play"}
                           </Text>
                         </TouchableOpacity>
-                      ) : (!messageText.includes("🎤VOICE_MSG🎤") && !messageText.includes("📁 Voice file")) || !message.attachment ? (
+                      ) : (messageText && !messageText.includes("🎤VOICE_MSG🎤") && !messageText.includes("📁 Voice file")) || !message.attachment ? (
                         <Text style={[
                           styles.messageText,
                           isMe ? styles.myMessageText : styles.theirMessageText,
@@ -1439,7 +1439,7 @@ export default function CalendarChatScreen() {
                               {messageText}
                             </Text>
                           )}
-                          {messageText.includes("📁 Voice file") ? (
+                          {messageText && messageText.includes("📁 Voice file") ? (
                             <View style={styles.voiceFileRow}>
                               <TouchableOpacity
                                 style={[
