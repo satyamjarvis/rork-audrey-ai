@@ -34,8 +34,6 @@ import {
   Paperclip,
   FileText,
   Image as ImageIcon,
-  Download,
-  Eye,
 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import * as DocumentPicker from "expo-document-picker";
@@ -43,10 +41,10 @@ import { Audio } from "expo-av";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useCalendar, type Attachment, type AttachmentPermissions } from "@/contexts/CalendarContext";
-import { getCalendarBackground } from "@/constants/calendarBackgrounds";
+import { useAppBackground } from "@/contexts/AppBackgroundContext";
 import { Image } from 'expo-image';
 import AttachmentPreviewModal from "@/components/AttachmentPreviewModal";
-import { useSharing, type Attachment as SharingAttachment } from "@/contexts/SharingContext";
+import { useSharing } from "@/contexts/SharingContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
 import ShareButton from "@/components/ShareButton";
 import MoonFloatingButton from "@/components/MoonFloatingButton";
@@ -58,7 +56,7 @@ import { useFontSize } from "@/contexts/FontSizeContext";
 import { useUniverseMode } from "@/contexts/UniverseModeContext";
 import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+Dimensions.get("window");
 
 const FUTURISTIC_COLORS = {
   primary: "#FFD700",
@@ -88,7 +86,8 @@ type DateCell = {
 
 export default function SolaraScreen() {
   const insets = useSafeAreaInsets();
-  const { selectedCalendar, events, addEvent, deleteEvent, updateEvent, selectedBackground } = useCalendar();
+  const { selectedCalendar, events, addEvent, deleteEvent, updateEvent } = useCalendar();
+  const { selectedBackground, hasCustomBackground } = useAppBackground();
   const { createShareableFromAttachment, createShareableFromCalendarEvent } = useSharing();
   const { theme } = useTheme();
   const { getFontSize } = useFontSize();
@@ -99,12 +98,11 @@ export default function SolaraScreen() {
   const isNightMode = theme.id === "night-mode";
   
   const backgroundImage = useMemo(() => {
-    if (selectedBackground && selectedBackground !== 'default') {
-      const bg = getCalendarBackground(selectedBackground);
-      return bg.url;
+    if (hasCustomBackground && selectedBackground && selectedBackground.url !== 'default') {
+      return selectedBackground.url;
     }
     return null;
-  }, [selectedBackground]);
+  }, [hasCustomBackground, selectedBackground]);
   
   const backgroundColors = isNightMode 
     ? FUTURISTIC_COLORS.background as any
@@ -659,7 +657,7 @@ export default function SolaraScreen() {
   if (!selectedCalendar) {
     return (
       <View style={styles.container}>
-        {backgroundImage && backgroundImage !== 'default' ? (
+        {backgroundImage ? (
           <View style={styles.backgroundContainer}>
             <Image
               source={{ uri: backgroundImage }}
@@ -683,7 +681,7 @@ export default function SolaraScreen() {
 
   return (
     <View style={styles.container}>
-      {backgroundImage && backgroundImage !== 'default' ? (
+      {backgroundImage ? (
         <View style={styles.backgroundContainer}>
           <Image
             source={{ uri: backgroundImage }}
