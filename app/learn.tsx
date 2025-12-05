@@ -69,7 +69,7 @@ export default function LearnScreen() {
   const [previewSettingsVideo, setPreviewSettingsVideo] = useState<{ categoryId: string; videoId: string } | null>(null);
   const [previewType, setPreviewType] = useState<'still' | 'loop' | 'custom'>('still');
   const [isSaving, setIsSaving] = useState(false);
-  const [showComingSoon, setShowComingSoon] = useState(true);
+  const [showComingSoon, setShowComingSoon] = useState(false);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [showUrlModal, setShowUrlModal] = useState(false);
   const [urlInput, setUrlInput] = useState("");
