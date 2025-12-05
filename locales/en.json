@@ -947,5 +947,108 @@
         "title": "Delete Calendar",
         "message": "Are you sure you want to delete \"{name}\"?"
     }
+  },
+  "learn": {
+    "title": "Learn & Grow",
+    "subtitle": "Expand your mind with expert-led courses",
+    "courses": "Courses",
+    "students": "Students",
+    "rating": "Rating",
+    "introduction": "Introduction",
+    "featuredVideos": "Featured Videos",
+    "courseCategories": "Course Categories",
+    "videosCount": "videos",
+    "saving": "Saving...",
+    "comingSoon": {
+      "title": "Coming Soon!",
+      "description": "Revolutionary videos that will transform your mindset, unlock your potential, and guide you to extraordinary success.",
+      "subheader": "We are crafting an extraordinary experience!\nThis page is being prepared with care.",
+      "button": "Worth the Wait"
+    },
+    "subscription": {
+      "title": "Unlock All Courses",
+      "description": "Get unlimited access to all videos, courses, and exclusive content",
+      "feature1": "100+ expert-led videos",
+      "feature2": "New content every week",
+      "feature3": "Downloadable resources",
+      "button": "Start Free Trial - $20.00/month"
+    },
+    "actions": {
+      "editText": "Edit Text",
+      "changeVideo": "Change Video",
+      "preview": "Preview",
+      "addVideo": "Add Video",
+      "uploadVideoDescription": "Upload a new video to this category",
+      "chooseImage": "Choose Image",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "saveSettings": "Save Settings"
+    },
+    "editModal": {
+      "title": "Edit Video Details",
+      "videoTitle": "Title",
+      "videoTitlePlaceholder": "Enter video title",
+      "videoDescription": "Description",
+      "videoDescriptionPlaceholder": "Enter video description"
+    },
+    "previewModal": {
+      "title": "Preview Settings",
+      "label": "Choose preview type for this video:",
+      "stillImage": "Still Image",
+      "stillImageDesc": "Show a static thumbnail from the video",
+      "loop": "3 Second Loop",
+      "loopDesc": "Play a 3-second preview on repeat",
+      "custom": "Custom Thumbnail",
+      "customDesc": "Upload your own preview image"
+    },
+    "messages": {
+      "success": "Success",
+      "error": "Error",
+      "videoUpdated": "Video details updated and saved!",
+      "saveError": "Failed to save changes. Please try again.",
+      "previewUpdated": "Preview settings updated and saved!",
+      "thumbnailSaved": "Custom thumbnail uploaded successfully!",
+      "thumbnailError": "Failed to upload thumbnail. Please try again.",
+      "videoSaved": "Video updated and saved!",
+      "videoAdded": "Video added and saved!",
+      "videoUploadError": "Failed to upload video. Please try again.",
+      "saveVideoError": "Failed to save video. Please try again."
+    },
+    "defaults": {
+      "newVideoTitle": "New Video",
+      "uploadedVideoDesc": "Uploaded video",
+      "introTitle": "Welcome to Your Learning Journey",
+      "introDesc": "Start your journey with this comprehensive introduction",
+      "featured": {
+        "v1Title": "Morning Mindfulness Practice",
+        "v2Title": "Building Healthy Habits",
+        "v3Title": "Productivity Masterclass",
+        "v4Title": "Stress Management Techniques"
+      },
+      "categories": {
+        "wellness": "Wellness & Health",
+        "wellnessV1Title": "Introduction to Wellness",
+        "wellnessV1Desc": "Learn the fundamentals of wellness and healthy living",
+        "wellnessV2Title": "Nutrition Basics",
+        "wellnessV2Desc": "Master the essentials of healthy eating",
+        "wellnessV3Title": "Exercise & Movement",
+        "wellnessV3Desc": "Effective workout strategies for all levels",
+        "productivity": "Productivity",
+        "productivityV1Title": "Time Management Mastery",
+        "productivityV1Desc": "Learn to manage your time effectively",
+        "productivityV2Title": "Focus Techniques",
+        "productivityV2Desc": "Boost your concentration and productivity",
+        "mindfulness": "Mindfulness",
+        "mindfulnessV1Title": "Meditation for Beginners",
+        "mindfulnessV1Desc": "Start your meditation practice today",
+        "mindfulnessV2Title": "Breathing Exercises",
+        "mindfulnessV2Desc": "Powerful breathing techniques for calm",
+        "lifestyle": "Lifestyle Design",
+        "lifestyleV1Title": "Creating Your Ideal Life",
+        "lifestyleV1Desc": "Design the life you've always wanted",
+        "lifestyleV2Title": "Work-Life Balance",
+        "lifestyleV2Desc": "Find harmony between work and life"
+      }
+    }
   }
 }

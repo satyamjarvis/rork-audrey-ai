@@ -658,5 +658,108 @@
       "vibrant": "Vibrante",
       "monochrome": "Monocromático"
     }
+  },
+  "learn": {
+    "title": "Aprender y Crecer",
+    "subtitle": "Expande tu mente con cursos guiados por expertos",
+    "courses": "Cursos",
+    "students": "Estudiantes",
+    "rating": "Calificación",
+    "introduction": "Introducción",
+    "featuredVideos": "Videos Destacados",
+    "courseCategories": "Categorías de Cursos",
+    "videosCount": "videos",
+    "saving": "Guardando...",
+    "comingSoon": {
+      "title": "¡Próximamente!",
+      "description": "Videos revolucionarios que transformarán tu mentalidad, desbloquearán tu potencial y te guiarán hacia un éxito extraordinario.",
+      "subheader": "¡Estamos creando una experiencia extraordinaria!\nEsta página está siendo preparada con cuidado.",
+      "button": "Vale la Pena Esperar"
+    },
+    "subscription": {
+      "title": "Desbloquear Todos los Cursos",
+      "description": "Obtén acceso ilimitado a todos los videos, cursos y contenido exclusivo",
+      "feature1": "100+ videos de expertos",
+      "feature2": "Nuevo contenido cada semana",
+      "feature3": "Recursos descargables",
+      "button": "Iniciar Prueba Gratis - $20.00/mes"
+    },
+    "actions": {
+      "editText": "Editar Texto",
+      "changeVideo": "Cambiar Video",
+      "preview": "Previsualizar",
+      "addVideo": "Agregar Video",
+      "uploadVideoDescription": "Subir un nuevo video a esta categoría",
+      "chooseImage": "Elegir Imagen",
+      "cancel": "Cancelar",
+      "saveChanges": "Guardar Cambios",
+      "saveSettings": "Guardar Ajustes"
+    },
+    "editModal": {
+      "title": "Editar Detalles del Video",
+      "videoTitle": "Título",
+      "videoTitlePlaceholder": "Ingresa título del video",
+      "videoDescription": "Descripción",
+      "videoDescriptionPlaceholder": "Ingresa descripción del video"
+    },
+    "previewModal": {
+      "title": "Configuración de Vista Previa",
+      "label": "Elige tipo de vista previa para este video:",
+      "stillImage": "Imagen Estática",
+      "stillImageDesc": "Mostrar una miniatura estática del video",
+      "loop": "Bucle de 3 Segundos",
+      "loopDesc": "Reproducir una vista previa de 3 segundos en repetición",
+      "custom": "Miniatura Personalizada",
+      "customDesc": "Sube tu propia imagen de vista previa"
+    },
+    "messages": {
+      "success": "Éxito",
+      "error": "Error",
+      "videoUpdated": "¡Detalles del video actualizados y guardados!",
+      "saveError": "Error al guardar cambios. Por favor intenta de nuevo.",
+      "previewUpdated": "¡Configuración de vista previa actualizada y guardada!",
+      "thumbnailSaved": "¡Miniatura personalizada subida exitosamente!",
+      "thumbnailError": "Error al subir miniatura. Por favor intenta de nuevo.",
+      "videoSaved": "¡Video actualizado y guardado!",
+      "videoAdded": "¡Video agregado y guardado!",
+      "videoUploadError": "Error al subir video. Por favor intenta de nuevo.",
+      "saveVideoError": "Error al guardar video. Por favor intenta de nuevo."
+    },
+    "defaults": {
+      "newVideoTitle": "Nuevo Video",
+      "uploadedVideoDesc": "Video subido",
+      "introTitle": "Bienvenido a Tu Viaje de Aprendizaje",
+      "introDesc": "Comienza tu viaje con esta introducción completa",
+      "featured": {
+        "v1Title": "Práctica de Mindfulness Matutino",
+        "v2Title": "Construyendo Hábitos Saludables",
+        "v3Title": "Clase Maestra de Productividad",
+        "v4Title": "Técnicas de Manejo del Estrés"
+      },
+      "categories": {
+        "wellness": "Bienestar y Salud",
+        "wellnessV1Title": "Introducción al Bienestar",
+        "wellnessV1Desc": "Aprende los fundamentos del bienestar y la vida saludable",
+        "wellnessV2Title": "Conceptos Básicos de Nutrición",
+        "wellnessV2Desc": "Domina los esenciales de una alimentación saludable",
+        "wellnessV3Title": "Ejercicio y Movimiento",
+        "wellnessV3Desc": "Estrategias de entrenamiento efectivas para todos los niveles",
+        "productivity": "Productividad",
+        "productivityV1Title": "Dominio de la Gestión del Tiempo",
+        "productivityV1Desc": "Aprende a gestionar tu tiempo efectivamente",
+        "productivityV2Title": "Técnicas de Enfoque",
+        "productivityV2Desc": "Impulsa tu concentración y productividad",
+        "mindfulness": "Mindfulness",
+        "mindfulnessV1Title": "Meditación para Principiantes",
+        "mindfulnessV1Desc": "Comienza tu práctica de meditación hoy",
+        "mindfulnessV2Title": "Ejercicios de Respiración",
+        "mindfulnessV2Desc": "Poderosas técnicas de respiración para la calma",
+        "lifestyle": "Diseño de Estilo de Vida",
+        "lifestyleV1Title": "Creando Tu Vida Ideal",
+        "lifestyleV1Desc": "Diseña la vida que siempre has querido",
+        "lifestyleV2Title": "Equilibrio Trabajo-Vida",
+        "lifestyleV2Desc": "Encuentra armonía entre el trabajo y la vida"
+      }
+    }
   }
 }
