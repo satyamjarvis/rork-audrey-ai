@@ -2,6 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DEFAULT_TIMEOUT = 10000;
 const MAX_RETRIES = 3;
+const BATCH_SIZE = 50;
+
+export interface StorageStats {
+  totalKeys: number;
+  corruptedKeys: number;
+  totalSize: number;
+  lastChecked: number;
+}
 
 function isValidBase64(str: string): boolean {
   if (!str || str.length === 0) return false;
@@ -139,25 +147,42 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, operation:
 
 async function retryOperation<T>(
   operation: () => Promise<T>,
-  maxRetries: number = MAX_RETRIES,
-  delay: number = 1000
+  options: {
+    maxRetries?: number;
+    initialDelay?: number;
+    context?: string;
+    shouldRetry?: (error: Error) => boolean;
+  } = {}
 ): Promise<T> {
+  const { 
+    maxRetries = MAX_RETRIES, 
+    initialDelay = 500,
+    context = 'operation',
+    shouldRetry = () => true,
+  } = options;
+  
   let lastError: Error | null = null;
+  let delay = initialDelay;
   
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       if (attempt > 0) {
-        console.log(`[AsyncStorage] Retry attempt ${attempt + 1}/${maxRetries}`);
-        await new Promise(resolve => setTimeout(resolve, delay * attempt));
+        console.log(`[AsyncStorage:${context}] Retry attempt ${attempt + 1}/${maxRetries}`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        delay = Math.min(delay * 2, 5000);
       }
       return await operation();
     } catch (error) {
-      lastError = error as Error;
-      console.error(`[AsyncStorage] Attempt ${attempt + 1} failed:`, error);
+      lastError = error instanceof Error ? error : new Error(String(error));
+      console.error(`[AsyncStorage:${context}] Attempt ${attempt + 1} failed:`, lastError.message);
+      
+      if (!shouldRetry(lastError)) {
+        throw lastError;
+      }
     }
   }
   
-  throw lastError || new Error('Operation failed after retries');
+  throw lastError || new Error(`${context} failed after ${maxRetries} retries`);
 }
 
 export async function safeAsyncStorageGet<T>(key: string, defaultValue: T): Promise<T> {
@@ -171,27 +196,141 @@ export async function safeAsyncStorageGet<T>(key: string, defaultValue: T): Prom
       return safeJSONParse(stored, defaultValue);
     };
     
-    return await retryOperation(operation);
+    return await retryOperation(operation, { context: `get(${key})` });
   } catch (error) {
-    console.error(`[AsyncStorage] Error reading ${key}:`, error);
+    console.error(`[AsyncStorage] Error reading ${key}:`, error instanceof Error ? error.message : error);
     return defaultValue;
   }
 }
 
-export async function safeAsyncStorageSet<T>(key: string, value: T): Promise<void> {
+export async function safeAsyncStorageGetMultiple<T>(
+  keys: string[],
+  defaultValue: T
+): Promise<Record<string, T>> {
+  const results: Record<string, T> = {};
+  
   try {
+    for (let i = 0; i < keys.length; i += BATCH_SIZE) {
+      const batch = keys.slice(i, i + BATCH_SIZE);
+      const batchResults = await withTimeout(
+        AsyncStorage.multiGet(batch),
+        DEFAULT_TIMEOUT * 2,
+        'AsyncStorage.multiGet'
+      );
+      
+      for (const [key, value] of batchResults) {
+        results[key] = safeJSONParse(value, defaultValue);
+      }
+    }
+  } catch (error) {
+    console.error('[AsyncStorage] Error in multiGet:', error instanceof Error ? error.message : error);
+    keys.forEach(key => {
+      if (!(key in results)) {
+        results[key] = defaultValue;
+      }
+    });
+  }
+  
+  return results;
+}
+
+export async function safeAsyncStorageSet<T>(key: string, value: T): Promise<boolean> {
+  try {
+    const stringValue = safeStringify(value);
+    if (stringValue === null) {
+      console.error(`[AsyncStorage] Failed to stringify value for key ${key}`);
+      return false;
+    }
+    
     const operation = async () => {
       await withTimeout(
-        AsyncStorage.setItem(key, JSON.stringify(value)),
+        AsyncStorage.setItem(key, stringValue),
         DEFAULT_TIMEOUT,
         'AsyncStorage.setItem'
       );
     };
     
-    await retryOperation(operation);
+    await retryOperation(operation, { context: `set(${key})` });
+    return true;
   } catch (error) {
-    console.error(`[AsyncStorage] Error writing ${key}:`, error);
-    throw error;
+    console.error(`[AsyncStorage] Error writing ${key}:`, error instanceof Error ? error.message : error);
+    return false;
+  }
+}
+
+export async function safeAsyncStorageSetMultiple(
+  items: { key: string; value: unknown }[]
+): Promise<{ success: boolean; failedKeys: string[] }> {
+  const failedKeys: string[] = [];
+  
+  try {
+    const pairs: [string, string][] = [];
+    
+    for (const { key, value } of items) {
+      const stringValue = safeStringify(value);
+      if (stringValue !== null) {
+        pairs.push([key, stringValue]);
+      } else {
+        failedKeys.push(key);
+      }
+    }
+    
+    for (let i = 0; i < pairs.length; i += BATCH_SIZE) {
+      const batch = pairs.slice(i, i + BATCH_SIZE);
+      await withTimeout(
+        AsyncStorage.multiSet(batch),
+        DEFAULT_TIMEOUT * 2,
+        'AsyncStorage.multiSet'
+      );
+    }
+    
+    return { success: failedKeys.length === 0, failedKeys };
+  } catch (error) {
+    console.error('[AsyncStorage] Error in multiSet:', error instanceof Error ? error.message : error);
+    return { success: false, failedKeys: items.map(i => i.key) };
+  }
+}
+
+export async function safeAsyncStorageRemove(key: string): Promise<boolean> {
+  try {
+    await withTimeout(
+      AsyncStorage.removeItem(key),
+      DEFAULT_TIMEOUT,
+      'AsyncStorage.removeItem'
+    );
+    return true;
+  } catch (error) {
+    console.error(`[AsyncStorage] Error removing ${key}:`, error instanceof Error ? error.message : error);
+    return false;
+  }
+}
+
+export async function safeAsyncStorageRemoveMultiple(keys: string[]): Promise<{ success: boolean; failedKeys: string[] }> {
+  try {
+    for (let i = 0; i < keys.length; i += BATCH_SIZE) {
+      const batch = keys.slice(i, i + BATCH_SIZE);
+      await withTimeout(
+        AsyncStorage.multiRemove(batch),
+        DEFAULT_TIMEOUT,
+        'AsyncStorage.multiRemove'
+      );
+    }
+    return { success: true, failedKeys: [] };
+  } catch (error) {
+    console.error('[AsyncStorage] Error in multiRemove:', error instanceof Error ? error.message : error);
+    return { success: false, failedKeys: keys };
+  }
+}
+
+function safeStringify(value: unknown): string | null {
+  try {
+    if (value === undefined) {
+      return null;
+    }
+    return JSON.stringify(value);
+  } catch (error) {
+    console.error('[AsyncStorage] Stringify error:', error instanceof Error ? error.message : error);
+    return null;
   }
 }
 
@@ -275,12 +414,84 @@ export async function clearCorruptedKeys(): Promise<void> {
   }
 }
 
-export async function clearAllStorage(): Promise<void> {
+export async function clearAllStorage(): Promise<boolean> {
   try {
     console.log('[AsyncStorage] Clearing ALL storage...');
-    await AsyncStorage.clear();
+    await withTimeout(AsyncStorage.clear(), DEFAULT_TIMEOUT * 2, 'AsyncStorage.clear');
     console.log('[AsyncStorage] All storage cleared successfully');
+    return true;
   } catch (error) {
-    console.error('[AsyncStorage] Error clearing all storage:', error);
+    console.error('[AsyncStorage] Error clearing all storage:', error instanceof Error ? error.message : error);
+    return false;
+  }
+}
+
+export async function getStorageStats(): Promise<StorageStats> {
+  const stats: StorageStats = {
+    totalKeys: 0,
+    corruptedKeys: 0,
+    totalSize: 0,
+    lastChecked: Date.now(),
+  };
+  
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+    stats.totalKeys = keys.length;
+    
+    for (let i = 0; i < keys.length; i += BATCH_SIZE) {
+      const batch = keys.slice(i, i + BATCH_SIZE);
+      const results = await AsyncStorage.multiGet(batch);
+      
+      for (const [, value] of results) {
+        if (value) {
+          stats.totalSize += value.length * 2;
+          
+          if (!isValidJSON(value)) {
+            stats.corruptedKeys++;
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('[AsyncStorage] Error getting stats:', error instanceof Error ? error.message : error);
+  }
+  
+  return stats;
+}
+
+export async function getAllKeys(): Promise<string[]> {
+  try {
+    return await withTimeout(
+      AsyncStorage.getAllKeys() as Promise<string[]>,
+      DEFAULT_TIMEOUT,
+      'AsyncStorage.getAllKeys'
+    );
+  } catch (error) {
+    console.error('[AsyncStorage] Error getting all keys:', error instanceof Error ? error.message : error);
+    return [];
+  }
+}
+
+export async function keyExists(key: string): Promise<boolean> {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    return value !== null;
+  } catch {
+    return false;
+  }
+}
+
+export async function mergeItem<T extends object>(key: string, value: Partial<T>): Promise<boolean> {
+  try {
+    const existing = await safeAsyncStorageGet<T | null>(key, null);
+    if (existing === null) {
+      return await safeAsyncStorageSet(key, value);
+    }
+    
+    const merged = { ...existing, ...value };
+    return await safeAsyncStorageSet(key, merged);
+  } catch (error) {
+    console.error(`[AsyncStorage] Error merging ${key}:`, error instanceof Error ? error.message : error);
+    return false;
   }
 }

@@ -292,11 +292,10 @@ export default function RootLayout() {
   }
 
   return (
-    <ErrorBoundary>
-      <ErrorBoundary>
-        <AppProviders>
-          <ErrorBoundary>
-            <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000000" }}>
+    <ErrorBoundary level="root" showHomeButton={true}>
+      <AppProviders>
+        <ErrorBoundary level="screen">
+          <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000000" }}>
               <KeyboardAvoidingView 
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
@@ -311,15 +310,14 @@ export default function RootLayout() {
                 >
                   <View style={{ flex: 1 }}>
                     <StatusBar style="light" />
-                    <RootLayoutNav />
-                    <FloatingButtons />
-                  </View>
-                </TouchableWithoutFeedback>
-              </KeyboardAvoidingView>
-            </GestureHandlerRootView>
-          </ErrorBoundary>
-        </AppProviders>
-      </ErrorBoundary>
+                  <RootLayoutNav />
+                  <FloatingButtons />
+                </View>
+              </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
+          </GestureHandlerRootView>
+        </ErrorBoundary>
+      </AppProviders>
     </ErrorBoundary>
   );
 }
