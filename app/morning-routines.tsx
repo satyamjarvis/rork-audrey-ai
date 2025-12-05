@@ -32,6 +32,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 
 import { useMorningRoutines, ROUTINE_ICON_MAP, RoutineStep } from "@/contexts/MorningRoutinesContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -42,6 +43,7 @@ const getIconComponent = (iconName: string) => {
 export default function MorningRoutinesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { translate } = useLanguage();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const sunPulse = useRef(new Animated.Value(1)).current;
@@ -92,17 +94,17 @@ export default function MorningRoutinesScreen() {
     });
   }, []);
 
-  const [morningQuote] = useState(() => {
+  const morningQuote = useMemo(() => {
     const quotes = [
-      "Every morning is a fresh start. Make it count.",
-      "Rise up, start fresh, see the bright opportunity in each day.",
-      "Morning is when I am awake and there is a dawn in me.",
-      "Each morning brings new potential, embrace it with joy.",
-      "The sun is new each day, and so are you.",
-      "Your morning routine shapes your entire day.",
+      translate('morning.routinesPage.quotes.1'),
+      translate('morning.routinesPage.quotes.2'),
+      translate('morning.routinesPage.quotes.3'),
+      translate('morning.routinesPage.quotes.4'),
+      translate('morning.routinesPage.quotes.5'),
+      translate('morning.routinesPage.quotes.6'),
     ];
     return quotes[Math.floor(Math.random() * quotes.length)];
-  });
+  }, [translate]);
 
   const starPositions = useMemo(() => {
     return Array.from({ length: 25 }, () => ({
@@ -240,13 +242,13 @@ export default function MorningRoutinesScreen() {
 
   const handleAddStep = async () => {
     if (!newStepTitle.trim()) {
-      Alert.alert("Error", "Please enter a step name");
+      Alert.alert(translate('morning.routinesPage.error'), translate('morning.routinesPage.enterStepName'));
       return;
     }
 
     const duration = parseInt(newStepDuration, 10);
     if (isNaN(duration) || duration <= 0) {
-      Alert.alert("Error", "Please enter a valid duration");
+      Alert.alert(translate('morning.routinesPage.error'), translate('morning.routinesPage.enterValidDuration'));
       return;
     }
 
@@ -270,13 +272,13 @@ export default function MorningRoutinesScreen() {
 
   const handleEditStep = async () => {
     if (!editingStep || !newStepTitle.trim()) {
-      Alert.alert("Error", "Please enter a step name");
+      Alert.alert(translate('morning.routinesPage.error'), translate('morning.routinesPage.enterStepName'));
       return;
     }
 
     const duration = parseInt(newStepDuration, 10);
     if (isNaN(duration) || duration <= 0) {
-      Alert.alert("Error", "Please enter a valid duration");
+      Alert.alert(translate('morning.routinesPage.error'), translate('morning.routinesPage.enterValidDuration'));
       return;
     }
 
@@ -301,12 +303,12 @@ export default function MorningRoutinesScreen() {
 
   const handleDeleteStep = async (stepId: string) => {
     Alert.alert(
-      "Delete Step",
-      "Are you sure you want to delete this routine step?",
+      translate('morning.routinesPage.deleteStep'),
+      translate('morning.routinesPage.deleteStepConfirmation'),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: translate('morning.routinesPage.cancel'), style: "cancel" },
         {
-          text: "Delete",
+          text: translate('common.delete'),
           style: "destructive",
           onPress: async () => {
             if (Platform.OS !== "web") {
@@ -349,7 +351,7 @@ export default function MorningRoutinesScreen() {
           style={styles.gradient}
         >
           <Text style={{ color: "#FF8C42", textAlign: "center", marginTop: 100 }}>
-            Loading...
+            {translate('morning.routinesPage.loading')}
           </Text>
         </LinearGradient>
       </View>
@@ -440,7 +442,7 @@ export default function MorningRoutinesScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>Morning Routines</Text>
+                  <Text style={styles.headerTitle}>{translate('morning.routinesPage.title')}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -463,7 +465,7 @@ export default function MorningRoutinesScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#FF8C42" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Inspiration</Text>
+                      <Text style={styles.quoteLabel}>{translate('morning.routinesPage.todaysInspiration')}</Text>
                     </View>
                     <Text style={styles.quoteText}>{morningQuote}</Text>
                   </View>
@@ -473,7 +475,7 @@ export default function MorningRoutinesScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#FF8C42" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Inspiration</Text>
+                      <Text style={styles.quoteLabel}>{translate('morning.routinesPage.todaysInspiration')}</Text>
                     </View>
                     <Text style={styles.quoteText}>{morningQuote}</Text>
                   </View>
@@ -482,7 +484,7 @@ export default function MorningRoutinesScreen() {
 
               <View style={styles.sectionHeader}>
                 <View style={styles.sectionHeaderTop}>
-                  <Text style={styles.sectionTitle}>Your Morning Flow</Text>
+                  <Text style={styles.sectionTitle}>{translate('morning.routinesPage.yourMorningFlow')}</Text>
                   <TouchableOpacity
                     onPress={handleReset}
                     style={styles.resetButton}
@@ -492,7 +494,7 @@ export default function MorningRoutinesScreen() {
                   </TouchableOpacity>
                 </View>
                 <Text style={styles.sectionSubtitle}>
-                  {completedCount}/{totalCount} steps completed • {completedDuration}/{totalDuration} min
+                  {completedCount}/{totalCount} {translate('morning.routinesPage.stepsCompleted')} • {completedDuration}/{totalDuration} {translate('morning.routinesPage.min')}
                 </Text>
               </View>
 
@@ -521,7 +523,7 @@ export default function MorningRoutinesScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Plus color="#FFFFFF" size={24} strokeWidth={2.5} />
-                  <Text style={styles.addButtonText}>Add Step</Text>
+                  <Text style={styles.addButtonText}>{translate('morning.routinesPage.addStep')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -566,7 +568,7 @@ export default function MorningRoutinesScreen() {
                             </Text>
                             <View style={styles.stepMeta}>
                               <Clock color="#8B6914" size={14} strokeWidth={2} />
-                              <Text style={styles.stepDuration}>{step.duration} min</Text>
+                              <Text style={styles.stepDuration}>{step.duration} {translate('morning.routinesPage.min')}</Text>
                             </View>
                           </View>
 
@@ -634,7 +636,7 @@ export default function MorningRoutinesScreen() {
                             </Text>
                             <View style={styles.stepMeta}>
                               <Clock color="#8B6914" size={14} strokeWidth={2} />
-                              <Text style={styles.stepDuration}>{step.duration} min</Text>
+                              <Text style={styles.stepDuration}>{step.duration} {translate('morning.routinesPage.min')}</Text>
                             </View>
                           </View>
 
@@ -683,10 +685,10 @@ export default function MorningRoutinesScreen() {
                     fillOpacity={0.1}
                   />
                   <Text style={styles.emptyStateText}>
-                    Create your morning routine
+                    {translate('morning.routinesPage.createYourMorningRoutine')}
                   </Text>
                   <Text style={styles.emptyStateSubtext}>
-                    Tap &ldquo;Add Step&rdquo; to begin
+                    {translate('morning.routinesPage.tapAddStepToBegin')}
                   </Text>
                 </View>
               )}
@@ -701,9 +703,9 @@ export default function MorningRoutinesScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Text style={styles.completionEmoji}>🌟</Text>
-                  <Text style={styles.completionTitle}>Perfect Morning!</Text>
+                  <Text style={styles.completionTitle}>{translate('morning.routinesPage.perfectMorning')}</Text>
                   <Text style={styles.completionText}>
-                    You&apos;ve completed your entire routine
+                    {translate('morning.routinesPage.completedEntireRoutine')}
                   </Text>
                 </LinearGradient>
               </Animated.View>
@@ -711,7 +713,7 @@ export default function MorningRoutinesScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Start your day with intention and energy
+                {translate('morning.routinesPage.startDayWithIntention')}
               </Text>
             </Animated.View>
           </ScrollView>
@@ -730,44 +732,44 @@ export default function MorningRoutinesScreen() {
             style={styles.modalGradient}
           >
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add Routine Step</Text>
+              <Text style={styles.modalTitle}>{translate('morning.routinesPage.addRoutineStep')}</Text>
               <TouchableOpacity onPress={() => setShowAddModal(false)}>
                 <X color="#8B6914" size={24} />
               </TouchableOpacity>
             </View>
 
             <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
-              <Text style={styles.inputLabel}>Step Name</Text>
+              <Text style={styles.inputLabel}>{translate('morning.routinesPage.stepName')}</Text>
               <TextInput
                 style={styles.input}
                 value={newStepTitle}
                 onChangeText={setNewStepTitle}
-                placeholder="e.g., Morning Yoga"
+                placeholder={translate('morning.routinesPage.stepNamePlaceholder')}
                 placeholderTextColor="rgba(139, 105, 20, 0.5)"
               />
 
-              <Text style={[styles.inputLabel, { marginTop: 16 }]}>Description</Text>
+              <Text style={[styles.inputLabel, { marginTop: 16 }]}>{translate('morning.routinesPage.descriptionLabel')}</Text>
               <TextInput
                 style={[styles.input, styles.textArea]}
                 value={newStepDescription}
                 onChangeText={setNewStepDescription}
-                placeholder="Brief description of this step"
+                placeholder={translate('morning.routinesPage.descriptionPlaceholder')}
                 placeholderTextColor="rgba(139, 105, 20, 0.5)"
                 multiline
                 numberOfLines={3}
               />
 
-              <Text style={[styles.inputLabel, { marginTop: 16 }]}>Duration (minutes)</Text>
+              <Text style={[styles.inputLabel, { marginTop: 16 }]}>{translate('morning.routinesPage.durationLabel')}</Text>
               <TextInput
                 style={styles.input}
                 value={newStepDuration}
                 onChangeText={setNewStepDuration}
-                placeholder="5"
+                placeholder={translate('morning.routinesPage.durationPlaceholder')}
                 placeholderTextColor="rgba(139, 105, 20, 0.5)"
                 keyboardType="numeric"
               />
 
-              <Text style={[styles.inputLabel, { marginTop: 24 }]}>Choose Icon</Text>
+              <Text style={[styles.inputLabel, { marginTop: 24 }]}>{translate('morning.routinesPage.chooseIcon')}</Text>
               <View style={styles.iconGrid}>
                 {availableIcons.map((iconName) => {
                   const IconComponent = ROUTINE_ICON_MAP[iconName as keyof typeof ROUTINE_ICON_MAP];
@@ -803,7 +805,7 @@ export default function MorningRoutinesScreen() {
                 style={styles.modalCancelButton}
                 onPress={() => setShowAddModal(false)}
               >
-                <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                <Text style={styles.modalCancelButtonText}>{translate('morning.routinesPage.cancel')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -814,7 +816,7 @@ export default function MorningRoutinesScreen() {
                   colors={["#FF8C42", "#FFB347"]}
                   style={styles.modalSaveButtonGradient}
                 >
-                  <Text style={styles.modalSaveButtonText}>Add Step</Text>
+                  <Text style={styles.modalSaveButtonText}>{translate('morning.routinesPage.addStep')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -834,44 +836,44 @@ export default function MorningRoutinesScreen() {
             style={styles.modalGradient}
           >
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Edit Routine Step</Text>
+              <Text style={styles.modalTitle}>{translate('morning.routinesPage.editRoutineStep')}</Text>
               <TouchableOpacity onPress={() => setShowEditModal(false)}>
                 <X color="#8B6914" size={24} />
               </TouchableOpacity>
             </View>
 
             <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
-              <Text style={styles.inputLabel}>Step Name</Text>
+              <Text style={styles.inputLabel}>{translate('morning.routinesPage.stepName')}</Text>
               <TextInput
                 style={styles.input}
                 value={newStepTitle}
                 onChangeText={setNewStepTitle}
-                placeholder="e.g., Morning Yoga"
+                placeholder={translate('morning.routinesPage.stepNamePlaceholder')}
                 placeholderTextColor="rgba(139, 105, 20, 0.5)"
               />
 
-              <Text style={[styles.inputLabel, { marginTop: 16 }]}>Description</Text>
+              <Text style={[styles.inputLabel, { marginTop: 16 }]}>{translate('morning.routinesPage.descriptionLabel')}</Text>
               <TextInput
                 style={[styles.input, styles.textArea]}
                 value={newStepDescription}
                 onChangeText={setNewStepDescription}
-                placeholder="Brief description of this step"
+                placeholder={translate('morning.routinesPage.descriptionPlaceholder')}
                 placeholderTextColor="rgba(139, 105, 20, 0.5)"
                 multiline
                 numberOfLines={3}
               />
 
-              <Text style={[styles.inputLabel, { marginTop: 16 }]}>Duration (minutes)</Text>
+              <Text style={[styles.inputLabel, { marginTop: 16 }]}>{translate('morning.routinesPage.durationLabel')}</Text>
               <TextInput
                 style={styles.input}
                 value={newStepDuration}
                 onChangeText={setNewStepDuration}
-                placeholder="5"
+                placeholder={translate('morning.routinesPage.durationPlaceholder')}
                 placeholderTextColor="rgba(139, 105, 20, 0.5)"
                 keyboardType="numeric"
               />
 
-              <Text style={[styles.inputLabel, { marginTop: 24 }]}>Choose Icon</Text>
+              <Text style={[styles.inputLabel, { marginTop: 24 }]}>{translate('morning.routinesPage.chooseIcon')}</Text>
               <View style={styles.iconGrid}>
                 {availableIcons.map((iconName) => {
                   const IconComponent = ROUTINE_ICON_MAP[iconName as keyof typeof ROUTINE_ICON_MAP];
@@ -907,7 +909,7 @@ export default function MorningRoutinesScreen() {
                 style={styles.modalCancelButton}
                 onPress={() => setShowEditModal(false)}
               >
-                <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                <Text style={styles.modalCancelButtonText}>{translate('morning.routinesPage.cancel')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -918,7 +920,7 @@ export default function MorningRoutinesScreen() {
                   colors={["#FF8C42", "#FFB347"]}
                   style={styles.modalSaveButtonGradient}
                 >
-                  <Text style={styles.modalSaveButtonText}>Save Changes</Text>
+                  <Text style={styles.modalSaveButtonText}>{translate('morning.routinesPage.saveChanges')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
