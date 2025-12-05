@@ -16,7 +16,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Brain, Play, Lock, Star, Clock, Users, TrendingUp, Award, BookOpen, Target, Zap, ArrowLeft, X, Plus, Edit3, Check, Camera, Image as ImageIcon, Upload, Hourglass, Link, Globe, Activity } from "lucide-react-native";
+import { Brain, Play, Lock, Star, Clock, Users, TrendingUp, Award, BookOpen, Target, Zap, ArrowLeft, X, Plus, Edit3, Check, Camera, Image as ImageIcon, Upload, Hourglass, Link, Globe, Activity, Sun } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { Video, ResizeMode, Audio } from "expo-av";
@@ -403,6 +403,33 @@ export default function LearnScreen() {
         ],
         isSubscriptionRequired: true,
       },
+      {
+        id: "connect-higher-intelligence",
+        title: "Connect To A Higher Intelligence And Become Your Desires",
+        icon: "Sun" as any,
+        color: isNightMode ? "#9370DB" : "#C71585",
+        videos: [
+          {
+            id: "chi1",
+            title: "Connecting with Higher Self",
+            duration: "18:45",
+            thumbnail: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            isLocked: false,
+            description: "Learn to connect with your higher intelligence",
+          },
+          {
+            id: "chi2",
+            title: "Manifesting Desires",
+            duration: "24:15",
+            thumbnail: "https://images.unsplash.com/photo-1499209974431-2761eb43a768?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            isLocked: true,
+            description: "Become one with your desires",
+          },
+        ],
+        isSubscriptionRequired: true,
+      },
     ];
 
     initializeDefaultCategories(courseCategories);
@@ -498,6 +525,39 @@ export default function LearnScreen() {
             videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
             isLocked: true,
             description: "Techniques for manifesting your dream reality",
+          },
+        ],
+        isSubscriptionRequired: true,
+      };
+      setCategories(prev => [...prev, newCategory]);
+    }
+
+    // Add Connect To A Higher Intelligence category if missing
+    if (!categories.find(c => c.id === 'connect-higher-intelligence')) {
+      console.log('Adding Connect To A Higher Intelligence category');
+      const newCategory: CourseCategory = {
+        id: "connect-higher-intelligence",
+        title: "Connect To A Higher Intelligence And Become Your Desires",
+        icon: "Sun" as any,
+        color: isNightMode ? "#9370DB" : "#C71585",
+        videos: [
+          {
+            id: "chi1",
+            title: "Connecting with Higher Self",
+            duration: "18:45",
+            thumbnail: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            isLocked: false,
+            description: "Learn to connect with your higher intelligence",
+          },
+          {
+            id: "chi2",
+            title: "Manifesting Desires",
+            duration: "24:15",
+            thumbnail: "https://images.unsplash.com/photo-1499209974431-2761eb43a768?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            isLocked: true,
+            description: "Become one with your desires",
           },
         ],
         isSubscriptionRequired: true,
@@ -1083,6 +1143,7 @@ export default function LearnScreen() {
                   Award: Award,
                   Zap: Zap,
                   Activity: Activity,
+                  Sun: Sun,
                 };
                 const Icon = iconMap[category.icon as string] || Star;
                 return (
@@ -1224,6 +1285,7 @@ export default function LearnScreen() {
                     Award: Award,
                     Zap: Zap,
                     Activity: Activity,
+                    Sun: Sun,
                   };
                   const Icon = iconMap[selectedCategory.icon as string] || Star;
                   return <Icon color={isNightMode ? "#FFD700" : "#C71585"} size={32} strokeWidth={2.5} />;
