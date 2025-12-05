@@ -156,6 +156,84 @@
     "wellnessCheck": "Bilan de Bien-être",
     "tuneIntoYourEnergy": "Connectez-vous à votre énergie",
     "embraceTheLight": "Embrassez la lumière. Saisissez votre journée.",
+    "meditationPage": {
+      "title": "Méditation Matinale",
+      "todaysReminder": "Rappel du Jour",
+      "minutesToday": "Minutes Aujourd'hui",
+      "sessions": "Sessions",
+      "guidedMeditations": "Méditations Guidées",
+      "chooseMeditation": "Choisissez une méditation pour commencer votre journée",
+      "noMeditationsFound": "Aucune méditation trouvée",
+      "tryDifferentFilter": "Essayez un filtre différent",
+      "footer": "Commencez chaque journée avec pleine conscience et intention",
+      "filters": {
+        "all": "Toutes",
+        "breathing": "Respiration",
+        "bodyScan": "Scan Corporel",
+        "visualization": "Visualisation",
+        "mindfulness": "Pleine Conscience",
+        "lovingKindness": "Bienveillance"
+      },
+      "actions": {
+        "start": "Démarrer",
+        "playing": "En Cours",
+        "completed": "Terminé"
+      },
+      "quotes": {
+        "1": "Commencez chaque journée avec un cœur reconnaissant et un esprit paisible.",
+        "2": "Inspirez le calme, expirez le stress.",
+        "3": "Votre matinée donne le ton à toute votre journée.",
+        "4": "Trouvez la paix intérieure et rayonnez vers l'extérieur.",
+        "5": "Chaque respiration est un nouveau départ.",
+        "6": "Éveillez votre esprit avec une présence consciente."
+      }
+    },
+    "meditations": {
+      "1": {
+        "title": "Respiration Matinale",
+        "description": "Commencez par de simples exercices de respiration pour vous centrer"
+      },
+      "2": {
+        "title": "Éveil du Scan Corporel",
+        "description": "Scan corporel doux pour vous connecter à votre présence physique"
+      },
+      "3": {
+        "title": "Visualisation de Gratitude",
+        "description": "Visualisez la journée à venir avec gratitude et positivité"
+      },
+      "4": {
+        "title": "Conscience Pleine",
+        "description": "Cultivez la conscience du moment présent pour la journée à venir"
+      },
+      "5": {
+        "title": "Pratique de Bienveillance",
+        "description": "Envoyez de la compassion à vous-même et aux autres"
+      },
+      "6": {
+        "title": "Recentrage Rapide",
+        "description": "Pratique de respiration rapide de 3 minutes pour les matins chargés"
+      },
+      "7": {
+        "title": "Relaxation Corporelle Profonde",
+        "description": "Libérez les tensions de la tête aux pieds"
+      },
+      "8": {
+        "title": "Visualisation d'Énergie",
+        "description": "Visualisez l'énergie positive circulant dans votre corps"
+      },
+      "9": {
+        "title": "Pleine Conscience Prolongée",
+        "description": "Pratique profonde de pleine conscience pour méditants expérimentés"
+      },
+      "10": {
+        "title": "Auto-Compassion",
+        "description": "Pratiquez la gentillesse et l'acceptation envers vous-même"
+      },
+      "11": {
+        "title": "5 Minutes de Respiration",
+        "description": "Une pratique de respiration ciblée de 5 minutes pour vous centrer."
+      }
+    },
     "quotes": {
       "quote1": "Levez-vous avec le soleil, brillez avec un but.",
       "quote2": "Aujourd'hui est une toile vierge—peignez-la en or.",

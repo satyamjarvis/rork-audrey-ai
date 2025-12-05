@@ -156,6 +156,84 @@
     "wellnessCheck": "Control de Bienestar",
     "tuneIntoYourEnergy": "Sintoniza con tu energía",
     "embraceTheLight": "Abraza la luz. Adueñate de tu día.",
+    "meditationPage": {
+      "title": "Meditación Matutina",
+      "todaysReminder": "Recordatorio de Hoy",
+      "minutesToday": "Minutos Hoy",
+      "sessions": "Sesiones",
+      "guidedMeditations": "Meditaciones Guiadas",
+      "chooseMeditation": "Elige una meditación para comenzar tu día",
+      "noMeditationsFound": "No se encontraron meditaciones",
+      "tryDifferentFilter": "Prueba con un filtro diferente",
+      "footer": "Comienza cada día con atención plena e intención",
+      "filters": {
+        "all": "Todas",
+        "breathing": "Respiración",
+        "bodyScan": "Escaneo Corporal",
+        "visualization": "Visualización",
+        "mindfulness": "Atención Plena",
+        "lovingKindness": "Bondad Amorosa"
+      },
+      "actions": {
+        "start": "Iniciar",
+        "playing": "Reproduciendo",
+        "completed": "Completado"
+      },
+      "quotes": {
+        "1": "Comienza cada día con un corazón agradecido y una mente en paz.",
+        "2": "Inhala calma, exhala estrés.",
+        "3": "Tu mañana marca el tono de todo tu día.",
+        "4": "Encuentra paz interior y irradia luz hacia afuera.",
+        "5": "Cada respiración es un nuevo comienzo.",
+        "6": "Despierta tu espíritu con presencia consciente."
+      }
+    },
+    "meditations": {
+      "1": {
+        "title": "Respiración Matutina",
+        "description": "Comienza con ejercicios de respiración simples para centrarte"
+      },
+      "2": {
+        "title": "Escaneo Corporal al Despertar",
+        "description": "Escaneo corporal suave para conectar con tu presencia física"
+      },
+      "3": {
+        "title": "Visualización de Gratitud",
+        "description": "Visualiza el día por delante con gratitud y positividad"
+      },
+      "4": {
+        "title": "Conciencia Plena",
+        "description": "Cultiva la conciencia del momento presente para el día por venir"
+      },
+      "5": {
+        "title": "Práctica de Bondad Amorosa",
+        "description": "Envía compasión a ti mismo y a los demás"
+      },
+      "6": {
+        "title": "Centramiento Rápido",
+        "description": "Práctica de respiración rápida de 3 minutos para mañanas ocupadas"
+      },
+      "7": {
+        "title": "Relajación Corporal Profunda",
+        "description": "Libera la tensión de pies a cabeza"
+      },
+      "8": {
+        "title": "Visualización de Energía",
+        "description": "Visualiza energía positiva fluyendo por tu cuerpo"
+      },
+      "9": {
+        "title": "Atención Plena Extendida",
+        "description": "Práctica profunda de atención plena para meditadores experimentados"
+      },
+      "10": {
+        "title": "Autocompasión",
+        "description": "Practica amabilidad y aceptación hacia ti mismo"
+      },
+      "11": {
+        "title": "5 Minutos de Respiración",
+        "description": "Una práctica de respiración enfocada de 5 minutos para centrarte."
+      }
+    },
     "quotes": {
       "quote1": "Levántate con el sol, brilla con propósito.",
       "quote2": "Hoy es un lienzo en blanco—píntalo de oro.",

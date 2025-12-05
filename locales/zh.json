@@ -156,6 +156,84 @@
     "wellnessCheck": "健康检查",
     "tuneIntoYourEnergy": "调整你的能量",
     "embraceTheLight": "拥抱光明。掌控你的一天。",
+    "meditationPage": {
+      "title": "早晨冥想",
+      "todaysReminder": "今日提醒",
+      "minutesToday": "今日分钟",
+      "sessions": "会话",
+      "guidedMeditations": "引导冥想",
+      "chooseMeditation": "选择冥想开始你的一天",
+      "noMeditationsFound": "未找到冥想",
+      "tryDifferentFilter": "尝试不同的筛选器",
+      "footer": "以正念和意图开始每一天",
+      "filters": {
+        "all": "全部",
+        "breathing": "呼吸",
+        "bodyScan": "身体扫描",
+        "visualization": "可视化",
+        "mindfulness": "正念",
+        "lovingKindness": "慈爱"
+      },
+      "actions": {
+        "start": "开始",
+        "playing": "播放中",
+        "completed": "已完成"
+      },
+      "quotes": {
+        "1": "以感恩的心和平静的心开始每一天。",
+        "2": "吸入平静，呼出压力。",
+        "3": "你的早晨为整个一天定下基调。",
+        "4": "在内心找到平静，向外散发光芒。",
+        "5": "每一次呼吸都是一个新的开始。",
+        "6": "用正念的存在唤醒你的精神。"
+      }
+    },
+    "meditations": {
+      "1": {
+        "title": "早晨呼吸",
+        "description": "从简单的呼吸练习开始，使自己集中"
+      },
+      "2": {
+        "title": "身体扫描觉醒",
+        "description": "轻柔的身体扫描，与你的身体存在连接"
+      },
+      "3": {
+        "title": "感恩可视化",
+        "description": "带着感恩和积极的心态可视化即将到来的一天"
+      },
+      "4": {
+        "title": "正念意识",
+        "description": "培养当下意识，为即将到来的一天做准备"
+      },
+      "5": {
+        "title": "慈爱练习",
+        "description": "向自己和他人发送慈悲"
+      },
+      "6": {
+        "title": "快速集中",
+        "description": "3分钟快速呼吸练习，适合忙碌的早晨"
+      },
+      "7": {
+        "title": "深度身体放松",
+        "description": "从头到脚释放紧张"
+      },
+      "8": {
+        "title": "能量可视化",
+        "description": "可视化正能量流经你的身体"
+      },
+      "9": {
+        "title": "延长正念",
+        "description": "为有经验的冥想者提供深度正念练习"
+      },
+      "10": {
+        "title": "自我慈悲",
+        "description": "对自己练习善意和接纳"
+      },
+      "11": {
+        "title": "5分钟呼吸",
+        "description": "专注的5分钟呼吸练习，使自己集中。"
+      }
+    },
     "quotes": {
       "quote1": "与太阳一同升起，带着目标发光。",
       "quote2": "今天是一张空白画布——把它涂成金色。",
