@@ -155,7 +155,15 @@
     "fuelYourTransformation": "Alimente sua transformação",
     "wellnessCheck": "Verificação de Bem-estar",
     "tuneIntoYourEnergy": "Sintonize com sua energia",
-    "embraceTheLight": "Abrace a luz. Domine seu dia."
+    "embraceTheLight": "Abrace a luz. Domine seu dia.",
+    "quotes": {
+      "quote1": "Levante com o sol, brilhe com propósito.",
+      "quote2": "Hoje é uma tela em branco—pinte-a de ouro.",
+      "quote3": "Cada nascer do sol traz novas oportunidades.",
+      "quote4": "Desperte seu potencial, abrace o dia.",
+      "quote5": "A luz da manhã traz possibilidades infinitas.",
+      "quote6": "Irradie positividade, ilumine o mundo."
+    }
   },
   "night": {
     "goodEvening": "Boa Noite",

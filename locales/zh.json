@@ -155,7 +155,15 @@
     "fuelYourTransformation": "加油你的转变",
     "wellnessCheck": "健康检查",
     "tuneIntoYourEnergy": "调整你的能量",
-    "embraceTheLight": "拥抱光明。掌控你的一天。"
+    "embraceTheLight": "拥抱光明。掌控你的一天。",
+    "quotes": {
+      "quote1": "与太阳一同升起，带着目标发光。",
+      "quote2": "今天是一张空白画布——把它涂成金色。",
+      "quote3": "每一次日出都带来新的机会。",
+      "quote4": "唤醒你的潜能，拥抱这一天。",
+      "quote5": "晨光带来无限可能。",
+      "quote6": "散发正能量，照亮世界。"
+    }
   },
   "night": {
     "goodEvening": "晚上好",
