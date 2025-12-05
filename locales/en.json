@@ -1115,5 +1115,52 @@
         "lifestyleV2Desc": "Find harmony between work and life"
       }
     }
+  },
+  "howAmIFeeling": {
+    "title": "How I'm Feeling",
+    "completeCheckIn": "Complete Check-in",
+    "checkInLogged": "Your check-in has been logged!",
+    "incomplete": "Incomplete",
+    "fillAllParameters": "Please fill in all wellness parameters",
+    "success": "Success",
+    "understanding": "Understanding your feelings is the first step to wellness",
+    "howAreYouFeeling": "How are you feeling?",
+    "energyLevel": "Energy Level",
+    "stressLevel": "Stress Level",
+    "sleepQuality": "Sleep Quality",
+    "physicalHealth": "Physical Health",
+    "gratitudeLabel": "Gratitude (one per line)",
+    "gratitudePlaceholder": "What are you grateful for today?",
+    "waterLabel": "Water (glasses)",
+    "exerciseLabel": "Exercise (min)",
+    "additionalNotes": "Additional Notes",
+    "notesPlaceholder": "Any thoughts or observations?",
+    "mood": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "okay": "Okay",
+      "low": "Low",
+      "poor": "Poor"
+    },
+    "energy": {
+      "high": "High",
+      "moderate": "Moderate",
+      "low": "Low",
+      "exhausted": "Exhausted"
+    },
+    "stress": {
+      "none": "None",
+      "mild": "Mild",
+      "moderate": "Moderate",
+      "high": "High",
+      "overwhelming": "Overwhelming"
+    },
+    "sleep": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "fair": "Fair",
+      "poor": "Poor",
+      "terrible": "Terrible"
+    }
   }
 }

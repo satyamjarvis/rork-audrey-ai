@@ -27,6 +27,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
+import { useTranslation } from "@/contexts/LanguageContext";
 import {
   useWellnessCheck,
   MoodType,
@@ -95,6 +96,7 @@ const SLEEP_OPTIONS: SleepOption[] = [
 ];
 
 export default function HowAmIFeelingScreen() {
+  const { t, language } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { addEntry, todayEntry } = useWellnessCheck();
@@ -243,7 +245,7 @@ export default function HowAmIFeelingScreen() {
 
   const handleSubmitCheckIn = async () => {
     if (!selectedMood || !selectedEnergy || !selectedStress || !selectedSleep) {
-      Alert.alert("Incomplete", "Please fill in all wellness parameters");
+      Alert.alert(t("howAmIFeeling.incomplete"), t("howAmIFeeling.fillAllParameters"));
       return;
     }
 
@@ -267,7 +269,7 @@ export default function HowAmIFeelingScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
 
-    Alert.alert("Success", "Your check-in has been logged!", [
+    Alert.alert(t("howAmIFeeling.success"), t("howAmIFeeling.checkInLogged"), [
       {
         text: "OK",
         onPress: () => router.back(),
@@ -276,7 +278,7 @@ export default function HowAmIFeelingScreen() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString(language, {
       hour: "numeric",
       minute: "2-digit",
     });
@@ -291,7 +293,7 @@ export default function HowAmIFeelingScreen() {
     <View style={styles.sectionContainer}>
       <View style={styles.sectionHeader}>
         <Heart color="#e8b4fa" size={16} strokeWidth={2.5} />
-        <Text style={styles.sectionTitle}>How are you feeling?</Text>
+        <Text style={styles.sectionTitle}>{t("howAmIFeeling.howAreYouFeeling")}</Text>
       </View>
       <View style={styles.optionsGrid}>
         {MOOD_OPTIONS.map((option) => (
@@ -324,7 +326,7 @@ export default function HowAmIFeelingScreen() {
                 },
               ]}
             >
-              {option.label}
+              {t(`howAmIFeeling.mood.${option.value}`)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -336,7 +338,7 @@ export default function HowAmIFeelingScreen() {
     <View style={styles.sectionContainer}>
       <View style={styles.sectionHeader}>
         <Zap color="#e8b4fa" size={16} strokeWidth={2.5} />
-        <Text style={styles.sectionTitle}>Energy Level</Text>
+        <Text style={styles.sectionTitle}>{t("howAmIFeeling.energyLevel")}</Text>
       </View>
       <View style={styles.optionsRow}>
         {ENERGY_OPTIONS.map((option) => (
@@ -368,7 +370,7 @@ export default function HowAmIFeelingScreen() {
                 },
               ]}
             >
-              {option.label}
+              {t(`howAmIFeeling.energy.${option.value}`)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -380,7 +382,7 @@ export default function HowAmIFeelingScreen() {
     <View style={styles.sectionContainer}>
       <View style={styles.sectionHeader}>
         <Brain color="#e8b4fa" size={16} strokeWidth={2.5} />
-        <Text style={styles.sectionTitle}>Stress Level</Text>
+        <Text style={styles.sectionTitle}>{t("howAmIFeeling.stressLevel")}</Text>
       </View>
       <View style={styles.optionsRow}>
         {STRESS_OPTIONS.map((option) => (
@@ -412,7 +414,7 @@ export default function HowAmIFeelingScreen() {
                 },
               ]}
             >
-              {option.label}
+              {t(`howAmIFeeling.stress.${option.value}`)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -424,7 +426,7 @@ export default function HowAmIFeelingScreen() {
     <View style={styles.sectionContainer}>
       <View style={styles.sectionHeader}>
         <Moon color="#e8b4fa" size={16} strokeWidth={2.5} />
-        <Text style={styles.sectionTitle}>Sleep Quality</Text>
+        <Text style={styles.sectionTitle}>{t("howAmIFeeling.sleepQuality")}</Text>
       </View>
       <View style={styles.optionsGrid}>
         {SLEEP_OPTIONS.map((option) => (
@@ -457,7 +459,7 @@ export default function HowAmIFeelingScreen() {
                 },
               ]}
             >
-              {option.label}
+              {t(`howAmIFeeling.sleep.${option.value}`)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -470,7 +472,7 @@ export default function HowAmIFeelingScreen() {
       <View style={styles.sectionHeader}>
         <Activity color="#e8b4fa" size={16} strokeWidth={2.5} />
         <Text style={styles.sectionTitle}>
-          Physical Health: {physicalHealth}/10
+          {t("howAmIFeeling.physicalHealth")}: {physicalHealth}/10
         </Text>
       </View>
       <View style={styles.sliderContainer}>
@@ -502,11 +504,11 @@ export default function HowAmIFeelingScreen() {
         <View style={styles.inputContainer}>
           <View style={styles.inputHeader}>
             <Sparkles color="#e8b4fa" size={14} strokeWidth={2.5} />
-            <Text style={styles.inputLabel}>Gratitude (one per line)</Text>
+            <Text style={styles.inputLabel}>{t("howAmIFeeling.gratitudeLabel")}</Text>
           </View>
           <TextInput
             style={styles.textArea}
-            placeholder="What are you grateful for today?"
+            placeholder={t("howAmIFeeling.gratitudePlaceholder")}
             placeholderTextColor="rgba(248, 244, 232, 0.4)"
             value={gratitude}
             onChangeText={setGratitude}
@@ -518,11 +520,11 @@ export default function HowAmIFeelingScreen() {
         <BlurView intensity={15} tint="dark" style={styles.inputContainer}>
           <View style={styles.inputHeader}>
             <Sparkles color="#e8b4fa" size={14} strokeWidth={2.5} />
-            <Text style={styles.inputLabel}>Gratitude (one per line)</Text>
+            <Text style={styles.inputLabel}>{t("howAmIFeeling.gratitudeLabel")}</Text>
           </View>
           <TextInput
             style={styles.textArea}
-            placeholder="What are you grateful for today?"
+            placeholder={t("howAmIFeeling.gratitudePlaceholder")}
             placeholderTextColor="rgba(248, 244, 232, 0.4)"
             value={gratitude}
             onChangeText={setGratitude}
@@ -537,7 +539,7 @@ export default function HowAmIFeelingScreen() {
           <>
             <View style={styles.quickInputCard}>
               <Droplets color="#e8b4fa" size={14} strokeWidth={2.5} />
-              <Text style={styles.quickInputLabel}>Water (glasses)</Text>
+              <Text style={styles.quickInputLabel}>{t("howAmIFeeling.waterLabel")}</Text>
               <TextInput
                 style={styles.quickInput}
                 placeholder="0"
@@ -550,7 +552,7 @@ export default function HowAmIFeelingScreen() {
 
             <View style={styles.quickInputCard}>
               <Clock color="#e8b4fa" size={14} strokeWidth={2.5} />
-              <Text style={styles.quickInputLabel}>Exercise (min)</Text>
+              <Text style={styles.quickInputLabel}>{t("howAmIFeeling.exerciseLabel")}</Text>
               <TextInput
                 style={styles.quickInput}
                 placeholder="0"
@@ -565,7 +567,7 @@ export default function HowAmIFeelingScreen() {
           <>
             <BlurView intensity={15} tint="dark" style={styles.quickInputCard}>
               <Droplets color="#e8b4fa" size={14} strokeWidth={2.5} />
-              <Text style={styles.quickInputLabel}>Water (glasses)</Text>
+              <Text style={styles.quickInputLabel}>{t("howAmIFeeling.waterLabel")}</Text>
               <TextInput
                 style={styles.quickInput}
                 placeholder="0"
@@ -578,7 +580,7 @@ export default function HowAmIFeelingScreen() {
 
             <BlurView intensity={15} tint="dark" style={styles.quickInputCard}>
               <Clock color="#e8b4fa" size={14} strokeWidth={2.5} />
-              <Text style={styles.quickInputLabel}>Exercise (min)</Text>
+              <Text style={styles.quickInputLabel}>{t("howAmIFeeling.exerciseLabel")}</Text>
               <TextInput
                 style={styles.quickInput}
                 placeholder="0"
@@ -594,10 +596,10 @@ export default function HowAmIFeelingScreen() {
 
       {Platform.OS === "web" ? (
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Additional Notes</Text>
+          <Text style={styles.inputLabel}>{t("howAmIFeeling.additionalNotes")}</Text>
           <TextInput
             style={styles.textArea}
-            placeholder="Any thoughts or observations?"
+            placeholder={t("howAmIFeeling.notesPlaceholder")}
             placeholderTextColor="rgba(248, 244, 232, 0.4)"
             value={notes}
             onChangeText={setNotes}
@@ -607,10 +609,10 @@ export default function HowAmIFeelingScreen() {
         </View>
       ) : (
         <BlurView intensity={15} tint="dark" style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Additional Notes</Text>
+          <Text style={styles.inputLabel}>{t("howAmIFeeling.additionalNotes")}</Text>
           <TextInput
             style={styles.textArea}
-            placeholder="Any thoughts or observations?"
+            placeholder={t("howAmIFeeling.notesPlaceholder")}
             placeholderTextColor="rgba(248, 244, 232, 0.4)"
             value={notes}
             onChangeText={setNotes}
@@ -703,7 +705,7 @@ export default function HowAmIFeelingScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>How I&apos;m Feeling</Text>
+                  <Text style={styles.headerTitle}>{t("howAmIFeeling.title")}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -738,13 +740,13 @@ export default function HowAmIFeelingScreen() {
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                 >
-                  <Text style={styles.submitText}>Complete Check-in</Text>
+                  <Text style={styles.submitText}>{t("howAmIFeeling.completeCheckIn")}</Text>
                 </LinearGradient>
               </TouchableOpacity>
 
               <Animated.View style={{ opacity: fadeAnim, marginTop: 16 }}>
                 <Text style={styles.footerText}>
-                  Understanding your feelings is the first step to wellness
+                  {t("howAmIFeeling.understanding")}
                 </Text>
               </Animated.View>
             </Animated.View>
