@@ -238,6 +238,7 @@
   },
   "common": {
     "save": "Save",
+    "saved": "Saved",
     "edit": "Edit",
     "add": "Add",
     "close": "Close",
@@ -329,7 +330,113 @@
     "clearChat": "Clear chat",
     "areYouSureClearChat": "Are you sure you want to clear the chat?",
     "whatCanIHelp": "What can I help you with?",
-    "audreyCapabilities": "Audrey's Capabilities"
+    "audreyCapabilities": "Audrey's Capabilities",
+    "aboutAudrey": "About Audrey",
+    "yourAiCompanion": "Your AI Life Companion",
+    "audreyDescription": "I am Audrey, an advanced AI designed to understand you, support your goals, and help you navigate life with clarity and purpose.",
+    "whatICanDo": "WHAT I CAN DO",
+    "smartScheduling": "Smart Scheduling",
+    "smartSchedulingDesc": "Manage your calendar, appointments, and daily agenda.",
+    "taskManagement": "Task Management",
+    "taskManagementDesc": "Organize to-dos, set priorities, and track progress.",
+    "wellnessSupport": "Wellness & Support",
+    "wellnessSupportDesc": "Emotional check-ins, sleep meditation, and wellness advice.",
+    "knowledgeWeb": "Knowledge & Web",
+    "knowledgeWebDesc": "Search the web, answer questions, and provide info.",
+    "learningGrowth": "Learning & Growth",
+    "learningGrowthDesc": "Create study plans and help you learn new skills.",
+    "intelligentAnalysis": "Intelligent Analysis",
+    "intelligentAnalysisDesc": "Analyze attached files, photos, and documents for deep insights.",
+    "uploadDocument": "Upload Document",
+    "attachFiles": "Attach text files or documents",
+    "attachedFiles": "Attached files",
+    "analysisFailed": "Analysis Failed",
+    "analysisFailedDesc": "Failed to analyze the content. Please try again.",
+    "noContent": "No Content",
+    "noContentDesc": "Please type something or upload an attachment to analyze.",
+    "fileAttached": "File Attached",
+    "fileAttachedDesc": "has been attached. Type your message and press send, or tap the brain icon to analyze it.",
+    "failedToPickFile": "Failed to pick file. Please try again.",
+    "imageSaved": "Image saved to your gallery!",
+    "failedToSaveImage": "Failed to save image.",
+    "download": "Download",
+    "clearAll": "Clear All",
+    "askMeAnything": "Ask me anything...",
+    "lifeCompanion": "Your AI assistant and life companion"
+  },
+  "automations": {
+    "title": "Automations Manager",
+    "tabs": {
+      "automations": "Automations",
+      "timers": "Timers"
+    },
+    "smsAutomations": "SMS Automations",
+    "otherAutomations": "Other Automations",
+    "noAutomationsYet": "No Automations Yet",
+    "noAutomationsDesc": "Ask Audrey to create automated reminders, scheduled SMS messages, or other tasks.",
+    "noTimersYet": "No Timers Yet",
+    "noTimersDesc": "Ask Audrey to create timers, stopwatches, or Pomodoro sessions.",
+    "actions": {
+      "stop": "Stop",
+      "pauseFor": "Pause for...",
+      "duplicate": "Duplicate",
+      "sendToDifferentContacts": "Send to Different Contacts",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "create": "Create"
+    },
+    "alerts": {
+      "stopped": "Stopped",
+      "itemStopped": "The item has been stopped.",
+      "paused": "Paused",
+      "pausedFor": "Paused for {duration}. Will auto-resume after.",
+      "duplicated": "Duplicated",
+      "automationDuplicated": "Automation has been duplicated.",
+      "created": "Created",
+      "createdCount": "Created {count} new SMS automation(s) with selected contacts.",
+      "deleteTitle": "Delete",
+      "deleteConfirm": "Are you sure you want to delete \"{name}\"?"
+    },
+    "pauseModal": {
+      "title": "Pause Duration",
+      "hours": "Hours",
+      "days": "Days"
+    },
+    "duplicateModal": {
+      "title": "Duplicate Automation",
+      "placeholder": "Automation name"
+    },
+    "contactsModal": {
+      "title": "Select Contacts",
+      "searchPlaceholder": "Search contacts...",
+      "selectedCount": "{count} selected",
+      "createButton": "Create {count} Automation{suffix}"
+    },
+    "status": {
+      "active": "Active",
+      "paused": "Paused",
+      "running": "Running",
+      "completed": "Completed"
+    },
+    "types": {
+      "pomodoro": "Pomodoro",
+      "stopwatch": "Stopwatch",
+      "countdown": "Countdown"
+    },
+    "triggers": {
+        "daily": "Daily at {time}",
+        "weekly": "Weekly ({days}) at {time}",
+        "timerComplete": "When timer completes",
+        "once": "Once at {time}",
+        "unknown": "Unknown trigger"
+    },
+    "common": {
+        "lastRun": "Last run: {date}",
+        "never": "Never",
+        "noNumber": "No number",
+        "created": "Created: {date}"
+    }
   },
   "planner": {
     "daily": "Daily",

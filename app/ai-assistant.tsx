@@ -71,6 +71,7 @@ import { useAudreyMemory } from "@/contexts/AudreyMemoryContext";
 import { useAffirmations } from "@/contexts/AffirmationsContext";
 import { useMorningHabits } from "@/contexts/MorningHabitsContext";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { getTranslations } from "@/utils/i18n";
 import { useChat } from "@/contexts/ChatContext";
 import { useAudreyTimer } from "@/contexts/AudreyTimerContext";
 import KeyboardDismissButton from "@/components/KeyboardDismissButton";
@@ -124,6 +125,7 @@ export default function AIAssistantScreen() {
     getActiveTimer,
     formatTime,
   } = useAudreyTimer();
+  const i18n = getTranslations(language);
   const languageMeta = LANGUAGE_DISPLAY_NAMES[language] ?? LANGUAGE_DISPLAY_NAMES.en;
   const assistantLanguageLabel =
     languageMeta.native === languageMeta.english
@@ -1483,7 +1485,7 @@ GUIDELINES FOR EXCELLENCE:
     try {
       // Use the proper message format with files
       await originalSendMessage({
-        text: messageText.trim() || (filesToSend.length > 0 ? "Attached files" : ""),
+        text: messageText.trim() || (filesToSend.length > 0 ? i18n.ai.attachedFiles : ""),
         files: filesToSend.length > 0 ? filesToSend : undefined,
       });
 
@@ -1517,7 +1519,7 @@ GUIDELINES FOR EXCELLENCE:
       }
 
       if (!result.assets || result.assets.length === 0) {
-        Alert.alert("No File Selected", "Please select a file to analyze.");
+        Alert.alert(i18n.ai.noContent, "Please select a file to analyze.");
         return;
       }
 
@@ -1539,20 +1541,20 @@ GUIDELINES FOR EXCELLENCE:
       setAttachedFiles([...attachedFiles, newFile]);
 
       Alert.alert(
-        "File Attached",
-        `${file.name} has been attached. Type your message and press send, or tap the brain icon to analyze it.`,
+        i18n.ai.fileAttached,
+        `${file.name} ${i18n.ai.fileAttachedDesc}`,
         [{ text: "OK" }]
       );
     } catch (error) {
       console.error("[AI Assistant] Error picking file:", error);
-      Alert.alert("Error", "Failed to pick file. Please try again.", [{ text: "OK" }]);
+      Alert.alert(i18n.common.error, i18n.ai.failedToPickFile, [{ text: "OK" }]);
     }
   };
 
   const handleAnalyzeContent = async () => {
     try {
       if (!messageText.trim() && attachedFiles.length === 0) {
-        Alert.alert("No Content", "Please type something or upload an attachment to analyze.");
+        Alert.alert(i18n.ai.noContent, i18n.ai.noContentDesc);
         return;
       }
 
@@ -1613,7 +1615,7 @@ GUIDELINES FOR EXCELLENCE:
     } catch (error) {
       console.error("[AI Assistant] Error analyzing:", error);
       setIsAnalyzing(false);
-      Alert.alert("Analysis Failed", "Failed to analyze the content. Please try again.", [{ text: "OK" }]);
+      Alert.alert(i18n.ai.analysisFailed, i18n.ai.analysisFailedDesc, [{ text: "OK" }]);
     }
   };
 
@@ -1835,7 +1837,7 @@ GUIDELINES FOR EXCELLENCE:
               >
                 <ChevronLeft color={palette.textPrimary} size={22} strokeWidth={2.4} />
               </TouchableOpacity>
-              <Text style={[styles.heroTitle, { color: palette.neonBlue }]}>AUDREY</Text>
+              <Text style={[styles.heroTitle, { color: palette.neonBlue }]}>{i18n.ai.audrey.toUpperCase()}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <Animated.View style={{ transform: [{ scale: buttonPulse }] }}>
                   <TouchableOpacity
@@ -1895,7 +1897,7 @@ GUIDELINES FOR EXCELLENCE:
               <View style={styles.modalOverlay}>
                 <View style={[styles.modalContent, { backgroundColor: isNightMode ? "#000000" : "#FFFFFF" }]}>
                   <View style={styles.modalHeader}>
-                    <Text style={[styles.modalTitle, { color: palette.textPrimary }]}>About Audrey</Text>
+                    <Text style={[styles.modalTitle, { color: palette.textPrimary }]}>{i18n.ai.aboutAudrey}</Text>
                     <TouchableOpacity
                       onPress={() => setShowAboutModal(false)}
                       style={[styles.closeButton, { backgroundColor: "rgba(255,255,255,0.1)" }]}
@@ -1919,22 +1921,22 @@ GUIDELINES FOR EXCELLENCE:
                           />
                         </LinearGradient>
                         <Text style={[styles.aboutSubtitle, { color: palette.textPrimary }]}>
-                          Your AI Life Companion
+                          {i18n.ai.yourAiCompanion}
                         </Text>
                         <Text style={[styles.aboutDescription, { color: palette.subtext }]}>
-                          I am Audrey, an advanced AI designed to understand you, support your goals, and help you navigate life with clarity and purpose.
+                          {i18n.ai.audreyDescription}
                         </Text>
                       </View>
 
-                      <Text style={[styles.sectionHeader, { color: palette.accent }]}>WHAT I CAN DO</Text>
+                      <Text style={[styles.sectionHeader, { color: palette.accent }]}>{i18n.ai.whatICanDo}</Text>
 
                       <View style={styles.featuresGrid}>
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <Calendar color="#A78BFA" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>Smart Scheduling</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.smartScheduling}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              Manage your calendar, appointments, and daily agenda.
+                              {i18n.ai.smartSchedulingDesc}
                             </Text>
                           </View>
                         </View>
@@ -1942,9 +1944,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <CheckCircle2 color="#34D399" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>Task Management</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.taskManagement}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              Organize to-dos, set priorities, and track progress.
+                              {i18n.ai.taskManagementDesc}
                             </Text>
                           </View>
                         </View>
@@ -1952,9 +1954,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <Heart color="#F472B6" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>Wellness & Support</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.wellnessSupport}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              Emotional check-ins, sleep meditation, and wellness advice.
+                              {i18n.ai.wellnessSupportDesc}
                             </Text>
                           </View>
                         </View>
@@ -1962,9 +1964,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <Search color="#60A5FA" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>Knowledge & Web</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.knowledgeWeb}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              Search the web, answer questions, and provide info.
+                              {i18n.ai.knowledgeWebDesc}
                             </Text>
                           </View>
                         </View>
@@ -1972,9 +1974,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <BookOpen color="#E879F9" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>Learning & Growth</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.learningGrowth}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              Create study plans and help you learn new skills.
+                              {i18n.ai.learningGrowthDesc}
                             </Text>
                           </View>
                         </View>
@@ -1982,9 +1984,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <Brain color="#FB923C" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>Intelligent Analysis</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.intelligentAnalysis}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              Analyze attached files, photos, and documents for deep insights.
+                              {i18n.ai.intelligentAnalysisDesc}
                             </Text>
                           </View>
                         </View>
@@ -2036,7 +2038,7 @@ GUIDELINES FOR EXCELLENCE:
                   </LinearGradient>
                 </View>
                 <Text style={[styles.heroName, { color: "#FFFFFF", fontSize: 16, fontWeight: "500" }]}>
-                  Your AI assistant and life companion
+                  {i18n.ai.lifeCompanion}
                 </Text>
               </View>
             )}
@@ -2094,7 +2096,7 @@ GUIDELINES FOR EXCELLENCE:
                           {message.parts.map((part, partIndex) => {
                             if (!part) return null;
                             if (part.type === "text") {
-                              if (hasFiles && part.text === "Attached files") return null;
+                              if (hasFiles && part.text === i18n.ai.attachedFiles) return null;
                               if (!part.text) return null;
 
                               const isCurrentlyReading = !isUser && currentlyReadingMessageId === message.id;
@@ -2177,7 +2179,7 @@ GUIDELINES FOR EXCELLENCE:
 
                                             if (await MediaLibrary.requestPermissionsAsync()) {
                                               await MediaLibrary.saveToLibraryAsync(filename);
-                                              Alert.alert("Saved", "Image saved to your gallery!");
+                                              Alert.alert(i18n.common.saved, i18n.ai.imageSaved);
                                             } else {
                                               await Share.share({
                                                 url: filename,
@@ -2186,13 +2188,13 @@ GUIDELINES FOR EXCELLENCE:
                                             }
                                           } catch (e) {
                                             console.error("Save error:", e);
-                                            Alert.alert("Error", "Failed to save image.");
+                                            Alert.alert(i18n.common.error, i18n.ai.failedToSaveImage);
                                           }
                                         }
                                       }}
                                     >
                                       <Download color="#FFFFFF" size={20} />
-                                      <Text style={styles.downloadText}>Download</Text>
+                                      <Text style={styles.downloadText}>{i18n.ai.download}</Text>
                                     </TouchableOpacity>
                                   </View>
                                 );
@@ -2213,7 +2215,7 @@ GUIDELINES FOR EXCELLENCE:
                 <View style={styles.attachmentsHeader}>
                   <Text style={[styles.attachmentsTitle, { color: palette.textPrimary }]}>({attachedFiles.length})</Text>
                   <TouchableOpacity onPress={() => setAttachedFiles([])}>
-                    <Text style={[styles.clearAttachmentsText, { color: palette.accent }]}>Clear All</Text>
+                    <Text style={[styles.clearAttachmentsText, { color: palette.accent }]}>{i18n.ai.clearAll}</Text>
                   </TouchableOpacity>
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.attachmentsList}>
@@ -2345,8 +2347,8 @@ GUIDELINES FOR EXCELLENCE:
                       <FileText color={palette.textPrimary} size={20} strokeWidth={2.2} />
                     </View>
                     <View style={styles.analysisMenuTextContainer}>
-                      <Text style={[styles.analysisMenuTitle, { color: palette.textPrimary }]}>Upload Document</Text>
-                      <Text style={[styles.analysisMenuSubtitle, { color: palette.subtext }]}>Attach text files or documents</Text>
+                      <Text style={[styles.analysisMenuTitle, { color: palette.textPrimary }]}>{i18n.ai.uploadDocument}</Text>
+                      <Text style={[styles.analysisMenuSubtitle, { color: palette.subtext }]}>{i18n.ai.attachFiles}</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -2358,7 +2360,7 @@ GUIDELINES FOR EXCELLENCE:
                     inputRef.current = ref;
                   }}
                   style={[styles.input, { color: palette.textPrimary }]}
-                  placeholder="Ask me anything..."
+                  placeholder={i18n.ai.askMeAnything}
                   placeholderTextColor={palette.subtext}
                   value={messageText}
                   onChangeText={setMessageText}

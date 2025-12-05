@@ -35,6 +35,8 @@ import * as Haptics from "expo-haptics";
 
 import { useAudreyTimer, AudreyAutomation, AudreyTimer } from "@/contexts/AudreyTimerContext";
 import { usePhonebook, Contact } from "@/contexts/PhonebookContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getTranslations } from "@/utils/i18n";
 
 type PauseDuration = {
   type: "hours" | "days";
@@ -56,6 +58,8 @@ export default function AutomationsManagerScreen() {
   } = useAudreyTimer();
 
   const { contacts } = usePhonebook();
+  const { language } = useLanguage();
+  const i18n = getTranslations(language);
 
   const [selectedItem, setSelectedItem] = useState<AudreyAutomation | AudreyTimer | null>(null);
   const [showActionSheet, setShowActionSheet] = useState(false);
@@ -153,7 +157,7 @@ export default function AutomationsManagerScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
 
-    Alert.alert("Stopped", "The item has been stopped.");
+    Alert.alert(i18n.automations.alerts.stopped, i18n.automations.alerts.itemStopped);
   };
 
   const handlePause = () => {
@@ -192,19 +196,19 @@ export default function AutomationsManagerScreen() {
     }
 
     const durationText = `${pauseDuration.value} ${pauseDuration.type}`;
-    Alert.alert("Paused", `Paused for ${durationText}. Will auto-resume after.`);
+    Alert.alert(i18n.automations.alerts.paused, i18n.automations.alerts.pausedFor.replace("{duration}", durationText));
   };
 
   const handleDelete = () => {
     if (!selectedItem) return;
 
     Alert.alert(
-      "Delete",
-      `Are you sure you want to delete "${selectedItem.name}"?`,
+      i18n.automations.alerts.deleteTitle,
+      i18n.automations.alerts.deleteConfirm.replace("{name}", selectedItem.name),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: i18n.automations.actions.cancel, style: "cancel" },
         {
-          text: "Delete",
+          text: i18n.automations.actions.delete,
           style: "destructive",
           onPress: async () => {
             if (isAutomation(selectedItem)) {
@@ -251,7 +255,7 @@ export default function AutomationsManagerScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
 
-    Alert.alert("Duplicated", "Automation has been duplicated.");
+    Alert.alert(i18n.automations.alerts.duplicated, i18n.automations.alerts.automationDuplicated);
   };
 
   const handleChangeContacts = () => {
@@ -305,25 +309,33 @@ export default function AutomationsManagerScreen() {
     }
 
     Alert.alert(
-      "Created",
-      `Created ${selectedContacts.length} new SMS automation(s) with selected contacts.`
+      i18n.automations.alerts.created,
+      i18n.automations.alerts.createdCount.replace("{count}", selectedContacts.length.toString())
     );
   };
 
   const getTriggerDescription = (automation: AudreyAutomation) => {
     switch (automation.trigger) {
       case "daily":
-        return `Daily at ${automation.triggerConfig.time}`;
+        return i18n.automations.triggers.daily.replace("{time}", automation.triggerConfig.time || "");
       case "weekly":
-        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const days = [
+          i18n.calendar.sunday,
+          i18n.calendar.monday,
+          i18n.calendar.tuesday,
+          i18n.calendar.wednesday,
+          i18n.calendar.thursday,
+          i18n.calendar.friday,
+          i18n.calendar.saturday
+        ];
         const selectedDays = automation.triggerConfig.dayOfWeek?.map((d) => days[d]).join(", ");
-        return `Weekly (${selectedDays}) at ${automation.triggerConfig.time}`;
+        return i18n.automations.triggers.weekly.replace("{days}", selectedDays || "").replace("{time}", automation.triggerConfig.time || "");
       case "timer_complete":
-        return "When timer completes";
+        return i18n.automations.triggers.timerComplete;
       case "time":
-        return `Once at ${automation.triggerConfig.time}`;
+        return i18n.automations.triggers.once.replace("{time}", automation.triggerConfig.time || "");
       default:
-        return "Unknown trigger";
+        return i18n.automations.triggers.unknown;
     }
   };
 
@@ -379,7 +391,7 @@ export default function AutomationsManagerScreen() {
               { color: automation.enabled ? palette.success : palette.danger },
             ]}
           >
-            {automation.enabled ? "Active" : "Paused"}
+            {automation.enabled ? i18n.automations.status.active : i18n.automations.status.paused}
           </Text>
         </View>
       </View>
@@ -389,7 +401,7 @@ export default function AutomationsManagerScreen() {
           <View style={styles.detailRow}>
             <Phone color={palette.subtext} size={14} />
             <Text style={[styles.detailText, { color: palette.subtext }]} numberOfLines={1}>
-              {automation.action.phoneNumber || "No number"}
+              {automation.action.phoneNumber || i18n.automations.common.noNumber}
             </Text>
           </View>
           {automation.action.message && (
@@ -402,7 +414,7 @@ export default function AutomationsManagerScreen() {
 
       <View style={styles.cardFooter}>
         <Text style={[styles.footerText, { color: palette.subtext }]}>
-          Last run: {automation.lastRun ? new Date(automation.lastRun).toLocaleDateString() : "Never"}
+          {i18n.automations.common.lastRun.replace("{date}", automation.lastRun ? new Date(automation.lastRun).toLocaleDateString() : i18n.automations.common.never)}
         </Text>
         <ChevronRight color={palette.subtext} size={16} />
       </View>
@@ -425,7 +437,7 @@ export default function AutomationsManagerScreen() {
             {timer.name}
           </Text>
           <Text style={[styles.cardSubtitle, { color: palette.subtext }]}>
-            {timer.type === "pomodoro" ? "🍅 Pomodoro" : timer.type === "stopwatch" ? "⏱️ Stopwatch" : "⏰ Countdown"}
+            {timer.type === "pomodoro" ? `🍅 ${i18n.automations.types.pomodoro}` : timer.type === "stopwatch" ? `⏱️ ${i18n.automations.types.stopwatch}` : `⏰ ${i18n.automations.types.countdown}`}
           </Text>
         </View>
         <View
@@ -467,7 +479,7 @@ export default function AutomationsManagerScreen() {
               },
             ]}
           >
-            {timer.status.charAt(0).toUpperCase() + timer.status.slice(1)}
+            {timer.status === "running" ? i18n.automations.status.running : timer.status === "paused" ? i18n.automations.status.paused : i18n.automations.status.completed}
           </Text>
         </View>
       </View>
@@ -485,7 +497,7 @@ export default function AutomationsManagerScreen() {
 
       <View style={styles.cardFooter}>
         <Text style={[styles.footerText, { color: palette.subtext }]}>
-          Created: {new Date(timer.createdAt).toLocaleDateString()}
+          {i18n.automations.common.created.replace("{date}", new Date(timer.createdAt).toLocaleDateString())}
         </Text>
         <ChevronRight color={palette.subtext} size={16} />
       </View>
@@ -511,7 +523,7 @@ export default function AutomationsManagerScreen() {
             {item.firstName} {item.lastName}
           </Text>
           <Text style={[styles.contactPhone, { color: palette.subtext }]}>
-            {phoneNumber || "No phone number"}
+            {phoneNumber || i18n.automations.common.noNumber}
           </Text>
         </View>
         {phoneNumber && (
@@ -539,7 +551,7 @@ export default function AutomationsManagerScreen() {
           >
             <ChevronLeft color={palette.textPrimary} size={22} />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: palette.textPrimary }]}>Automations Manager</Text>
+          <Text style={[styles.headerTitle, { color: palette.textPrimary }]}>{i18n.automations.title}</Text>
           <View style={styles.placeholder} />
         </View>
 
@@ -558,7 +570,7 @@ export default function AutomationsManagerScreen() {
                 { color: activeTab === "automations" ? palette.accent : palette.subtext },
               ]}
             >
-              Automations ({automations.length})
+              {i18n.automations.tabs.automations} ({automations.length})
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -575,7 +587,7 @@ export default function AutomationsManagerScreen() {
                 { color: activeTab === "timers" ? palette.accent : palette.subtext },
               ]}
             >
-              Timers ({timers.length})
+              {i18n.automations.tabs.timers} ({timers.length})
             </Text>
           </TouchableOpacity>
         </View>
@@ -592,7 +604,7 @@ export default function AutomationsManagerScreen() {
                   <View style={styles.sectionHeader}>
                     <MessageSquare color={palette.accent} size={18} />
                     <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
-                      SMS Automations
+                      {i18n.automations.smsAutomations}
                     </Text>
                   </View>
                   {smsAutomations.map(renderAutomationCard)}
@@ -604,7 +616,7 @@ export default function AutomationsManagerScreen() {
                   <View style={styles.sectionHeader}>
                     <Bell color={palette.warning} size={18} />
                     <Text style={[styles.sectionTitle, { color: palette.textPrimary }]}>
-                      Other Automations
+                      {i18n.automations.otherAutomations}
                     </Text>
                   </View>
                   {otherAutomations.map(renderAutomationCard)}
@@ -615,10 +627,10 @@ export default function AutomationsManagerScreen() {
                 <View style={styles.emptyState}>
                   <Zap color={palette.subtext} size={48} />
                   <Text style={[styles.emptyTitle, { color: palette.textPrimary }]}>
-                    No Automations Yet
+                    {i18n.automations.noAutomationsYet}
                   </Text>
                   <Text style={[styles.emptySubtitle, { color: palette.subtext }]}>
-                    Ask Audrey to create automated reminders, scheduled SMS messages, or other tasks.
+                    {i18n.automations.noAutomationsDesc}
                   </Text>
                 </View>
               )}
@@ -633,10 +645,10 @@ export default function AutomationsManagerScreen() {
                 <View style={styles.emptyState}>
                   <Timer color={palette.subtext} size={48} />
                   <Text style={[styles.emptyTitle, { color: palette.textPrimary }]}>
-                    No Timers Yet
+                    {i18n.automations.noTimersYet}
                   </Text>
                   <Text style={[styles.emptySubtitle, { color: palette.subtext }]}>
-                    Ask Audrey to create timers, stopwatches, or Pomodoro sessions.
+                    {i18n.automations.noTimersDesc}
                   </Text>
                 </View>
               )}
@@ -666,7 +678,7 @@ export default function AutomationsManagerScreen() {
                 <View style={[styles.actionIcon, { backgroundColor: "rgba(239, 68, 68, 0.2)" }]}>
                   <Pause color={palette.danger} size={20} />
                 </View>
-                <Text style={[styles.actionText, { color: palette.textPrimary }]}>Stop</Text>
+                <Text style={[styles.actionText, { color: palette.textPrimary }]}>{i18n.automations.actions.stop}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.actionItem} onPress={handlePause}>
@@ -674,7 +686,7 @@ export default function AutomationsManagerScreen() {
                   <Clock color={palette.warning} size={20} />
                 </View>
                 <Text style={[styles.actionText, { color: palette.textPrimary }]}>
-                  Pause for...
+                  {i18n.automations.actions.pauseFor}
                 </Text>
               </TouchableOpacity>
 
@@ -683,7 +695,7 @@ export default function AutomationsManagerScreen() {
                   <View style={[styles.actionIcon, { backgroundColor: "rgba(0, 217, 255, 0.2)" }]}>
                     <Copy color={palette.accent} size={20} />
                   </View>
-                  <Text style={[styles.actionText, { color: palette.textPrimary }]}>Duplicate</Text>
+                  <Text style={[styles.actionText, { color: palette.textPrimary }]}>{i18n.automations.actions.duplicate}</Text>
                 </TouchableOpacity>
               )}
 
@@ -695,7 +707,7 @@ export default function AutomationsManagerScreen() {
                       <Users color="#A78BFA" size={20} />
                     </View>
                     <Text style={[styles.actionText, { color: palette.textPrimary }]}>
-                      Send to Different Contacts
+                      {i18n.automations.actions.sendToDifferentContacts}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -704,14 +716,14 @@ export default function AutomationsManagerScreen() {
                 <View style={[styles.actionIcon, { backgroundColor: "rgba(239, 68, 68, 0.2)" }]}>
                   <Trash2 color={palette.danger} size={20} />
                 </View>
-                <Text style={[styles.actionText, { color: palette.danger }]}>Delete</Text>
+                <Text style={[styles.actionText, { color: palette.danger }]}>{i18n.automations.actions.delete}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.cancelButton, { borderColor: palette.cardBorder }]}
                 onPress={() => setShowActionSheet(false)}
               >
-                <Text style={[styles.cancelText, { color: palette.textPrimary }]}>Cancel</Text>
+                <Text style={[styles.cancelText, { color: palette.textPrimary }]}>{i18n.automations.actions.cancel}</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -727,7 +739,7 @@ export default function AutomationsManagerScreen() {
           <View style={styles.modalOverlay}>
             <View style={[styles.pauseModal, { backgroundColor: palette.cardBg }]}>
               <Text style={[styles.pauseModalTitle, { color: palette.textPrimary }]}>
-                Pause Duration
+                {i18n.automations.pauseModal.title}
               </Text>
 
               <View style={styles.durationSelector}>
@@ -744,7 +756,7 @@ export default function AutomationsManagerScreen() {
                       { color: pauseDuration.type === "hours" ? "#000" : palette.textPrimary },
                     ]}
                   >
-                    Hours
+                    {i18n.automations.pauseModal.hours}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -760,7 +772,7 @@ export default function AutomationsManagerScreen() {
                       { color: pauseDuration.type === "days" ? "#000" : palette.textPrimary },
                     ]}
                   >
-                    Days
+                    {i18n.automations.pauseModal.days}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -794,14 +806,14 @@ export default function AutomationsManagerScreen() {
                   onPress={() => setShowPauseModal(false)}
                 >
                   <Text style={[styles.modalButtonText, { color: palette.textPrimary }]}>
-                    Cancel
+                    {i18n.automations.actions.cancel}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.modalButton, { backgroundColor: palette.accent }]}
                   onPress={confirmPause}
                 >
-                  <Text style={[styles.modalButtonText, { color: "#000" }]}>Confirm</Text>
+                  <Text style={[styles.modalButtonText, { color: "#000" }]}>{i18n.automations.actions.confirm}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -819,7 +831,7 @@ export default function AutomationsManagerScreen() {
             <View style={[styles.contactsModal, { backgroundColor: palette.cardBg }]}>
               <View style={styles.contactsHeader}>
                 <Text style={[styles.contactsTitle, { color: palette.textPrimary }]}>
-                  Select Contacts
+                  {i18n.automations.contactsModal.title}
                 </Text>
                 <TouchableOpacity onPress={() => setShowContactsModal(false)}>
                   <X color={palette.textPrimary} size={24} />
@@ -830,7 +842,7 @@ export default function AutomationsManagerScreen() {
                 <Search color={palette.subtext} size={18} />
                 <TextInput
                   style={[styles.searchInput, { color: palette.textPrimary }]}
-                  placeholder="Search contacts..."
+                  placeholder={i18n.automations.contactsModal.searchPlaceholder}
                   placeholderTextColor={palette.subtext}
                   value={contactSearchQuery}
                   onChangeText={setContactSearchQuery}
@@ -838,7 +850,7 @@ export default function AutomationsManagerScreen() {
               </View>
 
               <Text style={[styles.selectedCount, { color: palette.subtext }]}>
-                {selectedContacts.length} selected
+                {i18n.automations.contactsModal.selectedCount.replace("{count}", selectedContacts.length.toString())}
               </Text>
 
               <FlatList
@@ -863,7 +875,11 @@ export default function AutomationsManagerScreen() {
                     { color: selectedContacts.length > 0 ? "#000" : palette.subtext },
                   ]}
                 >
-                  Create {selectedContacts.length} Automation{selectedContacts.length !== 1 ? "s" : ""}
+                  {
+                    i18n.automations.contactsModal.createButton
+                      .replace("{count}", selectedContacts.length.toString())
+                      .replace("{suffix}", selectedContacts.length !== 1 ? "s" : "")
+                  }
                 </Text>
               </TouchableOpacity>
             </View>
@@ -880,11 +896,11 @@ export default function AutomationsManagerScreen() {
           <View style={styles.modalOverlay}>
             <View style={[styles.duplicateModal, { backgroundColor: palette.cardBg }]}>
               <Text style={[styles.duplicateTitle, { color: palette.textPrimary }]}>
-                Duplicate Automation
+                {i18n.automations.duplicateModal.title}
               </Text>
               <TextInput
                 style={[styles.duplicateInput, { color: palette.textPrimary, borderColor: palette.cardBorder }]}
-                placeholder="Automation name"
+                placeholder={i18n.automations.duplicateModal.placeholder}
                 placeholderTextColor={palette.subtext}
                 value={duplicateName}
                 onChangeText={setDuplicateName}
@@ -895,14 +911,14 @@ export default function AutomationsManagerScreen() {
                   onPress={() => setShowDuplicateModal(false)}
                 >
                   <Text style={[styles.modalButtonText, { color: palette.textPrimary }]}>
-                    Cancel
+                    {i18n.automations.actions.cancel}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.modalButton, { backgroundColor: palette.accent }]}
                   onPress={confirmDuplicate}
                 >
-                  <Text style={[styles.modalButtonText, { color: "#000" }]}>Create</Text>
+                  <Text style={[styles.modalButtonText, { color: "#000" }]}>{i18n.automations.actions.create}</Text>
                 </TouchableOpacity>
               </View>
             </View>
