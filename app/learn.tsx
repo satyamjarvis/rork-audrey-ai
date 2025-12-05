@@ -16,7 +16,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Brain, Play, Lock, Star, Clock, Users, TrendingUp, Award, BookOpen, Target, Zap, ArrowLeft, X, Plus, Edit3, Check, Camera, Image as ImageIcon, Upload, Hourglass, Link, Globe, Activity, Sun } from "lucide-react-native";
+import { Brain, Play, Lock, Star, Clock, Users, TrendingUp, Award, BookOpen, Target, Zap, ArrowLeft, X, Plus, Edit3, Check, Camera, Image as ImageIcon, Upload, Hourglass, Link, Globe, Activity, Sun, Gem } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { Video, ResizeMode, Audio } from "expo-av";
@@ -430,6 +430,33 @@ export default function LearnScreen() {
         ],
         isSubscriptionRequired: true,
       },
+      {
+        id: "wealthy-mindset",
+        title: "Wealthy Mindset",
+        icon: "Gem" as any,
+        color: isNightMode ? "#50C878" : "#C71585",
+        videos: [
+          {
+            id: "wm1",
+            title: "The Psychology of Wealth",
+            duration: "16:20",
+            thumbnail: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            isLocked: false,
+            description: "Understand the mindset of wealthy individuals",
+          },
+          {
+            id: "wm2",
+            title: "Attracting Abundance",
+            duration: "21:15",
+            thumbnail: "https://images.unsplash.com/photo-1565514020176-dbf2277f0d03?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            isLocked: true,
+            description: "Learn to attract wealth into your life",
+          },
+        ],
+        isSubscriptionRequired: true,
+      },
     ];
 
     initializeDefaultCategories(courseCategories);
@@ -558,6 +585,39 @@ export default function LearnScreen() {
             videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
             isLocked: true,
             description: "Become one with your desires",
+          },
+        ],
+        isSubscriptionRequired: true,
+      };
+      setCategories(prev => [...prev, newCategory]);
+    }
+
+    // Add Wealthy Mindset category if missing
+    if (!categories.find(c => c.id === 'wealthy-mindset')) {
+      console.log('Adding Wealthy Mindset category');
+      const newCategory: CourseCategory = {
+        id: "wealthy-mindset",
+        title: "Wealthy Mindset",
+        icon: "Gem" as any,
+        color: isNightMode ? "#50C878" : "#C71585",
+        videos: [
+          {
+            id: "wm1",
+            title: "The Psychology of Wealth",
+            duration: "16:20",
+            thumbnail: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            isLocked: false,
+            description: "Understand the mindset of wealthy individuals",
+          },
+          {
+            id: "wm2",
+            title: "Attracting Abundance",
+            duration: "21:15",
+            thumbnail: "https://images.unsplash.com/photo-1565514020176-dbf2277f0d03?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            isLocked: true,
+            description: "Learn to attract wealth into your life",
           },
         ],
         isSubscriptionRequired: true,
@@ -1144,6 +1204,7 @@ export default function LearnScreen() {
                   Zap: Zap,
                   Activity: Activity,
                   Sun: Sun,
+                  Gem: Gem,
                 };
                 const Icon = iconMap[category.icon as string] || Star;
                 return (
@@ -1286,6 +1347,7 @@ export default function LearnScreen() {
                     Zap: Zap,
                     Activity: Activity,
                     Sun: Sun,
+                    Gem: Gem,
                   };
                   const Icon = iconMap[selectedCategory.icon as string] || Star;
                   return <Icon color={isNightMode ? "#FFD700" : "#C71585"} size={32} strokeWidth={2.5} />;
