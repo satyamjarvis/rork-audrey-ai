@@ -95,7 +95,7 @@ export default function SolaraScreen() {
   const { mode: universeMode } = useUniverseMode();
   const { markSolaraAccessed } = useUserProfile();
   const { notifyCalendarOpened } = useMusicPlayer();
-  const { translations } = useLanguage();
+  const { translations, language } = useLanguage();
   
   const isNightMode = theme.id === "night-mode";
   
@@ -845,7 +845,7 @@ export default function SolaraScreen() {
           <View ref={eventsSectionRef} style={styles.eventsSection}>
             <View style={styles.eventsSectionHeader}>
               <Text style={[styles.eventsSectionTitle, { color: isNightMode ? FUTURISTIC_COLORS.text.primary : '#000000' }]}>
-                {selectedDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                {selectedDate.toLocaleDateString(language === 'en' ? 'en-US' : language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'ar' ? 'ar-SA' : language === 'zh' ? 'zh-CN' : language === 'pt' ? 'pt-PT' : 'en-US', { month: "short", day: "numeric" })}
               </Text>
               <View style={styles.eventCount}>
                 <Text style={styles.eventCountText}>{selectedDateEvents.length}</Text>
@@ -1004,7 +1004,7 @@ export default function SolaraScreen() {
                             {showEditModal ? translations.calendar.editEvent : translations.calendar.newEvent}
                           </Text>
                           <Text style={[styles.modalSubtitle, { color: modalColors.textSecondary }]}>
-                            {selectedDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
+                            {selectedDate.toLocaleDateString(language === 'en' ? 'en-US' : language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'ar' ? 'ar-SA' : language === 'zh' ? 'zh-CN' : language === 'pt' ? 'pt-PT' : 'en-US', { weekday: "long", month: "short", day: "numeric" })}
                           </Text>
                         </View>
                       </View>
