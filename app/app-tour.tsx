@@ -15,12 +15,14 @@ import { X, Video, Music2, Sparkles, Play, User, Cloud, HelpCircle, Sun, Smile }
 import * as Haptics from 'expo-haptics';
 import { Audio } from 'expo-av';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function AppTour() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
 
   const [showVideo, setShowVideo] = useState(false);
@@ -187,7 +189,7 @@ export default function AppTour() {
           <Animated.View style={[styles.absolute, { top: height * 0.45, right: width * 0.35, opacity: questionOpacity }]}>
               <HelpCircle size={40} color="#a6b1e1" />
           </Animated.View>
-          <Text style={styles.textDistress}>Lost & Overwhelmed...</Text>
+          <Text style={styles.textDistress}>{t('appTour.lostOverwhelmed')}</Text>
         </Animated.View>
 
         <Animated.View style={[styles.scene, { opacity: scene2Opacity }]}>
@@ -198,7 +200,7 @@ export default function AppTour() {
           <Animated.View style={{ transform: [{ scale: audreyScale }] }}>
                <Sparkles size={120} color="#ffd700" />
           </Animated.View>
-          <Text style={styles.textDiscovery}>Then you found Audrey</Text>
+          <Text style={styles.textDiscovery}>{t('appTour.thenFoundAudrey')}</Text>
         </Animated.View>
 
         <Animated.View style={[styles.scene, { opacity: scene3Opacity }]}>
@@ -218,7 +220,7 @@ export default function AppTour() {
           }}>
               <User size={80} color="#fff" />
           </Animated.View>
-          <Text style={styles.textGuidance}>Showing you the way</Text>
+          <Text style={styles.textGuidance}>{t('appTour.showingTheWay')}</Text>
         </Animated.View>
 
         <Animated.View style={[styles.scene, { opacity: scene4Opacity }]}>
@@ -232,7 +234,7 @@ export default function AppTour() {
           <Animated.View style={{ transform: [{ translateY: userJump }] }}>
               <Smile size={100} color="#fff" fill="#ff6b6b" />
           </Animated.View>
-          <Text style={styles.textExcitement}>Ready for your journey!</Text>
+          <Text style={styles.textExcitement}>{t('appTour.readyForJourney')}</Text>
         </Animated.View>
 
         <Animated.View style={[styles.whiteOverlay, { opacity: whiteOverlayOpacity }]} />
@@ -266,9 +268,9 @@ export default function AppTour() {
             >
               <Sparkles color="#FFFFFF" size={28} strokeWidth={2.5} />
             </LinearGradient>
-            <Text style={[styles.title, { color: theme.colors.text.primary }]}>App Tour</Text>
+            <Text style={[styles.title, { color: theme.colors.text.primary }]}>{t('appTour.title')}</Text>
             <Text style={[styles.subtitle, { color: theme.colors.text.secondary }]}>
-              Experience Audrey&apos;s journey
+              {t('appTour.experienceJourney')}
             </Text>
           </View>
 
@@ -292,16 +294,16 @@ export default function AppTour() {
               </LinearGradient>
               <View style={styles.cardContent}>
                 <Text style={[styles.cardTitle, { color: theme.colors.text.primary }]}>
-                  Video Tour
+                  {t('appTour.videoTour')}
                 </Text>
                 <Text style={[styles.cardDescription, { color: theme.colors.text.secondary }]}>
-                  Watch the story of how you found Audrey
+                  {t('appTour.watchStory')}
                 </Text>
                 <View style={styles.playButtonContainer}>
                   <View style={[styles.playButton, { backgroundColor: `${theme.colors.primary}15` }]}>
                     <Play color={theme.colors.primary} size={16} strokeWidth={2.5} fill={theme.colors.primary} />
                     <Text style={[styles.playButtonText, { color: theme.colors.primary }]}>
-                      Play Video
+                      {t('appTour.playVideo')}
                     </Text>
                   </View>
                 </View>
@@ -327,16 +329,16 @@ export default function AppTour() {
               </LinearGradient>
               <View style={styles.cardContent}>
                 <Text style={[styles.cardTitle, { color: theme.colors.text.primary }]}>
-                  Audrey&apos;s Song
+                  {t('appTour.audreySong')}
                 </Text>
                 <Text style={[styles.cardDescription, { color: theme.colors.text.secondary }]}>
-                  Listen to a beautiful melody crafted for you
+                  {t('appTour.listenMelody')}
                 </Text>
                 <View style={styles.playButtonContainer}>
                   <View style={[styles.playButton, { backgroundColor: `${theme.colors.secondary}15` }]}>
                     <Music2 color={theme.colors.secondary} size={16} strokeWidth={2.5} />
                     <Text style={[styles.playButtonText, { color: theme.colors.secondary }]}>
-                      Listen Now
+                      {t('appTour.listenNow')}
                     </Text>
                   </View>
                 </View>

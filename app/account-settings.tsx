@@ -25,11 +25,13 @@ import { router } from "expo-router";
 
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUserProfile } from "@/contexts/UserProfileContext";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 export default function AccountSettingsScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { profile, updateUserProfile } = useUserProfile();
+  const { t } = useTranslation();
   
   const [name, setName] = useState<string>(profile.name || "Sarah Wilson");
   const [email, setEmail] = useState<string>(profile.email || "sarah.wilson@example.com");
@@ -42,7 +44,7 @@ export default function AccountSettingsScreen() {
     }
     await updateUserProfile({ name, email, phoneNumber });
     setIsEditing(false);
-    Alert.alert("Success", "Account information updated successfully");
+    Alert.alert(t('common.success'), t('accountSettings.updateSuccess'));
   };
 
   const handleCancel = () => {
@@ -74,11 +76,11 @@ export default function AccountSettingsScreen() {
           <View style={styles.headerContent}>
             <Settings color={theme.colors.primary} size={32} strokeWidth={2.5} />
             <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-              Account Settings
+              {t('accountSettings.title')}
             </Text>
           </View>
           <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-            Manage your account information
+            {t('accountSettings.manageAccountInfo')}
           </Text>
         </View>
 
@@ -108,18 +110,18 @@ export default function AccountSettingsScreen() {
 
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-              Personal Information
+              {t('accountSettings.personalInformation')}
             </Text>
           </View>
 
           <View style={[styles.formCard, { backgroundColor: theme.colors.cardBackground, borderColor: theme.colors.border }]}>
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.colors.text.primary }]}>Full Name</Text>
+              <Text style={[styles.inputLabel, { color: theme.colors.text.primary }]}>{t('accountSettings.fullName')}</Text>
               <View style={[styles.inputContainer, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}>
                 <User color={theme.colors.text.secondary} size={20} strokeWidth={2} />
                 <TextInput
                   style={[styles.input, { color: theme.colors.text.primary }]}
-                  placeholder="Enter your name"
+                  placeholder={t('accountSettings.enterYourName')}
                   placeholderTextColor={theme.colors.text.light}
                   value={name}
                   onChangeText={(text) => {
@@ -131,12 +133,12 @@ export default function AccountSettingsScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.colors.text.primary }]}>Email</Text>
+              <Text style={[styles.inputLabel, { color: theme.colors.text.primary }]}>{t('accountSettings.email')}</Text>
               <View style={[styles.inputContainer, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}>
                 <Mail color={theme.colors.text.secondary} size={20} strokeWidth={2} />
                 <TextInput
                   style={[styles.input, { color: theme.colors.text.primary }]}
-                  placeholder="Enter your email"
+                  placeholder={t('accountSettings.enterYourEmail')}
                   placeholderTextColor={theme.colors.text.light}
                   value={email}
                   onChangeText={(text) => {
@@ -150,12 +152,12 @@ export default function AccountSettingsScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.colors.text.primary }]}>Phone Number</Text>
+              <Text style={[styles.inputLabel, { color: theme.colors.text.primary }]}>{t('accountSettings.phoneNumber')}</Text>
               <View style={[styles.inputContainer, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}>
                 <Phone color={theme.colors.text.secondary} size={20} strokeWidth={2} />
                 <TextInput
                   style={[styles.input, { color: theme.colors.text.primary }]}
-                  placeholder="Enter your phone number"
+                  placeholder={t('accountSettings.enterPhoneNumber')}
                   placeholderTextColor={theme.colors.text.light}
                   value={phoneNumber}
                   onChangeText={(text) => {
@@ -166,7 +168,7 @@ export default function AccountSettingsScreen() {
                 />
               </View>
               <Text style={[styles.helperText, { color: theme.colors.text.secondary }]}>
-                Required for Audrey AI to send SMS messages on your behalf. Messages will appear from your number with Audrey AI Assistant signature.
+                {t('accountSettings.phoneHelperText')}
               </Text>
             </View>
           </View>
@@ -179,7 +181,7 @@ export default function AccountSettingsScreen() {
                 activeOpacity={0.7}
               >
                 <Text style={[styles.cancelButtonText, { color: theme.colors.text.primary }]}>
-                  Cancel
+                  {t('common.cancel')}
                 </Text>
               </TouchableOpacity>
 
@@ -189,7 +191,7 @@ export default function AccountSettingsScreen() {
                   style={styles.saveGradient}
                 >
                   <Save color="#FFFFFF" size={20} strokeWidth={2} />
-                  <Text style={styles.saveText}>Save Changes</Text>
+                  <Text style={styles.saveText}>{t('accountSettings.saveChanges')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -202,10 +204,10 @@ export default function AccountSettingsScreen() {
               </View>
               <View style={styles.infoContent}>
                 <Text style={[styles.infoLabel, { color: theme.colors.text.secondary }]}>
-                  Account Status
+                  {t('accountSettings.accountStatus')}
                 </Text>
                 <Text style={[styles.infoValue, { color: theme.colors.text.primary }]}>
-                  Active
+                  {t('accountSettings.active')}
                 </Text>
               </View>
             </View>
@@ -216,7 +218,7 @@ export default function AccountSettingsScreen() {
               </View>
               <View style={styles.infoContent}>
                 <Text style={[styles.infoLabel, { color: theme.colors.text.secondary }]}>
-                  Member Since
+                  {t('accountSettings.memberSince')}
                 </Text>
                 <Text style={[styles.infoValue, { color: theme.colors.text.primary }]}>
                   January 2025

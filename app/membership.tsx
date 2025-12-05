@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Crown, Star, Sparkles, X, CheckCircle, ShieldCheck, ArrowLeft, Check } from 'lucide-react-native';
 import * as Haptics from "expo-haptics";
 import { useTheme } from '@/contexts/ThemeContext';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 type SubscriptionTier = 'basic-monthly' | 'basic-yearly' | 'advanced-monthly' | 'advanced-yearly';
 
@@ -94,6 +95,7 @@ const plans: SubscriptionPlan[] = [
 export default function MembershipScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const isNightMode = theme.id === 'night-mode';
   
   // Mock current plan - in a real app this would come from context/backend
@@ -159,7 +161,7 @@ export default function MembershipScreen() {
         >
           {/* Current Plan Section */}
           <View style={[styles.sectionHeader, { marginTop: 0 }]}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Your Current Plan</Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>{t('membership.yourCurrentPlan')}</Text>
           </View>
 
           <View style={[
@@ -180,7 +182,7 @@ export default function MembershipScreen() {
               </View>
               <View style={[styles.activeBadge, { backgroundColor: theme.colors.primary }]}>
                 <Check color="#FFFFFF" size={14} strokeWidth={3} />
-                <Text style={styles.activeBadgeText}>Active</Text>
+                <Text style={styles.activeBadgeText}>{t('membership.active')}</Text>
               </View>
             </View>
             <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
@@ -191,14 +193,14 @@ export default function MembershipScreen() {
                   <Text style={[styles.featureText, { color: theme.colors.text.secondary }]}>{feature}</Text>
                 </View>
               ))}
-              <Text style={[styles.moreFeatures, { color: theme.colors.text.secondary }]}>+ {currentPlanDetails?.features.length ? currentPlanDetails.features.length - 3 : 0} more features</Text>
+              <Text style={[styles.moreFeatures, { color: theme.colors.text.secondary }]}>+ {currentPlanDetails?.features.length ? currentPlanDetails.features.length - 3 : 0} {t('membership.moreFeatures')}</Text>
             </View>
           </View>
 
           {/* Upgrade Section */}
           <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Upgrade Your Experience</Text>
-            <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>Unlock the full power of Audrey&apos;s features</Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>{t('membership.upgradeExperience')}</Text>
+            <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>{t('membership.unlockFullPower')}</Text>
           </View>
 
           <View style={styles.plansGrid}>
@@ -240,14 +242,14 @@ export default function MembershipScreen() {
                         end={{ x: 1, y: 0 }}
                       >
                         <Star color="#FFFFFF" size={10} fill="#FFFFFF" />
-                        <Text style={styles.popularBadgeText}>Best Value</Text>
+                        <Text style={styles.popularBadgeText}>{t('membership.bestValue')}</Text>
                       </LinearGradient>
                     </View>
                   )}
                   
                   {plan.comingSoon && (
                      <View style={styles.comingSoonOverlay}>
-                       <Text style={[styles.comingSoonText, { color: theme.colors.primary }]}>Coming Soon</Text>
+                       <Text style={[styles.comingSoonText, { color: theme.colors.primary }]}>{t('membership.comingSoon')}</Text>
                      </View>
                   )}
 
@@ -319,7 +321,7 @@ export default function MembershipScreen() {
                 textShadowOffset: { width: 0, height: 0 },
                 textShadowRadius: 15,
               }]} numberOfLines={1}>
-                Upgrade to {selectedPlanDetails?.name}
+                {t('membership.upgradeTo')} {selectedPlanDetails?.name}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -342,7 +344,7 @@ export default function MembershipScreen() {
               >
                 <View style={styles.modalHeader}>
                   <Text style={[styles.modalTitle, { color: '#FFD700' }]}>
-                    Confirm Upgrade
+                    {t('membership.confirmUpgrade')}
                   </Text>
                   <TouchableOpacity onPress={() => setShowConfirmModal(false)} style={styles.closeButton}>
                     <X size={24} color="#A0A0A0" />
@@ -365,7 +367,7 @@ export default function MembershipScreen() {
                 
                 <View style={styles.securityNote}>
                   <ShieldCheck size={16} color="#4ADE80" />
-                  <Text style={styles.securityText}>Secured by App Store</Text>
+                  <Text style={styles.securityText}>{t('membership.securedByAppStore')}</Text>
                 </View>
 
                 <TouchableOpacity
@@ -379,7 +381,7 @@ export default function MembershipScreen() {
                     end={{ x: 1, y: 0 }}
                     style={styles.confirmButtonGradient}
                   >
-                    <Text style={styles.confirmButtonText}>Double Click to Pay</Text>
+                    <Text style={styles.confirmButtonText}>{t('membership.doubleClickToPay')}</Text>
                   </LinearGradient>
                 </TouchableOpacity>
               </LinearGradient>
@@ -409,11 +411,11 @@ export default function MembershipScreen() {
                   </View>
                   
                   <Text style={[styles.successTitle, { color: '#FFD700' }]}>
-                    Upgrade Successful!
+                    {t('membership.upgradeSuccessful')}
                   </Text>
                   
                   <Text style={styles.successMessage}>
-                    Welcome to {selectedPlanDetails?.name}. You now have access to all premium features.
+                    {t('membership.welcomeTo')} {selectedPlanDetails?.name}. {t('membership.accessAllPremium')}
                   </Text>
 
                   <TouchableOpacity
@@ -427,7 +429,7 @@ export default function MembershipScreen() {
                       end={{ x: 1, y: 0 }}
                       style={styles.confirmButtonGradient}
                     >
-                      <Text style={styles.confirmButtonText}>Continue</Text>
+                      <Text style={styles.confirmButtonText}>{t('membership.continue')}</Text>
                     </LinearGradient>
                   </TouchableOpacity>
                 </LinearGradient>

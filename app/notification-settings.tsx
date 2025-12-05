@@ -18,6 +18,7 @@ import { Audio } from 'expo-av';
 import * as Haptics from 'expo-haptics';
 
 import { useTheme } from '@/contexts/ThemeContext';
+import { useTranslation } from '@/contexts/LanguageContext';
 import { useNotificationSettings } from '@/contexts/NotificationSettingsContext';
 import { NOTIFICATION_SOUNDS, getNotificationSound } from '@/constants/notificationSounds';
 
@@ -31,14 +32,14 @@ type SnoozeOption = {
   unit: 'minutes' | 'hours';
 };
 
-const SNOOZE_OPTIONS: SnoozeOption[] = [
-  { label: '5 minutes', value: 5, unit: 'minutes' },
-  { label: '10 minutes', value: 10, unit: 'minutes' },
-  { label: '15 minutes', value: 15, unit: 'minutes' },
-  { label: '30 minutes', value: 30, unit: 'minutes' },
-  { label: '1 hour', value: 1, unit: 'hours' },
-  { label: '2 hours', value: 2, unit: 'hours' },
-  { label: '3 hours', value: 3, unit: 'hours' },
+const getSnoozeOptions = (t: (key: string) => string): SnoozeOption[] => [
+  { label: `5 ${t('notificationSettings.minutes')}`, value: 5, unit: 'minutes' },
+  { label: `10 ${t('notificationSettings.minutes')}`, value: 10, unit: 'minutes' },
+  { label: `15 ${t('notificationSettings.minutes')}`, value: 15, unit: 'minutes' },
+  { label: `30 ${t('notificationSettings.minutes')}`, value: 30, unit: 'minutes' },
+  { label: `1 ${t('notificationSettings.hour')}`, value: 1, unit: 'hours' },
+  { label: `2 ${t('notificationSettings.hours')}`, value: 2, unit: 'hours' },
+  { label: `3 ${t('notificationSettings.hours')}`, value: 3, unit: 'hours' },
 ];
 
 type TimeBeforeOption = {
@@ -47,22 +48,23 @@ type TimeBeforeOption = {
   unit: 'minutes' | 'hours' | 'days';
 };
 
-const TIME_BEFORE_OPTIONS: TimeBeforeOption[] = [
-  { label: 'At time of event', value: 0, unit: 'minutes' },
-  { label: '5 minutes before', value: 5, unit: 'minutes' },
-  { label: '10 minutes before', value: 10, unit: 'minutes' },
-  { label: '15 minutes before', value: 15, unit: 'minutes' },
-  { label: '30 minutes before', value: 30, unit: 'minutes' },
-  { label: '1 hour before', value: 1, unit: 'hours' },
-  { label: '2 hours before', value: 2, unit: 'hours' },
-  { label: '1 day before', value: 1, unit: 'days' },
-  { label: '2 days before', value: 2, unit: 'days' },
-  { label: '1 week before', value: 7, unit: 'days' },
+const getTimeBeforeOptions = (t: (key: string) => string): TimeBeforeOption[] => [
+  { label: t('notificationSettings.atTimeOfEvent'), value: 0, unit: 'minutes' },
+  { label: `5 ${t('notificationSettings.minutesBefore')}`, value: 5, unit: 'minutes' },
+  { label: `10 ${t('notificationSettings.minutesBefore')}`, value: 10, unit: 'minutes' },
+  { label: `15 ${t('notificationSettings.minutesBefore')}`, value: 15, unit: 'minutes' },
+  { label: `30 ${t('notificationSettings.minutesBefore')}`, value: 30, unit: 'minutes' },
+  { label: `1 ${t('notificationSettings.hourBefore')}`, value: 1, unit: 'hours' },
+  { label: `2 ${t('notificationSettings.hoursBefore')}`, value: 2, unit: 'hours' },
+  { label: `1 ${t('notificationSettings.dayBefore')}`, value: 1, unit: 'days' },
+  { label: `2 ${t('notificationSettings.daysBefore')}`, value: 2, unit: 'days' },
+  { label: `1 ${t('notificationSettings.weekBefore')}`, value: 7, unit: 'days' },
 ];
 
 export default function NotificationSettingsScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const { settings, updateSettings } = useNotificationSettings();
   const [showTimeBeforeOptions, setShowTimeBeforeOptions] = useState<boolean>(false);
   const [showSnoozeOptions, setShowSnoozeOptions] = useState<boolean>(false);
@@ -196,18 +198,21 @@ export default function NotificationSettingsScreen() {
     setShowSoundSelector(true);
   };
 
+  const TIME_BEFORE_OPTIONS = getTimeBeforeOptions(t);
+  const SNOOZE_OPTIONS = getSnoozeOptions(t);
+
   const getTimeBeforeLabel = () => {
     const option = TIME_BEFORE_OPTIONS.find(
       opt => opt.value === settings.timeBefore && opt.unit === settings.timeBeforeUnit
     );
-    return option?.label || 'At time of event';
+    return option?.label || t('notificationSettings.atTimeOfEvent');
   };
 
   const getSnoozeLabel = () => {
     const option = SNOOZE_OPTIONS.find(
       opt => opt.value === settings.snoozeTime && opt.unit === settings.snoozeUnit
     );
-    return option?.label || '5 minutes';
+    return option?.label || `5 ${t('notificationSettings.minutes')}`;
   };
 
   const getSoundLabel = (soundId: string) => {
@@ -232,11 +237,11 @@ export default function NotificationSettingsScreen() {
             <View style={styles.headerContent}>
               <Clock color={theme.colors.primary} size={32} strokeWidth={2.5} />
               <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-                Notify Me
+                {t('notificationSettings.notifyMe')}
               </Text>
             </View>
             <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-              Choose when to be notified before events
+              {t('notificationSettings.chooseWhenNotified')}
             </Text>
           </View>
 
@@ -299,11 +304,11 @@ export default function NotificationSettingsScreen() {
             <View style={styles.headerContent}>
               <Clock color={theme.colors.primary} size={32} strokeWidth={2.5} />
               <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-                Snooze Duration
+                {t('notificationSettings.snoozeDuration')}
               </Text>
             </View>
             <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-              How long to snooze notifications
+              {t('notificationSettings.howLongSnooze')}
             </Text>
           </View>
 
@@ -370,11 +375,11 @@ export default function NotificationSettingsScreen() {
             <View style={styles.headerContent}>
               <Music color={theme.colors.primary} size={32} strokeWidth={2.5} />
               <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-                Select Sound
+                {t('notificationSettings.selectSound')}
               </Text>
             </View>
             <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-              Choose a sound for this alert
+              {t('notificationSettings.chooseSoundAlert')}
             </Text>
           </View>
 
@@ -474,11 +479,11 @@ export default function NotificationSettingsScreen() {
           <View style={styles.headerContent}>
             <Bell color={theme.colors.primary} size={32} strokeWidth={2.5} />
             <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-              Notifications
+              {t('notificationSettings.title')}
             </Text>
           </View>
           <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-            Customize your notification preferences
+            {t('notificationSettings.customizePreferences')}
           </Text>
         </View>
 
@@ -495,10 +500,10 @@ export default function NotificationSettingsScreen() {
             />
             <View style={styles.audreyInfo}>
               <Text style={[styles.audreyName, { color: theme.colors.text.primary }]}>
-                Audrey AI
+                {t('notificationSettings.audreyAI')}
               </Text>
               <Text style={[styles.audreyDescription, { color: theme.colors.text.secondary }]}>
-                Your intelligent assistant will remind you about your events
+                {t('notificationSettings.audreyDescription')}
               </Text>
             </View>
           </View>
@@ -507,10 +512,10 @@ export default function NotificationSettingsScreen() {
             <View style={styles.toggleContent}>
               <View style={styles.toggleInfo}>
                 <Text style={[styles.toggleTitle, { color: theme.colors.text.primary }]}>
-                  Calendar Notifications
+                  {t('notificationSettings.calendarNotifications')}
                 </Text>
                 <Text style={[styles.toggleDescription, { color: theme.colors.text.secondary }]}>
-                  Get notified about upcoming events
+                  {t('notificationSettings.getNotifiedEvents')}
                 </Text>
               </View>
               <Switch
@@ -526,10 +531,10 @@ export default function NotificationSettingsScreen() {
             <View style={styles.toggleContent}>
               <View style={styles.toggleInfo}>
                 <Text style={[styles.toggleTitle, { color: theme.colors.text.primary }]}>
-                  Messages Notifications
+                  {t('notificationSettings.messagesNotifications')}
                 </Text>
                 <Text style={[styles.toggleDescription, { color: theme.colors.text.secondary }]}>
-                  Get notified when you receive a message
+                  {t('notificationSettings.getNotifiedMessages')}
                 </Text>
               </View>
               <Switch
@@ -545,10 +550,10 @@ export default function NotificationSettingsScreen() {
             <>
               <View style={styles.sectionHeader}>
                 <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-                  Notification Timing
+                  {t('notificationSettings.notificationTiming')}
                 </Text>
                 <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>
-                  When should Audrey remind you?
+                  {t('notificationSettings.whenRemind')}
                 </Text>
               </View>
 
@@ -563,7 +568,7 @@ export default function NotificationSettingsScreen() {
                   </View>
                   <View style={styles.settingInfo}>
                     <Text style={[styles.settingTitle, { color: theme.colors.text.primary }]}>
-                      Notify Me
+                      {t('notificationSettings.notifyMe')}
                     </Text>
                     <Text style={[styles.settingValue, { color: theme.colors.text.secondary }]}>
                       {getTimeBeforeLabel()}
@@ -574,10 +579,10 @@ export default function NotificationSettingsScreen() {
 
               <View style={styles.sectionHeader}>
                 <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-                  Snooze Settings
+                  {t('notificationSettings.snoozeSettings')}
                 </Text>
                 <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>
-                  Audrey&apos;s reaction when you snooze
+                  {t('notificationSettings.audreyReactionSnooze')}
                 </Text>
               </View>
 
@@ -592,7 +597,7 @@ export default function NotificationSettingsScreen() {
                   </View>
                   <View style={styles.settingInfo}>
                     <Text style={[styles.settingTitle, { color: theme.colors.text.primary }]}>
-                      Snooze Duration
+                      {t('notificationSettings.snoozeDuration')}
                     </Text>
                     <Text style={[styles.settingValue, { color: theme.colors.text.secondary }]}>
                       {getSnoozeLabel()}
@@ -603,10 +608,10 @@ export default function NotificationSettingsScreen() {
 
               <View style={styles.sectionHeader}>
                 <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-                  Sound Settings
+                  {t('notificationSettings.soundSettings')}
                 </Text>
                 <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>
-                  Customize alert sounds
+                  {t('notificationSettings.customizeAlertSounds')}
                 </Text>
               </View>
 
@@ -621,7 +626,7 @@ export default function NotificationSettingsScreen() {
                   </View>
                   <View style={styles.settingInfo}>
                     <Text style={[styles.settingTitle, { color: theme.colors.text.primary }]}>
-                      Calendar Alerts
+                      {t('notificationSettings.calendarAlerts')}
                     </Text>
                     <Text style={[styles.settingValue, { color: theme.colors.text.secondary }]}>
                       {getSoundLabel(settings.calendarSound)}
@@ -641,7 +646,7 @@ export default function NotificationSettingsScreen() {
                   </View>
                   <View style={styles.settingInfo}>
                     <Text style={[styles.settingTitle, { color: theme.colors.text.primary }]}>
-                      Message Alerts
+                      {t('notificationSettings.messageAlerts')}
                     </Text>
                     <Text style={[styles.settingValue, { color: theme.colors.text.secondary }]}>
                       {getSoundLabel(settings.messageSound)}
@@ -661,7 +666,7 @@ export default function NotificationSettingsScreen() {
                   </View>
                   <View style={styles.settingInfo}>
                     <Text style={[styles.settingTitle, { color: theme.colors.text.primary }]}>
-                      Notification Sound
+                      {t('notificationSettings.notificationSound')}
                     </Text>
                     <Text style={[styles.settingValue, { color: theme.colors.text.secondary }]}>
                       {getSoundLabel(settings.notificationSound)}
@@ -681,7 +686,7 @@ export default function NotificationSettingsScreen() {
                   </View>
                   <View style={styles.settingInfo}>
                     <Text style={[styles.settingTitle, { color: theme.colors.text.primary }]}>
-                      Planners Notification
+                      {t('notificationSettings.plannersNotification')}
                     </Text>
                     <Text style={[styles.settingValue, { color: theme.colors.text.secondary }]}>
                       {getSoundLabel(settings.plannerSound)}
