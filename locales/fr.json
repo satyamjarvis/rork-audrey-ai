@@ -124,7 +124,20 @@
     "passwordManager": "Gestionnaire de Mots de Passe",
     "secureVault": "Coffre-fort Sécurisé",
     "mindMapping": "Cartes Mentales",
-    "visualizeIdeas": "Visualiser les Idées"
+    "visualizeIdeas": "Visualiser les Idées",
+    "fillRequiredFields": "Veuillez remplir tous les champs obligatoires",
+    "enterManifestation": "Veuillez entrer votre manifestation",
+    "investment": "Investissement",
+    "emergency": "Urgence",
+    "retirement": "Retraite",
+    "general": "Général",
+    "dailyAffirmation": "Affirmation Quotidienne",
+    "visualization": "Visualisation",
+    "gratitude": "Gratitude",
+    "actionStep": "Étape d'Action",
+    "titlePlaceholder": "ex., Salaire, Courses",
+    "categoryPlaceholder": "ex., Nourriture, Divertissement",
+    "goalPlaceholder": "ex., Fonds d'Urgence"
   },
   "morning": {
     "riseAndShine": "Lève-toi et Brille",

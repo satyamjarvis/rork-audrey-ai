@@ -124,7 +124,20 @@
     "passwordManager": "Gerenciador de Senhas",
     "secureVault": "Cofre Seguro",
     "mindMapping": "Mapas Mentais",
-    "visualizeIdeas": "Visualizar Ideias"
+    "visualizeIdeas": "Visualizar Ideias",
+    "fillRequiredFields": "Por favor, preencha todos os campos obrigatórios",
+    "enterManifestation": "Por favor, insira sua manifestação",
+    "investment": "Investimento",
+    "emergency": "Emergência",
+    "retirement": "Aposentadoria",
+    "general": "Geral",
+    "dailyAffirmation": "Afirmação Diária",
+    "visualization": "Visualização",
+    "gratitude": "Gratidão",
+    "actionStep": "Passo de Ação",
+    "titlePlaceholder": "ex., Salário, Compras",
+    "categoryPlaceholder": "ex., Comida, Entretenimento",
+    "goalPlaceholder": "ex., Fundo de Emergência"
   },
   "morning": {
     "riseAndShine": "Levante e Brilhe",

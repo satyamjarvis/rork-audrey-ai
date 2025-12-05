@@ -39,11 +39,11 @@ import colors from "@/constants/colors";
 import { useFinance, TransactionType, WealthCategory } from "@/contexts/FinanceContext";
 import { useWealthManifesting, ManifestationType } from "@/contexts/WealthManifestingContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { router } from "expo-router";
 import { useCalendar } from "@/contexts/CalendarContext";
 import { getCalendarBackground } from '@/constants/calendarBackgrounds';
 
-// Memoized Components for better performance
 const StatCard = React.memo(function StatCard({ icon, value, label, color, bgColor }: any) {
   const scaleAnim = React.useRef(new Animated.Value(0)).current;
 
@@ -130,6 +130,7 @@ const QuickActionCard = React.memo(function QuickActionCard({ onPress, icon, tit
 export default function TrackScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { translations } = useLanguage();
   const { selectedBackground } = useCalendar();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
   const { financialStats, addTransaction, wealthGoals, addWealthGoal } = useFinance();
@@ -149,7 +150,6 @@ export default function TrackScreen() {
 
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
-  // Form states
   const [formData, setFormData] = useState({
     transaction: {
       title: "",
@@ -184,7 +184,7 @@ export default function TrackScreen() {
   const handleAddTransaction = useCallback(async () => {
     const { title, amount, type, category, description } = formData.transaction;
     if (!title.trim() || !amount.trim()) {
-      Alert.alert("Error", "Please fill in all required fields");
+      Alert.alert(translations.common.error, translations.track.fillRequiredFields || "Please fill in all required fields");
       return;
     }
 
@@ -197,7 +197,7 @@ export default function TrackScreen() {
         title: title.trim(),
         amount: parseFloat(amount),
         type,
-        category: category.trim() || "Other",
+        category: category.trim() || translations.calendar.other,
         date: new Date().toISOString().split('T')[0],
         description: description.trim() || undefined,
       });
@@ -214,14 +214,13 @@ export default function TrackScreen() {
       }));
       setAddTransactionModalVisible(false);
     } finally {
-      // Done
     }
-  }, [formData.transaction, addTransaction]);
+  }, [formData.transaction, addTransaction, translations]);
 
   const handleAddGoal = useCallback(async () => {
     const { title, amount, category } = formData.goal;
     if (!title.trim() || !amount.trim()) {
-      Alert.alert("Error", "Please fill in all required fields");
+      Alert.alert(translations.common.error, translations.track.fillRequiredFields || "Please fill in all required fields");
       return;
     }
 
@@ -247,14 +246,13 @@ export default function TrackScreen() {
       }));
       setAddGoalModalVisible(false);
     } finally {
-      // Done
     }
-  }, [formData.goal, addWealthGoal]);
+  }, [formData.goal, addWealthGoal, translations]);
 
   const handleAddManifestation = useCallback(async () => {
     const { type, content, amount } = formData.manifestation;
     if (!content.trim()) {
-      Alert.alert("Error", "Please enter your manifestation");
+      Alert.alert(translations.common.error, translations.track.enterManifestation || "Please enter your manifestation");
       return;
     }
 
@@ -280,9 +278,8 @@ export default function TrackScreen() {
       }));
       setAddManifestationModalVisible(false);
     } finally {
-      // Done
     }
-  }, [formData.manifestation, addManifestation]);
+  }, [formData.manifestation, addManifestation, translations]);
 
   const handleCompleteManifestation = useCallback(async (id: string) => {
     if (Platform.OS !== "web") {
@@ -291,11 +288,36 @@ export default function TrackScreen() {
     completeManifestation(id);
   }, [completeManifestation]);
 
+  const getTransactionTypeLabel = useCallback((type: TransactionType) => {
+    const labels: Record<TransactionType, string> = {
+      income: translations.track.income,
+      expense: translations.track.expenses,
+      savings: translations.track.savings,
+      investment: translations.track.investment || "Investment",
+    };
+    return labels[type] || type.charAt(0).toUpperCase() + type.slice(1);
+  }, [translations]);
 
+  const getGoalCategoryLabel = useCallback((cat: WealthCategory) => {
+    const labels: Record<WealthCategory, string> = {
+      emergency: translations.track.emergency || "Emergency",
+      retirement: translations.track.retirement || "Retirement",
+      investment: translations.track.investment || "Investment",
+      general: translations.track.general || "General",
+    };
+    return labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
+  }, [translations]);
 
+  const getManifestationTypeLabel = useCallback((type: ManifestationType) => {
+    const labels: Record<ManifestationType, string> = {
+      daily_affirmation: translations.track.dailyAffirmation || "Daily Affirmation",
+      visualization: translations.track.visualization || "Visualization",
+      gratitude: translations.track.gratitude || "Gratitude",
+      action_step: translations.track.actionStep || "Action Step",
+    };
+    return labels[type] || type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }, [translations]);
 
-
-  // Quick actions data
   const activeBackground = useMemo(() => {
     if (selectedBackground && selectedBackground !== 'default') {
       return getCalendarBackground(selectedBackground);
@@ -306,8 +328,8 @@ export default function TrackScreen() {
   const quickActions = useMemo(() => [
     {
       icon: <BarChart3 color={theme.colors.primary} size={24} strokeWidth={2.5} />,
-      title: "Metrics Dashboard",
-      subtitle: "Track & Analyze",
+      title: translations.track.metricsDashboard,
+      subtitle: translations.track.trackAndAnalyze,
       color: theme.colors.primary,
       onPress: () => {
         if (Platform.OS !== "web") {
@@ -319,8 +341,8 @@ export default function TrackScreen() {
 
     {
       icon: <Lock color="#FFD700" size={24} strokeWidth={2.5} />,
-      title: "Password Manager",
-      subtitle: "Secure Vault",
+      title: translations.track.passwordManager,
+      subtitle: translations.track.secureVault,
       color: "#FFD700",
       onPress: () => {
         if (Platform.OS !== "web") {
@@ -331,8 +353,8 @@ export default function TrackScreen() {
     },
     {
       icon: <Brain color="#FF1493" size={24} strokeWidth={2.5} />,
-      title: "Mind Mapping",
-      subtitle: "Visualize Ideas",
+      title: translations.track.mindMapping,
+      subtitle: translations.track.visualizeIdeas,
       color: "#FF1493",
       onPress: () => {
         if (Platform.OS !== "web") {
@@ -341,7 +363,7 @@ export default function TrackScreen() {
         router.push('/mind-mapping' as any);
       },
     },
-  ], [theme]);
+  ], [theme, translations]);
 
   const renderContent = () => (
     <LinearGradient
@@ -361,9 +383,9 @@ export default function TrackScreen() {
                 <TrendingUp color={isNightMode ? "#FFD700" : theme.colors.primary} size={28} strokeWidth={2.5} />
               </View>
               <View style={styles.headerTextContainer}>
-                <Text style={[styles.headerTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>Track</Text>
+                <Text style={[styles.headerTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>{translations.navigation.track}</Text>
                 <Text style={[styles.headerSubtitle, { color: isNightMode ? "#FF1493" : theme.colors.text.secondary }]}>
-                  Your Financial Journey
+                  {translations.track.yourFinancialJourney}
                 </Text>
               </View>
             </View>
@@ -381,7 +403,7 @@ export default function TrackScreen() {
               <View style={styles.levelHeader}>
                 <View style={styles.levelInfo}>
                   <Text style={styles.levelTitle}>{userLevel.title}</Text>
-                  <Text style={styles.levelNumber}>Level {userLevel.level}</Text>
+                  <Text style={styles.levelNumber}>{translations.common.level} {userLevel.level}</Text>
                 </View>
                 <Trophy color="#FFFFFF" size={32} strokeWidth={2.5} />
               </View>
@@ -389,20 +411,20 @@ export default function TrackScreen() {
                 <View style={[styles.xpFill, { width: `${(userLevel.currentXP / userLevel.xpToNextLevel) * 100}%` }]} />
               </View>
               <Text style={styles.xpText}>
-                {userLevel.currentXP} / {userLevel.xpToNextLevel} XP
+                {userLevel.currentXP} / {userLevel.xpToNextLevel} {translations.common.xp}
               </Text>
               <View style={styles.statsRow}>
                 <View style={styles.statBadge}>
                   <Flame color="#FFFFFF" size={16} strokeWidth={2.5} />
-                  <Text style={styles.statBadgeText}>{streak} day streak</Text>
+                  <Text style={styles.statBadgeText}>{streak} {translations.common.dayStreak}</Text>
                 </View>
                 <View style={styles.statBadge}>
                   <Star color="#FFFFFF" size={16} strokeWidth={2.5} />
-                  <Text style={styles.statBadgeText}>{completedCount} completed</Text>
+                  <Text style={styles.statBadgeText}>{completedCount} {translations.common.completed}</Text>
                 </View>
                 <View style={styles.statBadge}>
                   <Award color="#FFFFFF" size={16} strokeWidth={2.5} />
-                  <Text style={styles.statBadgeText}>{unlockedAchievements.length} badges</Text>
+                  <Text style={styles.statBadgeText}>{unlockedAchievements.length} {translations.common.badges}</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -419,19 +441,19 @@ export default function TrackScreen() {
             borderWidth: 1,
             borderColor: isNightMode ? "rgba(255, 215, 0, 0.2)" : "transparent",
           }]}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Financial Overview</Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>{translations.track.financialOverview}</Text>
             <View style={styles.statsRow}>
               <StatCard
                 icon={<DollarSign color="#4CAF50" size={24} strokeWidth={2.5} />}
                 value={`${financialStats.totalIncome.toFixed(2)}`}
-                label="Income"
+                label={translations.track.income}
                 color="#4CAF50"
                 bgColor="#4CAF5015"
               />
               <StatCard
                 icon={<DollarSign color="#F44336" size={24} strokeWidth={2.5} />}
                 value={`${financialStats.totalExpenses.toFixed(2)}`}
-                label="Expenses"
+                label={translations.track.expenses}
                 color="#F44336"
                 bgColor="#F4433615"
               />
@@ -440,14 +462,14 @@ export default function TrackScreen() {
               <StatCard
                 icon={<PiggyBank color="#2196F3" size={24} strokeWidth={2.5} />}
                 value={`${financialStats.totalSavings.toFixed(2)}`}
-                label="Savings"
+                label={translations.track.savings}
                 color="#2196F3"
                 bgColor="#2196F315"
               />
               <StatCard
                 icon={<TrendingUp color={theme.colors.primary} size={24} strokeWidth={2.5} />}
                 value={`${financialStats.netWorth.toFixed(2)}`}
-                label="Net Worth"
+                label={translations.track.netWorth}
                 color={theme.colors.primary}
                 bgColor={`${theme.colors.primary}15`}
               />
@@ -467,7 +489,7 @@ export default function TrackScreen() {
                 style={styles.addButtonGradient}
               >
                 <Plus color="#FFFFFF" size={20} strokeWidth={2.5} />
-                <Text style={styles.addButtonText}>Add Transaction</Text>
+                <Text style={styles.addButtonText}>{translations.track.addTransaction}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -480,17 +502,17 @@ export default function TrackScreen() {
             <View style={styles.manifestHeader}>
               <Sparkles color={theme.colors.primary} size={24} strokeWidth={2.5} />
               <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-                Wealth Manifesting
+                {translations.track.wealthManifesting}
               </Text>
             </View>
             <Text style={[styles.manifestSubtitle, { color: theme.colors.text.secondary }]}>
-              Today&apos;s Manifestations ({todayManifestations.filter(m => m.completed).length}/{todayManifestations.length})
+              {translations.track.todaysManifestations} ({todayManifestations.filter(m => m.completed).length}/{todayManifestations.length})
             </Text>
             {todayManifestations.length === 0 ? (
               <View style={styles.emptyState}>
                 <Sparkles color={theme.colors.text.light} size={32} strokeWidth={1.5} />
                 <Text style={[styles.emptyStateText, { color: theme.colors.text.secondary }]}>
-                  No manifestations yet today
+                  {translations.track.noManifestationsYet}
                 </Text>
               </View>
             ) : (
@@ -540,7 +562,7 @@ export default function TrackScreen() {
                 style={styles.addButtonGradient}
               >
                 <Plus color="#FFFFFF" size={20} strokeWidth={2.5} />
-                <Text style={styles.addButtonText}>Add Manifestation</Text>
+                <Text style={styles.addButtonText}>{translations.track.addManifestation}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -552,13 +574,13 @@ export default function TrackScreen() {
           }]}>
             <View style={styles.sectionHeader}>
               <Target color={theme.colors.primary} size={24} strokeWidth={2.5} />
-              <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Wealth Goals</Text>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>{translations.track.wealthGoals}</Text>
             </View>
             {wealthGoals.length === 0 ? (
               <View style={styles.emptyState}>
                 <Target color={theme.colors.text.light} size={32} strokeWidth={1.5} />
                 <Text style={[styles.emptyStateText, { color: theme.colors.text.secondary }]}>
-                  No wealth goals yet
+                  {translations.track.noWealthGoalsYet}
                 </Text>
               </View>
             ) : (
@@ -579,7 +601,7 @@ export default function TrackScreen() {
                         <View style={[styles.progressBar, { width: `${Math.min(progress, 100)}%`, backgroundColor: theme.colors.primary }]} />
                       </View>
                       <Text style={[styles.progressText, { color: theme.colors.text.secondary }]}>
-                        {progress.toFixed(0)}% Complete
+                        {progress.toFixed(0)}% {translations.track.complete}
                       </Text>
                     </View>
                   );
@@ -601,7 +623,7 @@ export default function TrackScreen() {
                 style={styles.addButtonGradient}
               >
                 <Plus color="#FFFFFF" size={20} strokeWidth={2.5} />
-                <Text style={styles.addButtonText}>Add Goal</Text>
+                <Text style={styles.addButtonText}>{translations.track.addGoal}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -636,7 +658,7 @@ export default function TrackScreen() {
             }
           ]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>Add Transaction</Text>
+              <Text style={[styles.modalTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>{translations.track.addTransaction}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
                 <KeyboardDismissButton isDark={isNightMode} />
                 <TouchableOpacity onPress={() => setAddTransactionModalVisible(false)}>
@@ -646,7 +668,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Title *</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.forms.title} *</Text>
               <TextInput
                 style={[
                   styles.textInput,
@@ -656,7 +678,7 @@ export default function TrackScreen() {
                     borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : theme.colors.border,
                   }
                 ]}
-                placeholder="e.g., Salary, Groceries"
+                placeholder={translations.track.titlePlaceholder || "e.g., Salary, Groceries"}
                 placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                 value={formData.transaction.title}
                 onChangeText={(text) => setFormData(prev => ({ ...prev, transaction: { ...prev.transaction, title: text } }))}
@@ -664,7 +686,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Amount *</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.forms.amount} *</Text>
               <TextInput
                 style={[
                   styles.textInput,
@@ -683,7 +705,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Type *</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.forms.type} *</Text>
               <View style={styles.typeRow}>
                 {(["income", "expense", "savings", "investment"] as TransactionType[]).map((type) => (
                   <TouchableOpacity
@@ -717,7 +739,7 @@ export default function TrackScreen() {
                         },
                       ]}
                     >
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                      {getTransactionTypeLabel(type)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -725,7 +747,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Category</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.calendar.category}</Text>
               <TextInput
                 style={[
                   styles.textInput,
@@ -735,7 +757,7 @@ export default function TrackScreen() {
                     borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : theme.colors.border,
                   }
                 ]}
-                placeholder="e.g., Food, Entertainment"
+                placeholder={translations.track.categoryPlaceholder || "e.g., Food, Entertainment"}
                 placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                 value={formData.transaction.category}
                 onChangeText={(text) => setFormData(prev => ({ ...prev, transaction: { ...prev.transaction, category: text } }))}
@@ -748,7 +770,7 @@ export default function TrackScreen() {
                 style={styles.submitButtonGradient}
               >
                 <Plus color="#FFFFFF" size={20} strokeWidth={2.5} />
-                <Text style={styles.submitButtonText}>Add Transaction</Text>
+                <Text style={styles.submitButtonText}>{translations.track.addTransaction}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -769,7 +791,7 @@ export default function TrackScreen() {
             }
           ]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>Add Wealth Goal</Text>
+              <Text style={[styles.modalTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>{translations.track.addGoal}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
                 <KeyboardDismissButton isDark={isNightMode} />
                 <TouchableOpacity onPress={() => setAddGoalModalVisible(false)}>
@@ -779,7 +801,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Goal Title *</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.forms.goalTitle} *</Text>
               <TextInput
                 style={[
                   styles.textInput,
@@ -789,7 +811,7 @@ export default function TrackScreen() {
                     borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : theme.colors.border,
                   }
                 ]}
-                placeholder="e.g., Emergency Fund"
+                placeholder={translations.track.goalPlaceholder || "e.g., Emergency Fund"}
                 placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                 value={formData.goal.title}
                 onChangeText={(text) => setFormData(prev => ({ ...prev, goal: { ...prev.goal, title: text } }))}
@@ -797,7 +819,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Target Amount *</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.forms.targetAmount} *</Text>
               <TextInput
                 style={[
                   styles.textInput,
@@ -816,7 +838,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Category *</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.calendar.category} *</Text>
               <View style={styles.typeRow}>
                 {(["emergency", "retirement", "investment", "general"] as WealthCategory[]).map((cat) => (
                   <TouchableOpacity
@@ -850,7 +872,7 @@ export default function TrackScreen() {
                         },
                       ]}
                     >
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      {getGoalCategoryLabel(cat)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -863,7 +885,7 @@ export default function TrackScreen() {
                 style={styles.submitButtonGradient}
               >
                 <Plus color="#FFFFFF" size={20} strokeWidth={2.5} />
-                <Text style={styles.submitButtonText}>Add Goal</Text>
+                <Text style={styles.submitButtonText}>{translations.track.addGoal}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -884,7 +906,7 @@ export default function TrackScreen() {
             }
           ]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>Add Manifestation</Text>
+              <Text style={[styles.modalTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>{translations.track.addManifestation}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
                 <KeyboardDismissButton isDark={isNightMode} />
                 <TouchableOpacity onPress={() => setAddManifestationModalVisible(false)}>
@@ -894,7 +916,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Type *</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.forms.type} *</Text>
               <View style={styles.typeRow}>
                 {(["daily_affirmation", "visualization", "gratitude", "action_step"] as ManifestationType[]).map((type) => (
                   <TouchableOpacity
@@ -928,7 +950,7 @@ export default function TrackScreen() {
                         },
                       ]}
                     >
-                      {type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                      {getManifestationTypeLabel(type)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -936,7 +958,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Manifestation *</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.forms.manifestation} *</Text>
               <TextInput
                 style={[
                   styles.textInput,
@@ -947,7 +969,7 @@ export default function TrackScreen() {
                     borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : theme.colors.border,
                   }
                 ]}
-                placeholder="Write your manifestation..."
+                placeholder={translations.forms.writeYourManifestation}
                 placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                 value={formData.manifestation.content}
                 onChangeText={(text) => setFormData(prev => ({ ...prev, manifestation: { ...prev.manifestation, content: text } }))}
@@ -957,7 +979,7 @@ export default function TrackScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>Amount (Optional)</Text>
+              <Text style={[styles.formLabel, { color: isNightMode ? "#FF1493" : theme.colors.text.primary }]}>{translations.forms.amountOptional}</Text>
               <TextInput
                 style={[
                   styles.textInput,
@@ -981,7 +1003,7 @@ export default function TrackScreen() {
                 style={styles.submitButtonGradient}
               >
                 <Plus color="#FFFFFF" size={20} strokeWidth={2.5} />
-                <Text style={styles.submitButtonText}>Add Manifestation</Text>
+                <Text style={styles.submitButtonText}>{translations.track.addManifestation}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>

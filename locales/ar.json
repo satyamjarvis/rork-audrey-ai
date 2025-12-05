@@ -124,7 +124,20 @@
     "passwordManager": "مدير كلمات المرور",
     "secureVault": "خزنة آمنة",
     "mindMapping": "الخرائط الذهنية",
-    "visualizeIdeas": "تصور الأفكار"
+    "visualizeIdeas": "تصور الأفكار",
+    "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة",
+    "enterManifestation": "يرجى إدخال تجليك",
+    "investment": "استثمار",
+    "emergency": "طوارئ",
+    "retirement": "تقاعد",
+    "general": "عام",
+    "dailyAffirmation": "تأكيد يومي",
+    "visualization": "تصور",
+    "gratitude": "امتنان",
+    "actionStep": "خطوة عمل",
+    "titlePlaceholder": "مثال: راتب، مشتريات",
+    "categoryPlaceholder": "مثال: طعام، ترفيه",
+    "goalPlaceholder": "مثال: صندوق الطوارئ"
   },
   "morning": {
     "riseAndShine": "استيقظ وتألق",

@@ -124,7 +124,20 @@
     "passwordManager": "Password Manager",
     "secureVault": "Secure Vault",
     "mindMapping": "Mind Mapping",
-    "visualizeIdeas": "Visualize Ideas"
+    "visualizeIdeas": "Visualize Ideas",
+    "fillRequiredFields": "Please fill in all required fields",
+    "enterManifestation": "Please enter your manifestation",
+    "investment": "Investment",
+    "emergency": "Emergency",
+    "retirement": "Retirement",
+    "general": "General",
+    "dailyAffirmation": "Daily Affirmation",
+    "visualization": "Visualization",
+    "gratitude": "Gratitude",
+    "actionStep": "Action Step",
+    "titlePlaceholder": "e.g., Salary, Groceries",
+    "categoryPlaceholder": "e.g., Food, Entertainment",
+    "goalPlaceholder": "e.g., Emergency Fund"
   },
   "morning": {
     "riseAndShine": "Rise & Shine",
