@@ -46,6 +46,7 @@ import * as Sharing from "expo-sharing";
 
 import { useNotes, DrawingStroke } from "@/contexts/NotesContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import QuickPressable from "@/components/QuickPressable";
 import KeyboardDismissButton from "@/components/KeyboardDismissButton";
 
@@ -110,6 +111,7 @@ export default function NotesScreen() {
     return [theme.colors.primary, theme.colors.secondary] as const;
   }, [isNightMode, theme]);
   const { notes, isLoading, createNote, updateNote, deleteNote, addDrawingStroke, clearDrawing } = useNotes();
+  const { translations } = useLanguage();
   const heartPulse = useRef(new Animated.Value(1)).current;
   const sparkleOpacity = useRef(new Animated.Value(0)).current;
   const starsRotate = useRef(new Animated.Value(0)).current;
@@ -170,7 +172,7 @@ export default function NotesScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    const newNote = await createNote("New Note");
+    const newNote = await createNote(translations.notes.noteTitle || "New Note");
     setCurrentNoteId(newNote.id);
     setNoteTitle(newNote.title);
     setTextContent(newNote.textContent);
@@ -185,16 +187,16 @@ export default function NotesScreen() {
       title: noteTitle,
       textContent,
     });
-    Alert.alert("Saved", "Your note has been saved successfully!");
+    Alert.alert(translations.notes.saved, translations.notes.noteSavedSuccess);
   }, [currentNoteId, noteTitle, textContent, updateNote]);
 
   const handleDeleteNote = useCallback(async () => {
     if (!currentNoteId) return;
 
-    Alert.alert("Delete Note", "Are you sure you want to delete this note?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(translations.notes.deleteNote, translations.notes.deleteNoteConfirm, [
+      { text: translations.common.cancel, style: "cancel" },
       {
-        text: "Delete",
+        text: translations.common.delete,
         style: "destructive",
         onPress: async () => {
           await deleteNote(currentNoteId);
@@ -217,10 +219,10 @@ export default function NotesScreen() {
   const handleClearDrawing = useCallback(async () => {
     if (!currentNoteId) return;
 
-    Alert.alert("Clear Drawing", "Are you sure you want to clear all drawings?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(translations.notes.clearDrawing, translations.notes.clearDrawingConfirm, [
+      { text: translations.common.cancel, style: "cancel" },
       {
-        text: "Clear",
+        text: translations.notes.clear,
         style: "destructive",
         onPress: async () => {
           await clearDrawing(currentNoteId);
@@ -296,7 +298,7 @@ export default function NotesScreen() {
       }
     } catch (error) {
       console.error("Error exporting PDF:", error);
-      Alert.alert("Error", "Failed to export PDF");
+      Alert.alert(translations.notes.error, translations.notes.exportError);
     }
   }, [currentNote]);
 
@@ -555,7 +557,7 @@ export default function NotesScreen() {
       <View style={styles.container}>
         <LinearGradient colors={gradientColors} style={styles.gradient}>
           <View style={styles.loadingContainer}>
-            <Text style={[styles.loadingText, { color: colors.primary }]}>Loading notes...</Text>
+            <Text style={[styles.loadingText, { color: colors.primary }]}>{translations.notes.loadingNotes}</Text>
           </View>
         </LinearGradient>
       </View>
@@ -567,7 +569,7 @@ export default function NotesScreen() {
       <View style={styles.container}>
         <LinearGradient colors={gradientColors} style={styles.gradient}>
           <View style={styles.loadingContainer}>
-            <Text style={[styles.loadingText, { color: colors.primary }]}>Creating your first note...</Text>
+            <Text style={[styles.loadingText, { color: colors.primary }]}>{translations.notes.creatingFirstNote}</Text>
           </View>
         </LinearGradient>
       </View>
@@ -705,7 +707,7 @@ export default function NotesScreen() {
                     onPress={() => setShowNotesList(true)}
                     activeOpacity={0.7}
                   >
-                    <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>{notes.length} notes saved</Text>
+                    <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>{notes.length} {translations.notes.notesSaved}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -730,7 +732,7 @@ export default function NotesScreen() {
                   <View style={styles.toolbarOverlay}>
                     <View style={styles.toolbarHeader}>
                       <Palette color={colors.primary} size={18} strokeWidth={2} />
-                      <Text style={[styles.toolbarLabel, { color: colors.secondary }]}>Drawing Tools</Text>
+                      <Text style={[styles.toolbarLabel, { color: colors.secondary }]}>{translations.notes.drawingTools}</Text>
                     </View>
                     <View style={styles.toolbar}>
                       <Animated.View style={{ transform: [{ scale: tool === "text" ? scaleAnim : 1 }] }}>
@@ -795,7 +797,7 @@ export default function NotesScreen() {
                   <View style={styles.toolbarOverlay}>
                     <View style={styles.toolbarHeader}>
                       <Palette color={colors.primary} size={18} strokeWidth={2} />
-                      <Text style={[styles.toolbarLabel, { color: colors.secondary }]}>Drawing Tools</Text>
+                      <Text style={[styles.toolbarLabel, { color: colors.secondary }]}>{translations.notes.drawingTools}</Text>
                     </View>
                     <View style={styles.toolbar}>
                       <Animated.View style={{ transform: [{ scale: tool === "text" ? scaleAnim : 1 }] }}>
@@ -1031,7 +1033,7 @@ export default function NotesScreen() {
                         style={[styles.textInput, getTextStyleObject(), { position: 'absolute', zIndex: tool === "text" ? 2 : 1 }]}
                         value={textContent}
                         onChangeText={setTextContent}
-                        placeholder="Start typing your note..."
+                        placeholder={translations.notes.startTyping}
                         placeholderTextColor="rgba(255, 255, 255, 0.5)"
                         multiline
                         textAlignVertical="top"
@@ -1082,7 +1084,7 @@ export default function NotesScreen() {
                         style={[styles.textInput, getTextStyleObject(), { position: 'absolute', zIndex: tool === "text" ? 2 : 1 }]}
                         value={textContent}
                         onChangeText={setTextContent}
-                        placeholder="Start typing your note..."
+                        placeholder={translations.notes.startTyping}
                         placeholderTextColor="rgba(255, 255, 255, 0.5)"
                         multiline
                         textAlignVertical="top"
@@ -1141,7 +1143,7 @@ export default function NotesScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Plus color="#FFFFFF" size={16} strokeWidth={2.5} />
-                  <Text style={styles.actionButtonText}>New</Text>
+                  <Text style={styles.actionButtonText}>{translations.notes.newNote}</Text>
                 </LinearGradient>
               </TouchableOpacity>
 
@@ -1157,7 +1159,7 @@ export default function NotesScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Save color="#FFFFFF" size={16} strokeWidth={2.5} />
-                  <Text style={styles.actionButtonText}>Save</Text>
+                  <Text style={styles.actionButtonText}>{translations.notes.save}</Text>
                 </LinearGradient>
               </TouchableOpacity>
 
@@ -1173,7 +1175,7 @@ export default function NotesScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Download color="#FFFFFF" size={16} strokeWidth={2.5} />
-                  <Text style={styles.actionButtonText}>Export</Text>
+                  <Text style={styles.actionButtonText}>{translations.notes.export}</Text>
                 </LinearGradient>
               </TouchableOpacity>
 
@@ -1189,14 +1191,14 @@ export default function NotesScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Trash2 color="#FFFFFF" size={16} strokeWidth={2.5} />
-                  <Text style={styles.actionButtonText}>Delete</Text>
+                  <Text style={styles.actionButtonText}>{translations.notes.delete}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-                Express your thoughts and ideas freely
+                {translations.notes.expressYourThoughts}
               </Text>
             </Animated.View>
           </ScrollView>
@@ -1208,7 +1210,7 @@ export default function NotesScreen() {
           <View style={styles.modalOverlay}>
             <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20, backgroundColor: isNightMode ? "#1a0a1f" : theme.colors.cardBackground }]}>
               <View style={styles.modalHeader}>
-                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Choose Color</Text>
+                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{translations.notes.chooseColor}</Text>
                 <QuickPressable onPress={() => setShowColorPicker(false)}>
                   <Text style={[styles.modalClose, { color: theme.colors.text.primary }]}>✕</Text>
                 </QuickPressable>
@@ -1243,7 +1245,7 @@ export default function NotesScreen() {
           <View style={styles.modalOverlay}>
             <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20, backgroundColor: isNightMode ? "#1a0a1f" : theme.colors.cardBackground }]}>
               <View style={styles.modalHeader}>
-                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Stroke Size</Text>
+                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{translations.notes.strokeSize}</Text>
                 <QuickPressable onPress={() => setShowSizePicker(false)}>
                   <Text style={[styles.modalClose, { color: theme.colors.text.primary }]}>✕</Text>
                 </QuickPressable>
@@ -1279,7 +1281,7 @@ export default function NotesScreen() {
           <View style={styles.modalOverlay}>
             <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20, backgroundColor: isNightMode ? "#1a0a1f" : theme.colors.cardBackground }]}>
               <View style={styles.modalHeader}>
-                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Your Notes</Text>
+                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{translations.notes.yourNotes}</Text>
                 <QuickPressable onPress={() => setShowNotesList(false)}>
                   <Text style={[styles.modalClose, { color: theme.colors.text.primary }]}>✕</Text>
                 </QuickPressable>
@@ -1311,7 +1313,7 @@ export default function NotesScreen() {
               <View style={styles.modalHeader}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                   <Sparkles color={theme.colors.primary} size={22} />
-                  <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Text Color</Text>
+                  <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{translations.notes.textColor}</Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                   <KeyboardDismissButton color={theme.colors.text.primary} size={20} />
@@ -1354,7 +1356,7 @@ export default function NotesScreen() {
               <View style={styles.modalHeader}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                   <FileText color={theme.colors.primary} size={22} />
-                  <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Text Options</Text>
+                  <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{translations.notes.textOptions}</Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                   <KeyboardDismissButton color={theme.colors.text.primary} size={20} />
@@ -1366,7 +1368,7 @@ export default function NotesScreen() {
               
               <View style={{ gap: 20 }}>
                 <View>
-                  <Text style={[styles.optionLabel, { color: theme.colors.text.secondary }]}>Font Family</Text>
+                  <Text style={[styles.optionLabel, { color: theme.colors.text.secondary }]}>{translations.notes.fontFamily}</Text>
                   <View style={styles.fontGrid}>
                     {["default", "serif", "monospace", "cursive"].map((font) => (
                       <QuickPressable
@@ -1392,7 +1394,7 @@ export default function NotesScreen() {
                             font === "monospace" && Platform.select({ ios: { fontFamily: "Courier" }, android: { fontFamily: "monospace" } }),
                             font === "cursive" && Platform.select({ ios: { fontFamily: "Snell Roundhand" }, android: { fontFamily: "cursive" } }),
                           ]}>
-                            {font === "default" ? "Default" : font.charAt(0).toUpperCase() + font.slice(1)}
+                            {font === "default" ? translations.notes.default : font === "serif" ? translations.notes.serif : font === "monospace" ? translations.notes.monospace : translations.notes.cursive}
                           </Text>
                         </View>
                       </QuickPressable>
@@ -1401,7 +1403,7 @@ export default function NotesScreen() {
                 </View>
 
                 <View>
-                  <Text style={[styles.optionLabel, { color: theme.colors.text.secondary }]}>Font Size: {fontSize}px</Text>
+                  <Text style={[styles.optionLabel, { color: theme.colors.text.secondary }]}>{translations.notes.fontSize}: {fontSize}px</Text>
                   <View style={styles.fontSizeGrid}>
                     {[12, 14, 16, 18, 20, 24, 28, 32].map((size) => (
                       <QuickPressable
