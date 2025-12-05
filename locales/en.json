@@ -155,7 +155,15 @@
     "fuelYourTransformation": "Fuel your transformation",
     "wellnessCheck": "Wellness Check",
     "tuneIntoYourEnergy": "Tune into your energy",
-    "embraceTheLight": "Embrace the light. Own your day."
+    "embraceTheLight": "Embrace the light. Own your day.",
+    "quotes": {
+      "quote1": "Rise with the sun, shine with purpose.",
+      "quote2": "Today is a blank canvas—paint it gold.",
+      "quote3": "Every sunrise brings new opportunities.",
+      "quote4": "Awaken your potential, embrace the day.",
+      "quote5": "Morning light brings infinite possibilities.",
+      "quote6": "Radiate positivity, illuminate the world."
+    }
   },
   "night": {
     "goodEvening": "Good Evening",

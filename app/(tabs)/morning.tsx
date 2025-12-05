@@ -20,13 +20,12 @@ import {
   Heart,
   Sun,
   Sunrise,
-  Zap,
-  Star,
 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import AppBackgroundWrapper from "@/components/AppBackgroundWrapper";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -41,6 +40,7 @@ type FeatureCard = {
 
 export default function MorningScreen() {
   const insets = useSafeAreaInsets();
+  const { translate } = useLanguage();
   const scaleAnims = useRef<{ [key: string]: Animated.Value }>({}).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -50,12 +50,12 @@ export default function MorningScreen() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [morningQuote] = useState(() => {
     const quotes = [
-      "Rise with the sun, shine with purpose.",
-      "Today is a blank canvas—paint it gold.",
-      "Every sunrise brings new opportunities.",
-      "Awaken your potential, embrace the day.",
-      "Morning light brings infinite possibilities.",
-      "Radiate positivity, illuminate the world.",
+      translate('morning.quotes.quote1') !== 'morning.quotes.quote1' ? translate('morning.quotes.quote1') : "Rise with the sun, shine with purpose.",
+      translate('morning.quotes.quote2') !== 'morning.quotes.quote2' ? translate('morning.quotes.quote2') : "Today is a blank canvas—paint it gold.",
+      translate('morning.quotes.quote3') !== 'morning.quotes.quote3' ? translate('morning.quotes.quote3') : "Every sunrise brings new opportunities.",
+      translate('morning.quotes.quote4') !== 'morning.quotes.quote4' ? translate('morning.quotes.quote4') : "Awaken your potential, embrace the day.",
+      translate('morning.quotes.quote5') !== 'morning.quotes.quote5' ? translate('morning.quotes.quote5') : "Morning light brings infinite possibilities.",
+      translate('morning.quotes.quote6') !== 'morning.quotes.quote6' ? translate('morning.quotes.quote6') : "Radiate positivity, illuminate the world."
     ];
     return quotes[Math.floor(Math.random() * quotes.length)];
   });
@@ -119,40 +119,40 @@ export default function MorningScreen() {
   const features: FeatureCard[] = [
     {
       id: "meditation",
-      title: "Morning Meditation",
-      description: "Center your mind & breathe",
+      title: translate('morning.morningMeditation'),
+      description: translate('morning.centerYourMind'),
       icon: Music,
       gradient: ["#FFD700", "#FFA500"] as const,
       route: "/morning-meditation",
     },
     {
       id: "routines",
-      title: "Morning Routines",
-      description: "Build your perfect ritual",
+      title: translate('morning.morningRoutines'),
+      description: translate('morning.buildYourPerfectRitual'),
       icon: Clock,
       gradient: ["#FF8C00", "#FF6347"] as const,
       route: "/morning-routines",
     },
     {
       id: "affirmations",
-      title: "Daily Affirmations",
-      description: "Speak power into existence",
+      title: translate('morning.dailyAffirmations'),
+      description: translate('morning.speakPowerIntoExistence'),
       icon: Sparkles,
       gradient: ["#FFD700", "#DAA520"] as const,
       route: "/morning-affirmations",
     },
     {
       id: "habits",
-      title: "Morning Habits",
-      description: "Fuel your transformation",
+      title: translate('morning.morningHabits'),
+      description: translate('morning.fuelYourTransformation'),
       icon: Coffee,
       gradient: ["#FFA500", "#FF8C00"] as const,
       route: "/morning-habits",
     },
     {
       id: "wellness",
-      title: "Wellness Check",
-      description: "Tune into your energy",
+      title: translate('morning.wellnessCheck'),
+      description: translate('morning.tuneIntoYourEnergy'),
       icon: Heart,
       gradient: ["#FFB347", "#FF8C00"] as const,
       route: "/wellness-check",
@@ -197,9 +197,9 @@ export default function MorningScreen() {
 
   const getGreeting = () => {
     const hour = currentTime.getHours();
-    if (hour >= 5 && hour < 8) return "Rise & Shine";
-    if (hour >= 8 && hour < 12) return "Good Morning";
-    return "Seize the Day";
+    if (hour >= 5 && hour < 8) return translate('morning.riseAndShine');
+    if (hour >= 8 && hour < 12) return translate('morning.goodMorning');
+    return translate('morning.seizeTheDay');
   };
 
   const formatTime = (date: Date) => {
@@ -277,7 +277,7 @@ export default function MorningScreen() {
                     <View style={styles.quoteHeader}>
                       <Sunrise color="#FF8C00" size={18} strokeWidth={2} />
                       <Text style={styles.quoteLabel}>
-                        Morning Inspiration
+                        {translate('morning.morningInspiration')}
                       </Text>
                     </View>
                     <Text style={styles.quoteText}>
@@ -291,7 +291,7 @@ export default function MorningScreen() {
                     <View style={styles.quoteHeader}>
                       <Sunrise color="#FF8C00" size={18} strokeWidth={2} />
                       <Text style={styles.quoteLabel}>
-                        Morning Inspiration
+                        {translate('morning.morningInspiration')}
                       </Text>
                     </View>
                     <Text style={styles.quoteText}>
@@ -302,7 +302,7 @@ export default function MorningScreen() {
               )}
 
               <Text style={styles.sectionTitle}>
-                Awakening Rituals
+                {translate('morning.awakeningRituals')}
               </Text>
             </Animated.View>
 
@@ -314,7 +314,7 @@ export default function MorningScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Embrace the light. Own your day.
+                {translate('morning.embraceTheLight')}
               </Text>
             </Animated.View>
           </ScrollView>
