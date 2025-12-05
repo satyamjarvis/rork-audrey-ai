@@ -43,7 +43,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import colors from "@/constants/colors";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useTranslation } from "@/contexts/LanguageContext";
-import KeyboardDismissButton from "@/components/KeyboardDismissButton";
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -992,12 +992,12 @@ export default function WeeklyPlannerScreen() {
 
               <View style={styles.formGroup}>
                 <View style={styles.repeatHeader}>
-                  <Text style={styles.formLabel}>{t('weeklyPlanner.repeatWeekly')}</Text>
+                  <Text style={[styles.formLabel, { color: modalColors.labelColor, marginBottom: 0 }]}>{t('weeklyPlanner.repeatWeekly')}</Text>
                   <TouchableOpacity
                     style={[styles.toggleButton, taskRepeatEnabled && styles.toggleButtonActive]}
                     onPress={() => setTaskRepeatEnabled(!taskRepeatEnabled)}
                   >
-                    <Text style={[styles.toggleButtonText, taskRepeatEnabled && styles.toggleButtonTextActive]}>
+                    <Text style={[styles.toggleButtonText, { color: taskRepeatEnabled ? '#FFFFFF' : modalColors.textSecondary }]}>
                       {taskRepeatEnabled ? t('weeklyPlanner.on') : t('weeklyPlanner.off')}
                     </Text>
                   </TouchableOpacity>
@@ -1008,13 +1008,13 @@ export default function WeeklyPlannerScreen() {
                     <TouchableOpacity
                       style={[
                         styles.repeatTypeButton,
-                        taskRepeatType === "indefinite" && { backgroundColor: theme.colors.primary }
+                        { backgroundColor: taskRepeatType === "indefinite" ? theme.colors.primary : modalColors.inputBg, borderColor: modalColors.inputBorder }
                       ]}
                       onPress={() => setTaskRepeatType("indefinite")}
                     >
                       <Text style={[
                         styles.repeatTypeText,
-                        taskRepeatType === "indefinite" && styles.repeatTypeTextActive
+                        { color: taskRepeatType === "indefinite" ? '#FFFFFF' : modalColors.textSecondary }
                       ]}>
                         {t('weeklyPlanner.repeatIndefinite')}
                       </Text>
@@ -1023,13 +1023,13 @@ export default function WeeklyPlannerScreen() {
                     <TouchableOpacity
                       style={[
                         styles.repeatTypeButton,
-                        taskRepeatType === "limited" && { backgroundColor: theme.colors.primary }
+                        { backgroundColor: taskRepeatType === "limited" ? theme.colors.primary : modalColors.inputBg, borderColor: modalColors.inputBorder }
                       ]}
                       onPress={() => setTaskRepeatType("limited")}
                     >
                       <Text style={[
                         styles.repeatTypeText,
-                        taskRepeatType === "limited" && styles.repeatTypeTextActive
+                        { color: taskRepeatType === "limited" ? '#FFFFFF' : modalColors.textSecondary }
                       ]}>
                         {t('weeklyPlanner.repeatLimited')}
                       </Text>
@@ -1037,7 +1037,7 @@ export default function WeeklyPlannerScreen() {
 
                     {taskRepeatType === "limited" && (
                       <View style={styles.weeksCountContainer}>
-                        <Text style={styles.weeksCountLabel}>{t('weeklyPlanner.numberOfWeeks')}: {taskRepeatWeeks}</Text>
+                        <Text style={[styles.weeksCountLabel, { color: modalColors.textSecondary }]}>{t('weeklyPlanner.numberOfWeeks')}: {taskRepeatWeeks}</Text>
                         <View style={styles.weeksCountControl}>
                           <TouchableOpacity
                             style={styles.weeksCountButton}
@@ -1045,7 +1045,7 @@ export default function WeeklyPlannerScreen() {
                           >
                             <Text style={styles.weeksCountButtonText}>-</Text>
                           </TouchableOpacity>
-                          <Text style={styles.weeksCountValue}>{taskRepeatWeeks}</Text>
+                          <Text style={[styles.weeksCountValue, { color: modalColors.text }]}>{taskRepeatWeeks}</Text>
                           <TouchableOpacity
                             style={styles.weeksCountButton}
                             onPress={() => setTaskRepeatWeeks(taskRepeatWeeks + 1)}
@@ -1174,6 +1174,7 @@ export default function WeeklyPlannerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
   },
   gradient: {
     flex: 1,
@@ -1594,16 +1595,16 @@ const styles = StyleSheet.create({
   modalScrollContent: {
     flexGrow: 1,
     justifyContent: "flex-end" as const,
-    paddingTop: 80,
+    paddingTop: 60,
   },
   modalContent: {
-    backgroundColor: "rgba(255, 255, 255, 0.85)",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingTop: 20,
+    paddingTop: 16,
     paddingBottom: 30,
     paddingHorizontal: 20,
-    minHeight: SCREEN_WIDTH * 1.2,
+    minHeight: SCREEN_WIDTH * 1.1,
     borderTopWidth: 1,
     borderTopColor: "rgba(157, 78, 221, 0.15)",
     ...(Platform.OS === 'ios' && {
@@ -1639,7 +1640,7 @@ const styles = StyleSheet.create({
     justifyContent: "center" as const,
   },
   formGroup: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   formLabel: {
     fontSize: 14,
@@ -1772,7 +1773,7 @@ const styles = StyleSheet.create({
   },
   progressBarBgLarge: {
     height: 12,
-    backgroundColor: "#F5F7FA",
+    backgroundColor: "rgba(0, 0, 0, 0.08)",
     borderRadius: 6,
     overflow: "hidden",
   },
@@ -1876,7 +1877,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 8,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
   toggleButtonActive: {
     backgroundColor: colors.primary,
@@ -1884,7 +1885,6 @@ const styles = StyleSheet.create({
   toggleButtonText: {
     fontSize: 12,
     fontWeight: "700" as const,
-    color: colors.text.secondary,
   },
   toggleButtonTextActive: {
     color: "#FFFFFF",
@@ -1897,14 +1897,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 10,
-    backgroundColor: "#F5F7FA",
+    backgroundColor: "rgba(0, 0, 0, 0.05)",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(0, 0, 0, 0.1)",
   },
   repeatTypeText: {
     fontSize: 14,
     fontWeight: "600" as const,
-    color: colors.text.secondary,
     textAlign: "center" as const,
   },
   repeatTypeTextActive: {
@@ -1918,7 +1917,6 @@ const styles = StyleSheet.create({
   weeksCountLabel: {
     fontSize: 13,
     fontWeight: "600" as const,
-    color: colors.text.secondary,
   },
   weeksCountControl: {
     flexDirection: "row" as const,
@@ -1942,7 +1940,6 @@ const styles = StyleSheet.create({
   weeksCountValue: {
     fontSize: 20,
     fontWeight: "700" as const,
-    color: colors.text.primary,
     minWidth: 40,
     textAlign: "center" as const,
   },
