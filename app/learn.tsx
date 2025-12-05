@@ -76,6 +76,7 @@ export default function LearnScreen() {
   const [urlTitle, setUrlTitle] = useState("");
   const [urlDescription, setUrlDescription] = useState("");
   const [urlCategoryId, setUrlCategoryId] = useState<string | null>(null);
+  const [urlVideoId, setUrlVideoId] = useState<string | null>(null);
   
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const sandFallAnim = useRef(new Animated.Value(0)).current;
@@ -644,14 +645,26 @@ export default function LearnScreen() {
     return url;
   };
 
-  const handleOpenUrlModal = (categoryId: string) => {
+  const handleOpenUrlModal = (categoryId: string, videoId?: string) => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     setUrlCategoryId(categoryId);
-    setUrlInput("");
-    setUrlTitle("");
-    setUrlDescription("");
+    setUrlVideoId(videoId || null);
+    
+    if (videoId) {
+      const category = categories.find((cat) => cat.id === categoryId);
+      const video = category?.videos.find((vid) => vid.id === videoId);
+      if (video) {
+        setUrlInput(video.originalUrl || video.videoUrl || "");
+        setUrlTitle(video.title || "");
+        setUrlDescription(video.description || "");
+      }
+    } else {
+      setUrlInput("");
+      setUrlTitle("");
+      setUrlDescription("");
+    }
     setShowUrlModal(true);
   };
 
@@ -668,30 +681,51 @@ export default function LearnScreen() {
     setIsSaving(true);
 
     try {
-      const videoIdForSave = `url_video_${Date.now()}`;
       const processedUrl = convertGoogleDriveUrl(urlInput.trim());
       
-      const newVideo: VideoItem = {
-        id: videoIdForSave,
-        title: urlTitle.trim() || "Video from URL",
-        duration: "--:--",
-        thumbnail: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80",
-        videoUrl: processedUrl,
-        isLocked: false,
-        description: urlDescription.trim() || "Video added from URL",
-        isUrlVideo: true,
-        originalUrl: urlInput.trim(),
-      };
+      if (urlVideoId) {
+        await updateVideo(urlCategoryId, urlVideoId, {
+          title: urlTitle.trim() || "Video from URL",
+          videoUrl: processedUrl,
+          description: urlDescription.trim() || "Video added from URL",
+          isUrlVideo: true,
+          originalUrl: urlInput.trim(),
+        });
+        
+        setShowUrlModal(false);
+        setUrlInput("");
+        setUrlTitle("");
+        setUrlDescription("");
+        setUrlCategoryId(null);
+        setUrlVideoId(null);
+        
+        Alert.alert("Success", "Video URL updated!");
+      } else {
+        const videoIdForSave = `url_video_${Date.now()}`;
+        
+        const newVideo: VideoItem = {
+          id: videoIdForSave,
+          title: urlTitle.trim() || "Video from URL",
+          duration: "--:--",
+          thumbnail: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80",
+          videoUrl: processedUrl,
+          isLocked: false,
+          description: urlDescription.trim() || "Video added from URL",
+          isUrlVideo: true,
+          originalUrl: urlInput.trim(),
+        };
 
-      await addVideo(urlCategoryId, newVideo);
-      
-      setShowUrlModal(false);
-      setUrlInput("");
-      setUrlTitle("");
-      setUrlDescription("");
-      setUrlCategoryId(null);
-      
-      Alert.alert("Success", "Video added from URL!");
+        await addVideo(urlCategoryId, newVideo);
+        
+        setShowUrlModal(false);
+        setUrlInput("");
+        setUrlTitle("");
+        setUrlDescription("");
+        setUrlCategoryId(null);
+        setUrlVideoId(null);
+        
+        Alert.alert("Success", "Video added from URL!");
+      }
     } catch (error) {
       console.error("Error adding URL video:", error);
       Alert.alert("Error", "Failed to add video. Please try again.");
@@ -1115,10 +1149,10 @@ export default function LearnScreen() {
                           backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.15)" : "rgba(199, 21, 133, 0.1)",
                           borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
                         }]}
-                        onPress={() => handlePickVideo(selectedCategory.id, video.id)}
+                        onPress={() => handleOpenUrlModal(selectedCategory.id, video.id)}
                         activeOpacity={0.7}
                       >
-                        <Edit3 color={isNightMode ? "#FFD700" : "#C71585"} size={16} strokeWidth={2.5} />
+                        <Link color={isNightMode ? "#FFD700" : "#C71585"} size={16} strokeWidth={2.5} />
                         <Text style={[styles.editVideoText, { color: isNightMode ? "#FFD700" : "#C71585" }]}>Change Video</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
@@ -1552,11 +1586,14 @@ export default function LearnScreen() {
                   <View style={styles.urlModalTitleRow}>
                     <Globe color={isNightMode ? "#FFD700" : "#C71585"} size={24} strokeWidth={2.5} />
                     <Text style={[styles.editModalTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
-                      Add Video from URL
+                      {urlVideoId ? "Change Video URL" : "Add Video from URL"}
                     </Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => setShowUrlModal(false)}
+                    onPress={() => {
+                      setShowUrlModal(false);
+                      setUrlVideoId(null);
+                    }}
                     style={styles.editModalCloseButton}
                     activeOpacity={0.7}
                   >
@@ -1567,7 +1604,7 @@ export default function LearnScreen() {
                 <View style={styles.editModalForm}>
                   <View style={styles.editInputGroup}>
                     <Text style={[styles.editInputLabel, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
-                      Video URL *
+                      Video URL {urlVideoId ? "" : "*"}
                     </Text>
                     <TextInput
                       value={urlInput}
@@ -1632,7 +1669,10 @@ export default function LearnScreen() {
                       style={[styles.editModalButton, styles.editModalCancelButton, {
                         borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
                       }]}
-                      onPress={() => setShowUrlModal(false)}
+                      onPress={() => {
+                        setShowUrlModal(false);
+                        setUrlVideoId(null);
+                      }}
                       activeOpacity={0.7}
                     >
                       <Text style={[styles.editModalButtonText, { color: isNightMode ? "#FFD700" : "#C71585" }]}>
@@ -1649,9 +1689,13 @@ export default function LearnScreen() {
                       activeOpacity={0.7}
                       disabled={!urlInput.trim()}
                     >
-                      <Plus color={isNightMode ? "#000000" : "#FFFFFF"} size={20} strokeWidth={2.5} />
+                      {urlVideoId ? (
+                        <Check color={isNightMode ? "#000000" : "#FFFFFF"} size={20} strokeWidth={2.5} />
+                      ) : (
+                        <Plus color={isNightMode ? "#000000" : "#FFFFFF"} size={20} strokeWidth={2.5} />
+                      )}
                       <Text style={[styles.editModalButtonText, { color: isNightMode ? "#000000" : "#FFFFFF" }]}>
-                        Add Video
+                        {urlVideoId ? "Save Changes" : "Add Video"}
                       </Text>
                     </TouchableOpacity>
                   </View>
