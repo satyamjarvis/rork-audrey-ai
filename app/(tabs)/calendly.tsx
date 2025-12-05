@@ -55,6 +55,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useFontSize } from "@/contexts/FontSizeContext";
 import { useUniverseMode } from "@/contexts/UniverseModeContext";
 import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 Dimensions.get("window");
 
@@ -94,6 +95,7 @@ export default function SolaraScreen() {
   const { mode: universeMode } = useUniverseMode();
   const { markSolaraAccessed } = useUserProfile();
   const { notifyCalendarOpened } = useMusicPlayer();
+  const { translations } = useLanguage();
   
   const isNightMode = theme.id === "night-mode";
   
@@ -288,12 +290,30 @@ export default function SolaraScreen() {
     outputRange: [0.3, 0.8],
   });
 
-  const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-  ];
+  const monthNames = useMemo(() => [
+    translations.calendar.january,
+    translations.calendar.february,
+    translations.calendar.march,
+    translations.calendar.april,
+    translations.calendar.may,
+    translations.calendar.june,
+    translations.calendar.july,
+    translations.calendar.august,
+    translations.calendar.september,
+    translations.calendar.october,
+    translations.calendar.november,
+    translations.calendar.december,
+  ], [translations]);
 
-  const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
+  const dayNames = useMemo(() => [
+    translations.calendar.sunday,
+    translations.calendar.monday,
+    translations.calendar.tuesday,
+    translations.calendar.wednesday,
+    translations.calendar.thursday,
+    translations.calendar.friday,
+    translations.calendar.saturday,
+  ], [translations]);
 
   const generateCalendarDays = useMemo((): DateCell[] => {
     const year = currentMonth.getFullYear();
@@ -395,7 +415,7 @@ export default function SolaraScreen() {
 
   const handleAddAttachment = async () => {
     if (attachments.length >= 10) {
-      Alert.alert("Limit Reached", "You can only attach up to 10 files per event.");
+      Alert.alert(translations.calendar.limitReached, translations.calendar.maxAttachmentsMessage);
       return;
     }
 
@@ -429,10 +449,10 @@ export default function SolaraScreen() {
         if (Platform.OS === 'ios') {
           ActionSheetIOS.showActionSheetWithOptions(
             {
-              options: ['Cancel', 'Editable & Downloadable', 'View Only & Downloadable', 'View Only'],
+              options: [translations.common.cancel, translations.calendar.editableDownloadable, translations.calendar.viewOnlyDownloadable, translations.calendar.viewOnly],
               cancelButtonIndex: 0,
-              title: 'Attachment Permissions',
-              message: 'Select access level for this attachment',
+              title: translations.calendar.attachmentPermissions,
+              message: translations.calendar.selectAccessLevel,
             },
             (buttonIndex) => {
               if (buttonIndex === 0) return;
@@ -449,7 +469,7 @@ export default function SolaraScreen() {
       }
     } catch (error) {
       console.error('Error picking document:', error);
-      Alert.alert('Error', 'Failed to attach file. Please try again.');
+      Alert.alert(translations.common.error, translations.calendar.failedToAttachFile);
     }
   };
 
@@ -474,12 +494,12 @@ export default function SolaraScreen() {
 
   const handleAddEvent = useCallback(async () => {
     if (!eventTitle.trim()) {
-      Alert.alert("Validation Error", "Please enter an event title");
+      Alert.alert(translations.calendar.validationError, translations.calendar.pleaseEnterEventTitle);
       return;
     }
 
     if (!selectedCalendar) {
-      Alert.alert("Error", "No calendar selected. Please select a calendar first.");
+      Alert.alert(translations.common.error, translations.calendar.noCalendarSelectedError);
       return;
     }
 
@@ -518,7 +538,7 @@ export default function SolaraScreen() {
       setShowAddModal(false);
     } catch (error) {
       console.error('[Solara] Error creating event:', error);
-      Alert.alert("Error", "Failed to create event. Please try again.");
+      Alert.alert(translations.common.error, translations.calendar.failedToCreateEvent);
       
       if (Platform.OS !== "web") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -544,12 +564,12 @@ export default function SolaraScreen() {
 
   const handleUpdateEvent = useCallback(async () => {
     if (!eventTitle.trim()) {
-      Alert.alert("Validation Error", "Please enter an event title");
+      Alert.alert(translations.calendar.validationError, translations.calendar.pleaseEnterEventTitle);
       return;
     }
 
     if (!editingEventId) {
-      Alert.alert("Error", "Event ID not found");
+      Alert.alert(translations.common.error, translations.calendar.validationError);
       return;
     }
 
@@ -585,7 +605,7 @@ export default function SolaraScreen() {
       setShowEditModal(false);
     } catch (error) {
       console.error('[Solara] Error updating event:', error);
-      Alert.alert("Error", "Failed to update event. Please try again.");
+      Alert.alert(translations.common.error, translations.calendar.failedToUpdateEvent);
       
       if (Platform.OS !== "web") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -595,12 +615,12 @@ export default function SolaraScreen() {
 
   const handleDeleteEvent = useCallback((eventId: string) => {
     Alert.alert(
-      "Delete Event",
-      "Are you sure you want to delete this event?",
+      translations.calendar.deleteEvent,
+      translations.calendar.areYouSureDeleteEvent,
       [
-        { text: "Cancel", style: "cancel" },
+        { text: translations.common.cancel, style: "cancel" },
         {
-          text: "Delete",
+          text: translations.common.delete,
           style: "destructive",
           onPress: async () => {
             if (Platform.OS !== "web") {
@@ -671,8 +691,8 @@ export default function SolaraScreen() {
         )}
         <View style={[styles.emptyState, { paddingTop: insets.top + 24 }]}>
           <Zap color={FUTURISTIC_COLORS.primary} size={80} strokeWidth={1.5} />
-          <Text style={styles.emptyTitle}>No Calendar Selected</Text>
-          <Text style={styles.emptySubtitle}>Select a calendar to continue</Text>
+          <Text style={styles.emptyTitle}>{translations.calendar.noCalendarSelected}</Text>
+          <Text style={styles.emptySubtitle}>{translations.calendar.selectCalendarToContinue}</Text>
         </View>
         {universeMode !== 'universe' && <BrainFloatingButton />}
       </View>
@@ -697,7 +717,7 @@ export default function SolaraScreen() {
         <View style={[styles.header, { paddingTop: insets.top + 24 }]}>
           <View style={styles.headerTop}>
             <View style={styles.headerTitleRow}>
-              <Text style={styles.headerTitle}>AUDREY CALENDAR</Text>
+              <Text style={styles.headerTitle}>{translations.calendar.audreyCalendar}</Text>
             </View>
             <View>
               <Animated.View style={[styles.statsWidget, { transform: [{ scale: pulseAnim }] }]}>
@@ -754,17 +774,17 @@ export default function SolaraScreen() {
           <View style={styles.statCard}>
             <TrendingUp color={FUTURISTIC_COLORS.green} size={16} strokeWidth={2.5} />
             <Text style={styles.statValue}>{monthStats.today}</Text>
-            <Text style={styles.statLabel}>Today</Text>
+            <Text style={styles.statLabel}>{translations.calendar.today}</Text>
           </View>
           <View style={styles.statCard}>
             <Calendar color={FUTURISTIC_COLORS.purple} size={16} strokeWidth={2.5} />
             <Text style={styles.statValue}>{monthStats.total}</Text>
-            <Text style={styles.statLabel}>Month</Text>
+            <Text style={styles.statLabel}>{translations.calendar.month}</Text>
           </View>
           <View style={styles.statCard}>
             <Clock color={FUTURISTIC_COLORS.pink} size={16} strokeWidth={2.5} />
             <Text style={styles.statValue}>{selectedDateEvents.length}</Text>
-            <Text style={styles.statLabel}>Selected</Text>
+            <Text style={styles.statLabel}>{translations.calendar.selected}</Text>
           </View>
         </View>
 
@@ -835,7 +855,7 @@ export default function SolaraScreen() {
             {selectedDateEvents.length === 0 ? (
               <View style={styles.noEvents}>
                 <Calendar color={FUTURISTIC_COLORS.text.light} size={40} strokeWidth={1.5} />
-                <Text style={styles.noEventsText}>No events scheduled</Text>
+                <Text style={styles.noEventsText}>{translations.calendar.noEventsScheduled}</Text>
               </View>
             ) : (
               <View style={styles.eventsList}>
@@ -981,7 +1001,7 @@ export default function SolaraScreen() {
                         </View>
                         <View style={styles.modalTitleTextContainer}>
                           <Text style={[styles.modalTitle, { color: modalColors.text }]}>
-                            {showEditModal ? "Edit Event" : "New Event"}
+                            {showEditModal ? translations.calendar.editEvent : translations.calendar.newEvent}
                           </Text>
                           <Text style={[styles.modalSubtitle, { color: modalColors.textSecondary }]}>
                             {selectedDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
@@ -1021,12 +1041,12 @@ export default function SolaraScreen() {
                       <View style={styles.formGroup}>
                         <View style={styles.formLabelRow}>
                           <Sparkles color={modalColors.iconPrimary} size={16} strokeWidth={2} />
-                          <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Event Title</Text>
+                          <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{translations.calendar.eventTitle}</Text>
                           <Text style={[styles.requiredIndicator, { color: FUTURISTIC_COLORS.accent }]}>*</Text>
                         </View>
                         <TextInput
                           style={[styles.textInput, { backgroundColor: modalColors.inputBg, borderColor: eventTitle.trim() ? modalColors.inputBorder : FUTURISTIC_COLORS.accent, color: modalColors.text }]}
-                          placeholder="Enter event title"
+                          placeholder={translations.calendar.enterEventTitle}
                           placeholderTextColor={isNightMode ? FUTURISTIC_COLORS.text.light : '#999'}
                           value={eventTitle}
                           onChangeText={setEventTitle}
@@ -1039,7 +1059,7 @@ export default function SolaraScreen() {
                       <View style={styles.formGroup}>
                         <View style={styles.formLabelRow}>
                           <Clock color={modalColors.iconSecondary} size={16} strokeWidth={2} />
-                          <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Time</Text>
+                          <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{translations.calendar.time}</Text>
                         </View>
                         <TextInput
                           style={[styles.textInput, { backgroundColor: modalColors.inputBg, borderColor: modalColors.inputBorder, color: modalColors.text }]}
@@ -1055,11 +1075,11 @@ export default function SolaraScreen() {
                       <View style={styles.formGroup}>
                         <View style={styles.formLabelRow}>
                           <FileText color={modalColors.iconPurple} size={16} strokeWidth={2} />
-                          <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Description</Text>
+                          <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{translations.calendar.description}</Text>
                         </View>
                         <TextInput
                           style={[styles.textInput, styles.textArea, { backgroundColor: modalColors.inputBg, borderColor: modalColors.inputBorder, color: modalColors.text }]}
-                          placeholder="Add details..."
+                          placeholder={translations.calendar.addDetails}
                           placeholderTextColor={isNightMode ? FUTURISTIC_COLORS.text.light : '#999'}
                           value={eventDescription}
                           onChangeText={setEventDescription}
@@ -1073,7 +1093,7 @@ export default function SolaraScreen() {
                         <View style={styles.attachmentHeader}>
                           <View style={styles.formLabelRow}>
                             <Paperclip color={modalColors.iconPink} size={16} strokeWidth={2} />
-                            <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Attachments</Text>
+                            <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{translations.calendar.attachments}</Text>
                           </View>
                           <View style={[styles.attachmentLimitBadge, { backgroundColor: modalColors.limitBadgeBg, borderColor: modalColors.inputBorder }]}>
                             <Text style={[styles.attachmentLimit, { color: modalColors.iconPrimary }]}>{attachments.length}/10</Text>
@@ -1157,7 +1177,7 @@ export default function SolaraScreen() {
                             style={styles.attachButtonGradient}
                           >
                             <Paperclip color={attachments.length >= 10 ? (isNightMode ? FUTURISTIC_COLORS.text.light : '#999') : modalColors.iconPrimary} size={20} strokeWidth={2} />
-                            <Text style={[styles.attachButtonText, { color: attachments.length >= 10 ? (isNightMode ? FUTURISTIC_COLORS.text.light : '#999') : modalColors.iconPrimary }]}>Add Attachment</Text>
+                            <Text style={[styles.attachButtonText, { color: attachments.length >= 10 ? (isNightMode ? FUTURISTIC_COLORS.text.light : '#999') : modalColors.iconPrimary }]}>{translations.calendar.addAttachment}</Text>
                           </LinearGradient>
                         </TouchableOpacity>
                       </View>
@@ -1182,7 +1202,7 @@ export default function SolaraScreen() {
                       >
                         <Sparkles color="#FFFFFF" size={16} strokeWidth={2.5} />
                         <Text style={styles.submitButtonText} numberOfLines={1}>
-                          {showEditModal ? "Update Event" : "Create Event"}
+                          {showEditModal ? translations.calendar.updateEvent : translations.calendar.createEvent}
                         </Text>
                       </LinearGradient>
                     </TouchableOpacity>
@@ -1205,31 +1225,31 @@ export default function SolaraScreen() {
         <View style={styles.modalOverlay}>
           <View style={[styles.permissionModalContent, { backgroundColor: isNightMode ? '#1A1A1A' : '#FFFFFF' }]}>
             <Text style={[styles.permissionModalTitle, { color: isNightMode ? '#FFFFFF' : '#000000' }]}>
-              Attachment Permissions
+              {translations.calendar.attachmentPermissions}
             </Text>
             <Text style={[styles.permissionModalSubtitle, { color: isNightMode ? '#CCCCCC' : '#666666' }]}>
-              Select access level for &quot;{tempAttachment?.name}&quot;
+              {translations.calendar.selectAccessLevel}
             </Text>
             
             <TouchableOpacity 
               style={styles.permissionOption} 
               onPress={() => handlePermissionSelect('edit_download')}
             >
-              <Text style={[styles.permissionOptionText, { color: isNightMode ? '#FFFFFF' : '#000000' }]}>Editable & Downloadable</Text>
+              <Text style={[styles.permissionOptionText, { color: isNightMode ? '#FFFFFF' : '#000000' }]}>{translations.calendar.editableDownloadable}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
               style={styles.permissionOption} 
               onPress={() => handlePermissionSelect('view_download')}
             >
-              <Text style={[styles.permissionOptionText, { color: isNightMode ? '#FFFFFF' : '#000000' }]}>View Only & Downloadable</Text>
+              <Text style={[styles.permissionOptionText, { color: isNightMode ? '#FFFFFF' : '#000000' }]}>{translations.calendar.viewOnlyDownloadable}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
               style={[styles.permissionOption, { borderBottomWidth: 0 }]} 
               onPress={() => handlePermissionSelect('view_only')}
             >
-              <Text style={[styles.permissionOptionText, { color: isNightMode ? '#FFFFFF' : '#000000' }]}>View Only</Text>
+              <Text style={[styles.permissionOptionText, { color: isNightMode ? '#FFFFFF' : '#000000' }]}>{translations.calendar.viewOnly}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -1239,7 +1259,7 @@ export default function SolaraScreen() {
                 setPermissionModalVisible(false);
               }}
             >
-              <Text style={styles.permissionCancelText}>Cancel</Text>
+              <Text style={styles.permissionCancelText}>{translations.common.cancel}</Text>
             </TouchableOpacity>
           </View>
         </View>
