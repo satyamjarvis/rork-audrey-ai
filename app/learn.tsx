@@ -59,7 +59,7 @@ export default function LearnScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { mode: universeMode } = useUniverseMode();
-  const { categories, initializeDefaultCategories, updateVideo, addVideo, isLoading, updateCategory } = useLearn();
+  const { categories, initializeDefaultCategories, updateVideo, addVideo, isLoading, updateCategory, setCategories } = useLearn();
   const [hasSubscription] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<CourseCategory | null>(null);
@@ -349,6 +349,33 @@ export default function LearnScreen() {
         ],
         isSubscriptionRequired: true,
       },
+      {
+        id: "meta-learn",
+        title: "Meta Learn To Create Your Reality",
+        icon: "Zap" as any,
+        color: isNightMode ? "#FF8C00" : "#C71585",
+        videos: [
+          {
+            id: "ml1",
+            title: "The Power of Belief",
+            duration: "15:00",
+            thumbnail: "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            isLocked: false,
+            description: "Understand how your beliefs shape your reality",
+          },
+          {
+            id: "ml2",
+            title: "Manifestation 101",
+            duration: "20:30",
+            thumbnail: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            isLocked: true,
+            description: "Learn the basics of manifesting your desires",
+          },
+        ],
+        isSubscriptionRequired: true,
+      },
     ];
 
     initializeDefaultCategories(courseCategories);
@@ -378,7 +405,40 @@ export default function LearnScreen() {
       console.log('Migrating lifestyle category title to Conversational Speaking');
       updateCategory('lifestyle', { title: 'Conversational Speaking' });
     }
-  }, [categories, isLoading, updateCategory]);
+
+    // Add Meta Learn category if missing
+    if (!categories.find(c => c.id === 'meta-learn')) {
+      console.log('Adding Meta Learn category');
+      const newCategory: CourseCategory = {
+        id: "meta-learn",
+        title: "Meta Learn To Create Your Reality",
+        icon: "Zap" as any,
+        color: isNightMode ? "#FF8C00" : "#C71585",
+        videos: [
+          {
+            id: "ml1",
+            title: "The Power of Belief",
+            duration: "15:00",
+            thumbnail: "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            isLocked: false,
+            description: "Understand how your beliefs shape your reality",
+          },
+          {
+            id: "ml2",
+            title: "Manifestation 101",
+            duration: "20:30",
+            thumbnail: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            isLocked: true,
+            description: "Learn the basics of manifesting your desires",
+          },
+        ],
+        isSubscriptionRequired: true,
+      };
+      setCategories(prev => [...prev, newCategory]);
+    }
+  }, [categories, isLoading, updateCategory, setCategories]);
 
   const handleVideoPress = (video: VideoItem) => {
     if (Platform.OS !== "web") {
@@ -955,6 +1015,7 @@ export default function LearnScreen() {
                   TrendingUp: TrendingUp,
                   Brain: Brain,
                   Award: Award,
+                  Zap: Zap,
                 };
                 const Icon = iconMap[category.icon as string] || Star;
                 return (
@@ -1094,6 +1155,7 @@ export default function LearnScreen() {
                     TrendingUp: TrendingUp,
                     Brain: Brain,
                     Award: Award,
+                    Zap: Zap,
                   };
                   const Icon = iconMap[selectedCategory.icon as string] || Star;
                   return <Icon color={isNightMode ? "#FFD700" : "#C71585"} size={32} strokeWidth={2.5} />;
