@@ -35,6 +35,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { usePlanner } from "@/contexts/PlannerContext";
 import { getCalendarBackground } from '@/constants/calendarBackgrounds';
 import { useAppBackground } from "@/contexts/AppBackgroundContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getTranslations } from "@/utils/i18n";
 
 type PlannerView = "yearly" | "monthly" | "weekly" | "daily" | null;
 
@@ -44,6 +46,8 @@ export default function PlannerScreen() {
   const { calendars, selectedCalendar, selectedBackground: calendarSelectedBackground } = useCalendar();
   const { selectedBackgroundId: globalSelectedBackground, hasCustomBackground } = useAppBackground();
   const { pendingTasks, todayTasks, overdueTasks, upcomingTasks, isLoading } = usePlanner();
+  const { language } = useLanguage();
+  const t = getTranslations(language);
   const [selectedPlannerView, setSelectedPlannerView] = useState<PlannerView>(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -71,7 +75,6 @@ export default function PlannerScreen() {
       }),
     ]).start();
 
-    // Staggered animation for grid items
     const staggerDelay = 100;
     const animations = [
       { anim: slideAnimYearly, delay: 0 },
@@ -129,12 +132,10 @@ export default function PlannerScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    // Simulate refresh - in real app this would reload data
     await new Promise(resolve => setTimeout(resolve, 1000));
     setRefreshing(false);
   }, []);
 
-  // Memoized stats summary
   const taskStats = useMemo(() => ({
     total: pendingTasks.length,
     today: todayTasks.length,
@@ -209,9 +210,9 @@ export default function PlannerScreen() {
                   />
                 </View>
                 <View style={styles.headerTextContainer}>
-                  <Text style={[styles.headerTitle, { color: textColor }, shinyTextStyle]}>Seraphim Schedule</Text>
+                  <Text style={[styles.headerTitle, { color: textColor }, shinyTextStyle]}>{t.planner.seraphimSchedule}</Text>
                   <Text style={[styles.headerSubtitle, { color: subtextColor }, shinySubtextStyle]}>
-                    Master Your Schedule
+                    {t.planner.masterYourSchedule}
                   </Text>
                 </View>
               </View>
@@ -233,7 +234,7 @@ export default function PlannerScreen() {
                         }]}>
                           <Clock color={activeBackground ? "#FFFFFF" : (isNightMode ? "#00FF87" : "#4CAF50")} size={16} strokeWidth={2.5} />
                           <Text style={[styles.statBadgeText, { color: activeBackground ? "#00FF87" : (isNightMode ? "#00FF87" : "#4CAF50") }, activeBackground && styles.shinyBadgeText]}>
-                            {taskStats.today} Today
+                            {taskStats.today} {t.planner.today}
                           </Text>
                         </View>
                       </Animated.View>
@@ -248,7 +249,7 @@ export default function PlannerScreen() {
                         }]}>
                           <Flame color={activeBackground ? "#FFFFFF" : (isNightMode ? "#FF1493" : "#F5576C")} size={16} strokeWidth={2.5} />
                           <Text style={[styles.statBadgeText, { color: activeBackground ? "#FF69B4" : (isNightMode ? "#FF1493" : "#F5576C") }, activeBackground && styles.shinyBadgeText]}>
-                            {taskStats.overdue} Overdue
+                            {taskStats.overdue} {t.planner.overdue}
                           </Text>
                         </View>
                       </Animated.View>
@@ -263,7 +264,7 @@ export default function PlannerScreen() {
                         }]}>
                           <TrendingUp color={activeBackground ? "#FFFFFF" : (isNightMode ? "#6B9BD1" : "#2196F3")} size={16} strokeWidth={2.5} />
                           <Text style={[styles.statBadgeText, { color: activeBackground ? "#00F5FF" : (isNightMode ? "#6B9BD1" : "#2196F3") }, activeBackground && styles.shinyBadgeText]}>
-                            {taskStats.upcoming} This Week
+                            {taskStats.upcoming} {t.planner.thisWeek}
                           </Text>
                         </View>
                       </Animated.View>
@@ -300,7 +301,7 @@ export default function PlannerScreen() {
                         color={activeBackground ? "#FFFFFF" : (isNightMode ? "#FFD700" : "#6B9BD1")}
                       />
                       <Text style={[styles.loadingText, { color: textColor }, shinyTextStyle]}>
-                        Loading planner data...
+                        {t.planner.loadingPlannerData}
                       </Text>
                     </View>
                   ) : null}
@@ -313,7 +314,7 @@ export default function PlannerScreen() {
                     <View style={styles.calendarSelectorHeader}>
                       <View style={styles.titleRow}>
                         <Zap color={activeBackground ? "#00F5FF" : (isNightMode ? "#00F5FF" : "#6B9BD1")} size={20} strokeWidth={2.5} />
-                        <Text style={[styles.calendarSelectorTitle, { color: textColor }, shinyTextStyle]}>Active Calendar</Text>
+                        <Text style={[styles.calendarSelectorTitle, { color: textColor }, shinyTextStyle]}>{t.planner.activeCalendar}</Text>
                       </View>
                       <TouchableOpacity
                         style={styles.manageCalendarsButton}
@@ -324,7 +325,7 @@ export default function PlannerScreen() {
                           colors={isNightMode || activeBackground ? ["#FFD700", "#FFA500"] : ["#F093FB", "#F5576C"]}
                           style={styles.manageButtonGradient}
                         >
-                          <Text style={[styles.manageCalendarsText, { color: isNightMode || activeBackground ? "#000000" : "#FFFFFF" }]}>Manage</Text>
+                          <Text style={[styles.manageCalendarsText, { color: isNightMode || activeBackground ? "#000000" : "#FFFFFF" }]}>{t.planner.manage}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -341,15 +342,15 @@ export default function PlannerScreen() {
                         </Text>
                         {selectedCalendar.isShared && (
                           <View style={[styles.sharedIndicator, { backgroundColor: activeBackground ? "rgba(0, 255, 135, 0.3)" : (isNightMode ? "#00FF8720" : "#6B9BD120") }]}>
-                            <Text style={[styles.sharedIndicatorText, { color: activeBackground ? "#00FF87" : (isNightMode ? "#00FF87" : "#6B9BD1") }, activeBackground && styles.shinyBadgeText]}>SHARED</Text>
+                            <Text style={[styles.sharedIndicatorText, { color: activeBackground ? "#00FF87" : (isNightMode ? "#00FF87" : "#6B9BD1") }, activeBackground && styles.shinyBadgeText]}>{t.common.shared.toUpperCase()}</Text>
                           </View>
                         )}
                       </View>
                     ) : (
-                      <Text style={[styles.noCalendarText, { color: subtextColor }, shinySubtextStyle]}>No calendar selected</Text>
+                      <Text style={[styles.noCalendarText, { color: subtextColor }, shinySubtextStyle]}>{t.planner.noCalendarSelected}</Text>
                     )}
                     <Text style={[styles.calendarCount, { color: subtextColor }, shinySubtextStyle]}>
-                      {calendars.length} {calendars.length === 1 ? "calendar" : "calendars"} total
+                      {calendars.length} {calendars.length === 1 ? t.planner.calendarTotal : t.planner.calendarsTotal} {t.planner.total}
                     </Text>
                   </View>
 
@@ -376,8 +377,8 @@ export default function PlannerScreen() {
                       <CheckSquare color={activeBackground ? "#FFFFFF" : (isNightMode ? "#FF1493" : "#F093FB")} size={26} strokeWidth={2.5} />
                     </LinearGradient>
                     <View style={styles.optionTextContainer}>
-                      <Text style={[styles.plannerOptionText, { color: textColor }, shinyTextStyle]}>To-Do List</Text>
-                      <Text style={[styles.plannerOptionSubtext, { color: subtextColor }, shinySubtextStyle]}>Manage your tasks</Text>
+                      <Text style={[styles.plannerOptionText, { color: textColor }, shinyTextStyle]}>{t.planner.todoList}</Text>
+                      <Text style={[styles.plannerOptionSubtext, { color: subtextColor }, shinySubtextStyle]}>{t.planner.manageTasks}</Text>
                     </View>
                     <View style={styles.optionRightContent}>
                       {pendingTasks.length > 0 && (
@@ -420,8 +421,8 @@ export default function PlannerScreen() {
                           <Paintbrush color={activeBackground ? "#FFFFFF" : (isNightMode ? "#FF6B9D" : "#F093FB")} size={32} strokeWidth={2.5} />
                         </View>
                         <View style={styles.notesTextContainer}>
-                          <Text style={[styles.notesButtonTitle, { color: textColor }, shinyTextStyle]}>NOTES & PAD</Text>
-                          <Text style={[styles.notesButtonSubtitle, { color: activeBackground ? "#FFB6D9" : (isNightMode ? "#FF6B9D" : "#9D4EDD") }, shinyAccentStyle]}>Type • Draw • Voice • Encrypt • Export</Text>
+                          <Text style={[styles.notesButtonTitle, { color: textColor }, shinyTextStyle]}>{t.planner.notesAndPad}</Text>
+                          <Text style={[styles.notesButtonSubtitle, { color: activeBackground ? "#FFB6D9" : (isNightMode ? "#FF6B9D" : "#9D4EDD") }, shinyAccentStyle]}>{t.planner.notesFeatures}</Text>
                         </View>
                         <Star 
                           color={activeBackground ? "#FFD700" : (isNightMode ? "#FFD700" : "#F093FB")} 
@@ -459,8 +460,8 @@ export default function PlannerScreen() {
                       >
                         <Target color={activeBackground ? "#FFFFFF" : (isNightMode ? "#FFD700" : "#4CAF50")} size={28} strokeWidth={2.5} />
                       </LinearGradient>
-                        <Text style={[styles.plannerOptionTextSmall, { color: textColor }, shinyTextStyle]}>Yearly</Text>
-                        <Text style={[styles.plannerOptionSubtextSmall, { color: subtextColor }, shinySubtextStyle]}>Goals</Text>
+                        <Text style={[styles.plannerOptionTextSmall, { color: textColor }, shinyTextStyle]}>{t.planner.yearly}</Text>
+                        <Text style={[styles.plannerOptionSubtextSmall, { color: subtextColor }, shinySubtextStyle]}>{t.planner.goals}</Text>
                       </TouchableOpacity>
                     </Animated.View>
 
@@ -489,8 +490,8 @@ export default function PlannerScreen() {
                       >
                         <Calendar color={activeBackground ? "#FFFFFF" : (isNightMode ? "#9D4EDD" : "#2196F3")} size={28} strokeWidth={2.5} />
                       </LinearGradient>
-                        <Text style={[styles.plannerOptionTextSmall, { color: textColor }, shinyTextStyle]}>Monthly</Text>
-                        <Text style={[styles.plannerOptionSubtextSmall, { color: subtextColor }, shinySubtextStyle]}>Overview</Text>
+                        <Text style={[styles.plannerOptionTextSmall, { color: textColor }, shinyTextStyle]}>{t.planner.monthly}</Text>
+                        <Text style={[styles.plannerOptionSubtextSmall, { color: subtextColor }, shinySubtextStyle]}>{t.planner.overview}</Text>
                       </TouchableOpacity>
                     </Animated.View>
                   </View>
@@ -521,8 +522,8 @@ export default function PlannerScreen() {
                       >
                         <TrendingUp color={activeBackground ? "#FFFFFF" : (isNightMode ? "#00F5FF" : "#FF9800")} size={28} strokeWidth={2.5} />
                       </LinearGradient>
-                        <Text style={[styles.plannerOptionTextSmall, { color: textColor }, shinyTextStyle]}>Weekly</Text>
-                        <Text style={[styles.plannerOptionSubtextSmall, { color: subtextColor }, shinySubtextStyle]}>Progress</Text>
+                        <Text style={[styles.plannerOptionTextSmall, { color: textColor }, shinyTextStyle]}>{t.planner.weekly}</Text>
+                        <Text style={[styles.plannerOptionSubtextSmall, { color: subtextColor }, shinySubtextStyle]}>{t.planner.progress}</Text>
                       </TouchableOpacity>
                     </Animated.View>
 
@@ -551,8 +552,8 @@ export default function PlannerScreen() {
                       >
                         <Sparkles color={activeBackground ? "#FFFFFF" : (isNightMode ? "#00FF87" : "#FFB84D")} size={28} strokeWidth={2.5} />
                       </LinearGradient>
-                        <Text style={[styles.plannerOptionTextSmall, { color: textColor }, shinyTextStyle]}>Daily</Text>
-                        <Text style={[styles.plannerOptionSubtextSmall, { color: subtextColor }, shinySubtextStyle]}>Focus</Text>
+                        <Text style={[styles.plannerOptionTextSmall, { color: textColor }, shinyTextStyle]}>{t.planner.daily}</Text>
+                        <Text style={[styles.plannerOptionSubtextSmall, { color: subtextColor }, shinySubtextStyle]}>{t.planner.focus}</Text>
                       </TouchableOpacity>
                     </Animated.View>
                   </View>
@@ -561,10 +562,10 @@ export default function PlannerScreen() {
               ) : (
                 <View style={[styles.plannerViewContainer, { backgroundColor: cardBg }]}>
                   <Text style={[styles.plannerViewTitle, { color: textColor }, shinyTextStyle]}>
-                    {selectedPlannerView.charAt(0).toUpperCase() + selectedPlannerView.slice(1)} Planner
+                    {selectedPlannerView.charAt(0).toUpperCase() + selectedPlannerView.slice(1)} {t.planner.plannerView}
                   </Text>
                   <Text style={[styles.plannerViewSubtitle, { color: subtextColor }, shinySubtextStyle]}>
-                    This is your {selectedPlannerView} planning view. You can organize and plan your schedule here.
+                    {t.planner.planningViewDescription.replace('{view}', selectedPlannerView)}
                   </Text>
                   <TouchableOpacity
                     style={styles.backToOptionsButton}
@@ -575,7 +576,7 @@ export default function PlannerScreen() {
                       colors={theme.gradients.primary as any}
                       style={styles.backButtonGradient}
                     >
-                      <Text style={styles.backToOptionsText}>Back to Options</Text>
+                      <Text style={styles.backToOptionsText}>{t.planner.backToOptions}</Text>
                     </LinearGradient>
                   </TouchableOpacity>
                 </View>
@@ -609,9 +610,9 @@ export default function PlannerScreen() {
               />
             </View>
             <View style={styles.headerTextContainer}>
-              <Text style={[styles.headerTitle, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>Seraphim Schedule</Text>
+              <Text style={[styles.headerTitle, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>{t.planner.seraphimSchedule}</Text>
               <Text style={[styles.headerSubtitle, { color: isNightMode ? "#FF1493" : "#6B9BD1" }]}>
-                Master Your Schedule
+                {t.planner.masterYourSchedule}
               </Text>
             </View>
           </View>
@@ -633,7 +634,7 @@ export default function PlannerScreen() {
                     }]}>
                       <Clock color={isNightMode ? "#00FF87" : "#4CAF50"} size={16} strokeWidth={2.5} />
                       <Text style={[styles.statBadgeText, { color: isNightMode ? "#00FF87" : "#4CAF50" }]}>
-                        {taskStats.today} Today
+                        {taskStats.today} {t.planner.today}
                       </Text>
                     </View>
                   </Animated.View>
@@ -648,7 +649,7 @@ export default function PlannerScreen() {
                     }]}>
                       <Flame color={isNightMode ? "#FF1493" : "#F5576C"} size={16} strokeWidth={2.5} />
                       <Text style={[styles.statBadgeText, { color: isNightMode ? "#FF1493" : "#F5576C" }]}>
-                        {taskStats.overdue} Overdue
+                        {taskStats.overdue} {t.planner.overdue}
                       </Text>
                     </View>
                   </Animated.View>
@@ -663,7 +664,7 @@ export default function PlannerScreen() {
                     }]}>
                       <TrendingUp color={isNightMode ? "#6B9BD1" : "#2196F3"} size={16} strokeWidth={2.5} />
                       <Text style={[styles.statBadgeText, { color: isNightMode ? "#6B9BD1" : "#2196F3" }]}>
-                        {taskStats.upcoming} This Week
+                        {taskStats.upcoming} {t.planner.thisWeek}
                       </Text>
                     </View>
                   </Animated.View>
@@ -700,7 +701,7 @@ export default function PlannerScreen() {
                     color={isNightMode ? "#FFD700" : "#6B9BD1"}
                   />
                   <Text style={[styles.loadingText, { color: isNightMode ? "#FFD700" : "#6B9BD1" }]}>
-                    Loading planner data...
+                    {t.planner.loadingPlannerData}
                   </Text>
                 </View>
               ) : null}
@@ -713,7 +714,7 @@ export default function PlannerScreen() {
                 <View style={styles.calendarSelectorHeader}>
                   <View style={styles.titleRow}>
                     <Zap color={isNightMode ? "#00F5FF" : "#6B9BD1"} size={20} strokeWidth={2.5} />
-                    <Text style={[styles.calendarSelectorTitle, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>Active Calendar</Text>
+                    <Text style={[styles.calendarSelectorTitle, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>{t.planner.activeCalendar}</Text>
                   </View>
                   <TouchableOpacity
                     style={styles.manageCalendarsButton}
@@ -724,7 +725,7 @@ export default function PlannerScreen() {
                       colors={isNightMode ? ["#FFD700", "#FFA500"] : ["#F093FB", "#F5576C"]}
                       style={styles.manageButtonGradient}
                     >
-                      <Text style={[styles.manageCalendarsText, { color: isNightMode ? "#000000" : "#FFFFFF" }]}>Manage</Text>
+                      <Text style={[styles.manageCalendarsText, { color: isNightMode ? "#000000" : "#FFFFFF" }]}>{t.planner.manage}</Text>
                     </LinearGradient>
                   </TouchableOpacity>
                 </View>
@@ -741,15 +742,15 @@ export default function PlannerScreen() {
                     </Text>
                     {selectedCalendar.isShared && (
                       <View style={[styles.sharedIndicator, { backgroundColor: isNightMode ? "#00FF8720" : "#6B9BD120" }]}>
-                        <Text style={[styles.sharedIndicatorText, { color: isNightMode ? "#00FF87" : "#6B9BD1" }]}>SHARED</Text>
+                        <Text style={[styles.sharedIndicatorText, { color: isNightMode ? "#00FF87" : "#6B9BD1" }]}>{t.common.shared.toUpperCase()}</Text>
                       </View>
                     )}
                   </View>
                 ) : (
-                  <Text style={[styles.noCalendarText, { color: isNightMode ? "#999999" : "#6B7E8F" }]}>No calendar selected</Text>
+                  <Text style={[styles.noCalendarText, { color: isNightMode ? "#999999" : "#6B7E8F" }]}>{t.planner.noCalendarSelected}</Text>
                 )}
                 <Text style={[styles.calendarCount, { color: isNightMode ? "#888888" : "#6B7E8F" }]}>
-                  {calendars.length} {calendars.length === 1 ? "calendar" : "calendars"} total
+                  {calendars.length} {calendars.length === 1 ? t.planner.calendarTotal : t.planner.calendarsTotal} {t.planner.total}
                 </Text>
               </View>
 
@@ -776,8 +777,8 @@ export default function PlannerScreen() {
                   <CheckSquare color={isNightMode ? "#FF1493" : "#F093FB"} size={26} strokeWidth={2.5} />
                 </LinearGradient>
                 <View style={styles.optionTextContainer}>
-                  <Text style={[styles.plannerOptionText, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>To-Do List</Text>
-                  <Text style={[styles.plannerOptionSubtext, { color: isNightMode ? "#888888" : "#A0ADB8" }]}>Manage your tasks</Text>
+                  <Text style={[styles.plannerOptionText, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>{t.planner.todoList}</Text>
+                  <Text style={[styles.plannerOptionSubtext, { color: isNightMode ? "#888888" : "#A0ADB8" }]}>{t.planner.manageTasks}</Text>
                 </View>
                 <View style={styles.optionRightContent}>
                   {pendingTasks.length > 0 && (
@@ -820,8 +821,8 @@ export default function PlannerScreen() {
                       <Paintbrush color={isNightMode ? "#FF6B9D" : "#F093FB"} size={32} strokeWidth={2.5} />
                     </View>
                     <View style={styles.notesTextContainer}>
-                      <Text style={[styles.notesButtonTitle, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>NOTES & PAD</Text>
-                      <Text style={[styles.notesButtonSubtitle, { color: isNightMode ? "#FF6B9D" : "#9D4EDD" }]}>Type • Draw • Voice • Encrypt • Export</Text>
+                      <Text style={[styles.notesButtonTitle, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>{t.planner.notesAndPad}</Text>
+                      <Text style={[styles.notesButtonSubtitle, { color: isNightMode ? "#FF6B9D" : "#9D4EDD" }]}>{t.planner.notesFeatures}</Text>
                     </View>
                     <Star 
                       color={isNightMode ? "#FFD700" : "#F093FB"} 
@@ -859,8 +860,8 @@ export default function PlannerScreen() {
                   >
                     <Target color={isNightMode ? "#FFD700" : "#4CAF50"} size={28} strokeWidth={2.5} />
                   </LinearGradient>
-                    <Text style={[styles.plannerOptionTextSmall, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>Yearly</Text>
-                    <Text style={[styles.plannerOptionSubtextSmall, { color: isNightMode ? "#666666" : "#A0ADB8" }]}>Goals</Text>
+                    <Text style={[styles.plannerOptionTextSmall, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>{t.planner.yearly}</Text>
+                    <Text style={[styles.plannerOptionSubtextSmall, { color: isNightMode ? "#666666" : "#A0ADB8" }]}>{t.planner.goals}</Text>
                   </TouchableOpacity>
                 </Animated.View>
 
@@ -889,8 +890,8 @@ export default function PlannerScreen() {
                   >
                     <Calendar color={isNightMode ? "#9D4EDD" : "#2196F3"} size={28} strokeWidth={2.5} />
                   </LinearGradient>
-                    <Text style={[styles.plannerOptionTextSmall, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>Monthly</Text>
-                    <Text style={[styles.plannerOptionSubtextSmall, { color: isNightMode ? "#666666" : "#A0ADB8" }]}>Overview</Text>
+                    <Text style={[styles.plannerOptionTextSmall, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>{t.planner.monthly}</Text>
+                    <Text style={[styles.plannerOptionSubtextSmall, { color: isNightMode ? "#666666" : "#A0ADB8" }]}>{t.planner.overview}</Text>
                   </TouchableOpacity>
                 </Animated.View>
               </View>
@@ -921,8 +922,8 @@ export default function PlannerScreen() {
                   >
                     <TrendingUp color={isNightMode ? "#00F5FF" : "#FF9800"} size={28} strokeWidth={2.5} />
                   </LinearGradient>
-                    <Text style={[styles.plannerOptionTextSmall, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>Weekly</Text>
-                    <Text style={[styles.plannerOptionSubtextSmall, { color: isNightMode ? "#666666" : "#A0ADB8" }]}>Progress</Text>
+                    <Text style={[styles.plannerOptionTextSmall, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>{t.planner.weekly}</Text>
+                    <Text style={[styles.plannerOptionSubtextSmall, { color: isNightMode ? "#666666" : "#A0ADB8" }]}>{t.planner.progress}</Text>
                   </TouchableOpacity>
                 </Animated.View>
 
@@ -951,8 +952,8 @@ export default function PlannerScreen() {
                   >
                     <Sparkles color={isNightMode ? "#00FF87" : "#FFB84D"} size={28} strokeWidth={2.5} />
                   </LinearGradient>
-                    <Text style={[styles.plannerOptionTextSmall, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>Daily</Text>
-                    <Text style={[styles.plannerOptionSubtextSmall, { color: isNightMode ? "#666666" : "#A0ADB8" }]}>Focus</Text>
+                    <Text style={[styles.plannerOptionTextSmall, { color: isNightMode ? "#FFD700" : "#1A2B3C" }]}>{t.planner.daily}</Text>
+                    <Text style={[styles.plannerOptionSubtextSmall, { color: isNightMode ? "#666666" : "#A0ADB8" }]}>{t.planner.focus}</Text>
                   </TouchableOpacity>
                 </Animated.View>
               </View>
@@ -961,10 +962,10 @@ export default function PlannerScreen() {
           ) : (
             <View style={[styles.plannerViewContainer, { backgroundColor: theme.colors.cardBackground }]}>
               <Text style={[styles.plannerViewTitle, { color: theme.colors.text.primary }]}>
-                {selectedPlannerView.charAt(0).toUpperCase() + selectedPlannerView.slice(1)} Planner
+                {selectedPlannerView.charAt(0).toUpperCase() + selectedPlannerView.slice(1)} {t.planner.plannerView}
               </Text>
               <Text style={[styles.plannerViewSubtitle, { color: theme.colors.text.secondary }]}>
-                This is your {selectedPlannerView} planning view. You can organize and plan your schedule here.
+                {t.planner.planningViewDescription.replace('{view}', selectedPlannerView)}
               </Text>
               <TouchableOpacity
                 style={styles.backToOptionsButton}
@@ -975,7 +976,7 @@ export default function PlannerScreen() {
                   colors={theme.gradients.primary as any}
                   style={styles.backButtonGradient}
                 >
-                  <Text style={styles.backToOptionsText}>Back to Options</Text>
+                  <Text style={styles.backToOptionsText}>{t.planner.backToOptions}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
