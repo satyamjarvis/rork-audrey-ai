@@ -67,6 +67,7 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     duration: 3,
     type: "breathing",
     isFavorite: false,
+    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/breathing_exercise_2",
   },
   {
     id: "7",
