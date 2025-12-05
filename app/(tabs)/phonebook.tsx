@@ -34,6 +34,7 @@ import { Image } from 'expo-image';
 import { usePhonebook, type Contact } from "@/contexts/PhonebookContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useFontSize } from "@/contexts/FontSizeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import KeyboardDismissButton from "@/components/KeyboardDismissButton";
 import ShareButton from "@/components/ShareButton";
 import { useCalendar } from "@/contexts/CalendarContext";
@@ -44,6 +45,7 @@ export default function PhonebookScreen() {
   const { theme } = useTheme();
   const { getFontSize } = useFontSize();
   const { selectedBackground } = useCalendar();
+  const { translations } = useLanguage();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
   const {
     contacts,
@@ -140,7 +142,7 @@ export default function PhonebookScreen() {
 
   const handleAddContact = useCallback(async () => {
     if (!firstName.trim() || !lastName.trim()) {
-      Alert.alert("Required Fields", "Please enter first and last name");
+      Alert.alert(translations.contacts.requiredFields, translations.contacts.pleaseEnterFirstLastName);
       return;
     }
 
@@ -220,10 +222,10 @@ export default function PhonebookScreen() {
 
   const handleDeleteContact = useCallback(
     (contactId: string) => {
-      Alert.alert("Delete Contact", "Are you sure you want to delete this contact?", [
-        { text: "Cancel", style: "cancel" },
+      Alert.alert(translations.contacts.deleteContact, translations.contacts.confirmDeleteContact, [
+        { text: translations.common.cancel, style: "cancel" },
         {
-          text: "Delete",
+          text: translations.common.delete,
           style: "destructive",
           onPress: async () => {
             if (Platform.OS !== "web") {
@@ -249,7 +251,7 @@ export default function PhonebookScreen() {
 
   const handleCreateList = useCallback(async () => {
     if (!newListName.trim()) {
-      Alert.alert("Required", "Please enter a list name");
+      Alert.alert(translations.contacts.required, translations.contacts.pleaseEnterListName);
       return;
     }
 
@@ -264,10 +266,10 @@ export default function PhonebookScreen() {
 
   const handleDeleteList = useCallback(
     (listId: string) => {
-      Alert.alert("Delete List", "Remove this list? Contacts won't be deleted.", [
-        { text: "Cancel", style: "cancel" },
+      Alert.alert(translations.contacts.deleteList, translations.contacts.removeListConfirmation, [
+        { text: translations.common.cancel, style: "cancel" },
         {
-          text: "Delete",
+          text: translations.common.delete,
           style: "destructive",
           onPress: async () => {
             if (Platform.OS !== "web") {
@@ -306,7 +308,7 @@ export default function PhonebookScreen() {
               </View>
               <View style={styles.titleContent}>
                 <Text style={[styles.title, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
-                  Contacts
+                  {translations.contacts.contacts}
                 </Text>
                 <Text
                   style={[
@@ -314,7 +316,7 @@ export default function PhonebookScreen() {
                     { color: isNightMode ? "#FF1493" : theme.colors.text.light, fontSize: getFontSize(14) },
                   ]}
                 >
-                  {contactStats.total} contact{contactStats.total !== 1 ? "s" : ""}
+                  {contactStats.total} {contactStats.total !== 1 ? translations.contacts.contactsCount : translations.contacts.contactCount}
                 </Text>
               </View>
             </View>
@@ -348,7 +350,7 @@ export default function PhonebookScreen() {
                 styles.searchInput,
                 { color: isNightMode ? "#FFFFFF" : theme.colors.text.primary, fontSize: getFontSize(16) },
               ]}
-              placeholder="Search by name, email, phone..."
+              placeholder={translations.contacts.searchPlaceholder}
               placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -397,7 +399,7 @@ export default function PhonebookScreen() {
                   },
                 ]}
               >
-                All ({contactStats.total})
+                {translations.contacts.all} ({contactStats.total})
               </Text>
             </TouchableOpacity>
 
@@ -434,7 +436,7 @@ export default function PhonebookScreen() {
                   },
                 ]}
               >
-                Favorites ({contactStats.favorites})
+                {translations.contacts.favorites} ({contactStats.favorites})
               </Text>
             </TouchableOpacity>
 
@@ -504,7 +506,7 @@ export default function PhonebookScreen() {
                   { color: isNightMode ? "#FFD700" : theme.colors.text.primary, fontSize: getFontSize(20) },
                 ]}
               >
-                {searchQuery ? "No matches found" : "No contacts yet"}
+                {searchQuery ? translations.contacts.noMatchesFound : translations.contacts.noContactsYet}
               </Text>
               <Text
                 style={[
@@ -513,8 +515,8 @@ export default function PhonebookScreen() {
                 ]}
               >
                 {searchQuery
-                  ? "Try adjusting your search"
-                  : "Tap + to add your first contact"}
+                  ? translations.contacts.tryAdjustingSearch
+                  : translations.contacts.tapPlusToAdd}
               </Text>
             </View>
           ) : (
@@ -707,7 +709,7 @@ export default function PhonebookScreen() {
                                 },
                               ]}
                             >
-                              {contact.mobile} • Mobile
+                              {contact.mobile} • {translations.contacts.mobile}
                             </Text>
                           </View>
                         )}
@@ -795,7 +797,7 @@ export default function PhonebookScreen() {
                   { color: isNightMode ? "#FFD700" : theme.colors.text.primary },
                 ]}
               >
-                {editingContact ? "Edit Contact" : "New Contact"}
+                {editingContact ? translations.contacts.editContact : translations.contacts.newContact}
               </Text>
               <View style={styles.headerActions}>
                 <KeyboardDismissButton
@@ -817,7 +819,7 @@ export default function PhonebookScreen() {
                     { color: isNightMode ? "#888888" : theme.colors.text.secondary, fontSize: getFontSize(13) },
                   ]}
                 >
-                  PERSONAL INFORMATION
+                  {translations.contacts.personalInformation}
                 </Text>
                 <View style={styles.formRow}>
                   <View style={[styles.formField, { flex: 1 }]}>
@@ -830,7 +832,7 @@ export default function PhonebookScreen() {
                           fontSize: getFontSize(16),
                         },
                       ]}
-                      placeholder="First Name *"
+                      placeholder={`${translations.contacts.firstName} *`}
                       placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                       value={firstName}
                       onChangeText={setFirstName}
@@ -846,7 +848,7 @@ export default function PhonebookScreen() {
                           fontSize: getFontSize(16),
                         },
                       ]}
-                      placeholder="Last Name *"
+                      placeholder={`${translations.contacts.lastName} *`}
                       placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                       value={lastName}
                       onChangeText={setLastName}
@@ -862,7 +864,7 @@ export default function PhonebookScreen() {
                     { color: isNightMode ? "#888888" : theme.colors.text.secondary, fontSize: getFontSize(13) },
                   ]}
                 >
-                  PROFESSIONAL
+                  {translations.contacts.professional}
                 </Text>
                 <View style={styles.formField}>
                   <TextInput
@@ -874,7 +876,7 @@ export default function PhonebookScreen() {
                         fontSize: getFontSize(16),
                       },
                     ]}
-                    placeholder="Company"
+                    placeholder={translations.contacts.company}
                     placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                     value={company}
                     onChangeText={setCompany}
@@ -890,7 +892,7 @@ export default function PhonebookScreen() {
                         fontSize: getFontSize(16),
                       },
                     ]}
-                    placeholder="Job Title"
+                    placeholder={translations.contacts.jobTitle}
                     placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                     value={title}
                     onChangeText={setTitle}
@@ -905,7 +907,7 @@ export default function PhonebookScreen() {
                     { color: isNightMode ? "#888888" : theme.colors.text.secondary, fontSize: getFontSize(13) },
                   ]}
                 >
-                  CONTACT
+                  {translations.contacts.contact}
                 </Text>
                 <View style={styles.formField}>
                   <TextInput
@@ -917,7 +919,7 @@ export default function PhonebookScreen() {
                         fontSize: getFontSize(16),
                       },
                     ]}
-                    placeholder="Email"
+                    placeholder={translations.contacts.email}
                     placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                     value={email}
                     onChangeText={setEmail}
@@ -935,7 +937,7 @@ export default function PhonebookScreen() {
                         fontSize: getFontSize(16),
                       },
                     ]}
-                    placeholder="Phone"
+                    placeholder={translations.contacts.phone}
                     placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                     value={phone}
                     onChangeText={setPhone}
@@ -952,7 +954,7 @@ export default function PhonebookScreen() {
                         fontSize: getFontSize(16),
                       },
                     ]}
-                    placeholder="Mobile"
+                    placeholder={translations.contacts.mobile}
                     placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                     value={mobile}
                     onChangeText={setMobile}
@@ -968,7 +970,7 @@ export default function PhonebookScreen() {
                     { color: isNightMode ? "#888888" : theme.colors.text.secondary, fontSize: getFontSize(13) },
                   ]}
                 >
-                  ADDRESS
+                  {translations.contacts.addressSection}
                 </Text>
                 <View style={styles.formField}>
                   <TextInput
@@ -980,7 +982,7 @@ export default function PhonebookScreen() {
                         fontSize: getFontSize(16),
                       },
                     ]}
-                    placeholder="Street"
+                    placeholder={translations.contacts.street}
                     placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                     value={street}
                     onChangeText={setStreet}
@@ -997,7 +999,7 @@ export default function PhonebookScreen() {
                           fontSize: getFontSize(16),
                         },
                       ]}
-                      placeholder="City"
+                      placeholder={translations.contacts.city}
                       placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                       value={city}
                       onChangeText={setCity}
@@ -1013,7 +1015,7 @@ export default function PhonebookScreen() {
                           fontSize: getFontSize(16),
                         },
                       ]}
-                      placeholder="State"
+                      placeholder={translations.contacts.state}
                       placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                       value={state}
                       onChangeText={setState}
@@ -1030,7 +1032,7 @@ export default function PhonebookScreen() {
                         fontSize: getFontSize(16),
                       },
                     ]}
-                    placeholder="ZIP Code"
+                    placeholder={translations.contacts.zipCode}
                     placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                     value={zipCode}
                     onChangeText={setZipCode}
@@ -1046,7 +1048,7 @@ export default function PhonebookScreen() {
                     { color: isNightMode ? "#888888" : theme.colors.text.secondary, fontSize: getFontSize(13) },
                   ]}
                 >
-                  ADDITIONAL
+                  {translations.contacts.additional}
                 </Text>
                 <View style={styles.formField}>
                   <TextInput
@@ -1058,7 +1060,7 @@ export default function PhonebookScreen() {
                         fontSize: getFontSize(16),
                       },
                     ]}
-                    placeholder="Website"
+                    placeholder={translations.contacts.website}
                     placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                     value={website}
                     onChangeText={setWebsite}
@@ -1077,7 +1079,7 @@ export default function PhonebookScreen() {
                         fontSize: getFontSize(16),
                       },
                     ]}
-                    placeholder="Notes"
+                    placeholder={translations.contacts.notes}
                     placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                     value={notes}
                     onChangeText={setNotes}
@@ -1095,7 +1097,7 @@ export default function PhonebookScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Text style={[styles.submitText, { fontSize: getFontSize(17), color: isNightMode ? "#000000" : "#FFFFFF" }]}>
-                    {editingContact ? "Update Contact" : "Add Contact"}
+                    {editingContact ? translations.contacts.updateContact : translations.contacts.addContact}
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -1124,7 +1126,7 @@ export default function PhonebookScreen() {
                   { color: isNightMode ? "#FFD700" : theme.colors.text.primary },
                 ]}
               >
-                Manage Lists
+                {translations.contacts.manageLists}
               </Text>
               <TouchableOpacity
                 onPress={() => setShowListModal(false)}
@@ -1146,7 +1148,7 @@ export default function PhonebookScreen() {
                       fontSize: getFontSize(16),
                     },
                   ]}
-                  placeholder="New list name"
+                  placeholder={translations.contacts.newListName}
                   placeholderTextColor={isNightMode ? "#888888" : theme.colors.text.light}
                   value={newListName}
                   onChangeText={setNewListName}
@@ -1176,7 +1178,7 @@ export default function PhonebookScreen() {
                       { color: isNightMode ? "#888888" : theme.colors.text.secondary, fontSize: getFontSize(15) },
                     ]}
                   >
-                    No custom lists yet
+                    {translations.contacts.noCustomListsYet}
                   </Text>
                 </View>
               ) : (
