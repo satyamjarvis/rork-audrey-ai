@@ -351,7 +351,7 @@ export default function LearnScreen() {
       },
       {
         id: "meta-learn",
-        title: "Meta Learn To Create Your Reality",
+        title: " Meta , Create Your Reality",
         icon: "Zap" as any,
         color: isNightMode ? "#FF8C00" : "#C71585",
         videos: [
@@ -433,12 +433,18 @@ export default function LearnScreen() {
       updateCategory('lifestyle', { title: 'Conversational Speaking' });
     }
 
+    const metaCategory = categories.find(c => c.id === 'meta-learn');
+    if (metaCategory && metaCategory.title !== ' Meta , Create Your Reality') {
+      console.log('Migrating meta-learn category title to Meta , Create Your Reality');
+      updateCategory('meta-learn', { title: ' Meta , Create Your Reality' });
+    }
+
     // Add Meta Learn category if missing
     if (!categories.find(c => c.id === 'meta-learn')) {
       console.log('Adding Meta Learn category');
       const newCategory: CourseCategory = {
         id: "meta-learn",
-        title: "Meta Learn To Create Your Reality",
+        title: " Meta , Create Your Reality",
         icon: "Zap" as any,
         color: isNightMode ? "#FF8C00" : "#C71585",
         videos: [
