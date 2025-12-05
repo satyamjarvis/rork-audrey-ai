@@ -155,7 +155,15 @@
     "fuelYourTransformation": "Alimentez votre transformation",
     "wellnessCheck": "Bilan de Bien-être",
     "tuneIntoYourEnergy": "Connectez-vous à votre énergie",
-    "embraceTheLight": "Embrassez la lumière. Saisissez votre journée."
+    "embraceTheLight": "Embrassez la lumière. Saisissez votre journée.",
+    "quotes": {
+      "quote1": "Levez-vous avec le soleil, brillez avec un but.",
+      "quote2": "Aujourd'hui est une toile vierge—peignez-la en or.",
+      "quote3": "Chaque lever de soleil apporte de nouvelles opportunités.",
+      "quote4": "Éveillez votre potentiel, embrassez la journée.",
+      "quote5": "La lumière du matin apporte des possibilités infinies.",
+      "quote6": "Rayonnez de positivité, illuminez le monde."
+    }
   },
   "night": {
     "goodEvening": "Bonsoir",
