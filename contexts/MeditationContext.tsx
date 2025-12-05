@@ -76,6 +76,7 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     duration: 12,
     type: "body-scan",
     isFavorite: false,
+    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/relaxation_head_to_toe_1",
   },
   {
     id: "8",
