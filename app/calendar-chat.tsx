@@ -76,12 +76,12 @@ function GlitterSendButton({ hasText, onPress, theme, isNightMode }: { hasText: 
           Animated.timing(glowAnim, {
             toValue: 1,
             duration: 800,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }),
           Animated.timing(glowAnim, {
             toValue: 0.3,
             duration: 800,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }),
         ])
       );
@@ -330,12 +330,12 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
               toValue: max,
               duration: 300,
               delay,
-              useNativeDriver: false,
+              useNativeDriver: true,
             }),
             Animated.timing(anim, {
               toValue: min,
               duration: 300,
-              useNativeDriver: false,
+              useNativeDriver: true,
             }),
           ])
         );
@@ -352,12 +352,12 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
           Animated.timing(pulseAnim, {
             toValue: 1.15,
             duration: 800,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }),
           Animated.timing(pulseAnim, {
             toValue: 1,
             duration: 800,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }),
         ])
       );
@@ -367,12 +367,12 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
           Animated.timing(glowAnim, {
             toValue: 1,
             duration: 1000,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }),
           Animated.timing(glowAnim, {
             toValue: 0,
             duration: 1000,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }),
         ])
       );
@@ -396,11 +396,11 @@ function AnimatedMusicIcon({ isPlaying, color }: { isPlaying: boolean; color: st
       };
     } else {
       // Reset animations to base values when stopped
-      Animated.timing(scaleAnim1, { toValue: 0.3, duration: 200, useNativeDriver: false }).start();
-      Animated.timing(scaleAnim2, { toValue: 0.5, duration: 200, useNativeDriver: false }).start();
-      Animated.timing(scaleAnim3, { toValue: 0.4, duration: 200, useNativeDriver: false }).start();
-      Animated.timing(scaleAnim4, { toValue: 0.6, duration: 200, useNativeDriver: false }).start();
-      Animated.timing(scaleAnim5, { toValue: 0.3, duration: 200, useNativeDriver: false }).start();
+      Animated.timing(scaleAnim1, { toValue: 0.3, duration: 200, useNativeDriver: true }).start();
+      Animated.timing(scaleAnim2, { toValue: 0.5, duration: 200, useNativeDriver: true }).start();
+      Animated.timing(scaleAnim3, { toValue: 0.4, duration: 200, useNativeDriver: true }).start();
+      Animated.timing(scaleAnim4, { toValue: 0.6, duration: 200, useNativeDriver: true }).start();
+      Animated.timing(scaleAnim5, { toValue: 0.3, duration: 200, useNativeDriver: true }).start();
       pulseAnim.setValue(1);
       glowAnim.setValue(0);
     }
