@@ -324,7 +324,7 @@ export default function LearnScreen() {
       },
       {
         id: "lifestyle",
-        title: "Lifestyle Design",
+        title: "Conversational Speaking",
         icon: "Award" as any,
         color: isNightMode ? "#00F5FF" : "#C71585",
         videos: [
@@ -372,6 +372,11 @@ export default function LearnScreen() {
     if (mindfulnessCategory && mindfulnessCategory.title !== 'Becoming Extraordinary') {
       console.log('Migrating mindfulness category title to Becoming Extraordinary');
       updateCategory('mindfulness', { title: 'Becoming Extraordinary' });
+    }
+    const lifestyleCategory = categories.find(c => c.id === 'lifestyle');
+    if (lifestyleCategory && lifestyleCategory.title !== 'Conversational Speaking') {
+      console.log('Migrating lifestyle category title to Conversational Speaking');
+      updateCategory('lifestyle', { title: 'Conversational Speaking' });
     }
   }, [categories, isLoading, updateCategory]);
 
