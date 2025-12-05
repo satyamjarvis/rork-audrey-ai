@@ -862,5 +862,74 @@
       "vibrant": "Vibrant",
       "monochrome": "Monochrome"
     }
+  },
+  "calendarManager": {
+    "title": "Calendar Manager",
+    "calendarsCount": "{count} calendars",
+    "yourCalendars": "Your Calendars",
+    "features": "Features",
+    "stats": {
+        "total": "Total",
+        "shared": "Shared",
+        "personal": "Personal",
+        "users": "Users"
+    },
+    "badges": {
+        "shared": "SHARED",
+        "users": "{count} USERS",
+        "colorTag": "Color Tag"
+    },
+    "featureCards": {
+        "encrypted": "Encrypted",
+        "encryptionDesc": "AES-256 encryption",
+        "smartSync": "Smart Sync",
+        "syncDesc": "Auto synchronization",
+        "collaborate": "Collaborate",
+        "collaborateDesc": "Real-time updates",
+        "smartPlans": "Smart Plans",
+        "plansDesc": "AI-powered planning"
+    },
+    "footer": "Stay organized and productive",
+    "createModal": {
+        "title": "Create Calendar",
+        "nameLabel": "Calendar Name",
+        "namePlaceholder": "Work, Personal, Family...",
+        "sharedLabel": "Create as shared calendar",
+        "submit": "Create Calendar",
+        "errorName": "Please enter a calendar name"
+    },
+    "shareModal": {
+        "title": "Share Calendar",
+        "email": "Email",
+        "phone": "Phone",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "user@example.com",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "+1 234 567 8900",
+        "emailInfo": "They will receive an invitation to view and manage this calendar",
+        "smsInfo": "An SMS with the app link will be sent to join this calendar",
+        "submit": "Send Invitation",
+        "errorEmail": "Please enter an email address",
+        "errorValidEmail": "Please enter a valid email address",
+        "errorPhone": "Please enter a phone number",
+        "errorValidPhone": "Please enter a valid phone number",
+        "invitationSent": "Invitation Sent",
+        "sentTo": "An invitation has been sent to {email}",
+        "smsSentTo": "An SMS invitation has been sent to {phone}"
+    },
+    "settingsModal": {
+        "title": "Settings",
+        "permissionsTitle": "Attachment Permissions",
+        "permissionsDesc": "Control how shared users can interact with attachments",
+        "allowDownload": "Allow Download",
+        "allowDownloadDesc": "Users can view and download",
+        "viewOnly": "View Only",
+        "viewOnlyDesc": "Users can only view",
+        "save": "Save Settings"
+    },
+    "deleteAlert": {
+        "title": "Delete Calendar",
+        "message": "Are you sure you want to delete \"{name}\"?"
+    }
   }
 }

@@ -42,6 +42,8 @@ import * as Haptics from "expo-haptics";
 import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
 import { useCalendar } from "@/contexts/CalendarContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getTranslations } from "@/utils/i18n";
 import KeyboardDismissButton from "@/components/KeyboardDismissButton";
 import QuickPressable from "@/components/QuickPressable";
 
@@ -50,6 +52,8 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 export default function CalendarManagerScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { language } = useLanguage();
+  const t = getTranslations(language);
   const { notifyCalendarOpened } = useMusicPlayer();
   const {
     calendars,
@@ -128,7 +132,7 @@ export default function CalendarManagerScreen() {
 
   const handleCreateCalendar = async () => {
     if (!newCalendarName.trim()) {
-      Alert.alert("Error", "Please enter a calendar name");
+      Alert.alert(t.common.error, t.calendarManager.createModal.errorName);
       return;
     }
 
@@ -144,12 +148,12 @@ export default function CalendarManagerScreen() {
 
   const handleDeleteCalendar = (calendarId: string, calendarName: string) => {
     Alert.alert(
-      "Delete Calendar",
-      `Are you sure you want to delete "${calendarName}"?`,
+      t.calendarManager.deleteAlert.title,
+      t.calendarManager.deleteAlert.message.replace("{name}", calendarName),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t.common.cancel, style: "cancel" },
         {
-          text: "Delete",
+          text: t.common.delete,
           style: "destructive",
           onPress: async () => {
             if (Platform.OS !== "web") {
@@ -201,13 +205,13 @@ export default function CalendarManagerScreen() {
 
     if (shareMethod === "email") {
       if (!shareEmail.trim()) {
-        Alert.alert("Error", "Please enter an email address");
+        Alert.alert(t.common.error, t.calendarManager.shareModal.errorEmail);
         return;
       }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(shareEmail.trim())) {
-        Alert.alert("Error", "Please enter a valid email address");
+        Alert.alert(t.common.error, t.calendarManager.shareModal.errorValidEmail);
         return;
       }
 
@@ -217,19 +221,19 @@ export default function CalendarManagerScreen() {
 
       await shareCalendar(calendarToShare, shareEmail.trim());
       Alert.alert(
-        "Invitation Sent",
-        `An invitation has been sent to ${shareEmail.trim()}`
+        t.calendarManager.shareModal.invitationSent,
+        t.calendarManager.shareModal.sentTo.replace("{email}", shareEmail.trim())
       );
     } else {
       if (!sharePhone.trim()) {
-        Alert.alert("Error", "Please enter a phone number");
+        Alert.alert(t.common.error, t.calendarManager.shareModal.errorPhone);
         return;
       }
 
       const phoneRegex = /^\+?[1-9]\d{1,14}$/;
       const cleanedPhone = sharePhone.trim().replace(/[\s()-]/g, "");
       if (!phoneRegex.test(cleanedPhone)) {
-        Alert.alert("Error", "Please enter a valid phone number");
+        Alert.alert(t.common.error, t.calendarManager.shareModal.errorValidPhone);
         return;
       }
 
@@ -239,8 +243,8 @@ export default function CalendarManagerScreen() {
 
       await shareCalendar(calendarToShare, `phone:${cleanedPhone}`);
       Alert.alert(
-        "Invitation Sent",
-        `An SMS invitation has been sent to ${sharePhone.trim()}`
+        t.calendarManager.shareModal.invitationSent,
+        t.calendarManager.shareModal.smsSentTo.replace("{phone}", sharePhone.trim())
       );
     }
 
@@ -509,8 +513,8 @@ export default function CalendarManagerScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={[styles.headerTitle, { color: colors.primary }]}>Calendar Manager</Text>
-                  <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>{calendars.length} calendars</Text>
+                  <Text style={[styles.headerTitle, { color: colors.primary }]}>{t.calendarManager.title}</Text>
+                  <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>{t.calendarManager.calendarsCount.replace('{count}', calendars.length.toString())}</Text>
                 </View>
               </View>
               <View style={styles.headerRight}>
@@ -537,22 +541,22 @@ export default function CalendarManagerScreen() {
                       <View style={styles.statItem}>
                         <Target color={colors.primary} size={24} />
                         <Text style={[styles.statValue, { color: colors.primary }]}>{stats.total}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Total</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t.calendarManager.stats.total}</Text>
                       </View>
                       <View style={styles.statItem}>
                         <Users color="#30CFD0" size={24} />
                         <Text style={[styles.statValue, { color: "#30CFD0" }]}>{stats.shared}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Shared</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t.calendarManager.stats.shared}</Text>
                       </View>
                       <View style={styles.statItem}>
                         <Shield color="#FFB84D" size={24} />
                         <Text style={[styles.statValue, { color: "#FFB84D" }]}>{stats.personal}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Personal</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t.calendarManager.stats.personal}</Text>
                       </View>
                       <View style={styles.statItem}>
                         <TrendingUp color="#FA709A" size={24} />
                         <Text style={[styles.statValue, { color: "#FA709A" }]}>{stats.totalUsers}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Users</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t.calendarManager.stats.users}</Text>
                       </View>
                     </View>
                   </View>
@@ -564,22 +568,22 @@ export default function CalendarManagerScreen() {
                       <View style={styles.statItem}>
                         <Target color={colors.primary} size={24} />
                         <Text style={[styles.statValue, { color: colors.primary }]}>{stats.total}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Total</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t.calendarManager.stats.total}</Text>
                       </View>
                       <View style={styles.statItem}>
                         <Users color="#30CFD0" size={24} />
                         <Text style={[styles.statValue, { color: "#30CFD0" }]}>{stats.shared}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Shared</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t.calendarManager.stats.shared}</Text>
                       </View>
                       <View style={styles.statItem}>
                         <Shield color="#FFB84D" size={24} />
                         <Text style={[styles.statValue, { color: "#FFB84D" }]}>{stats.personal}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Personal</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t.calendarManager.stats.personal}</Text>
                       </View>
                       <View style={styles.statItem}>
                         <TrendingUp color="#FA709A" size={24} />
                         <Text style={[styles.statValue, { color: "#FA709A" }]}>{stats.totalUsers}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Users</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t.calendarManager.stats.users}</Text>
                       </View>
                     </View>
                   </View>
@@ -589,7 +593,7 @@ export default function CalendarManagerScreen() {
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <Sparkles color={colors.primary} size={20} strokeWidth={2} />
-                  <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Your Calendars</Text>
+                  <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.calendarManager.yourCalendars}</Text>
                 </View>
 
                 <View style={styles.calendarsGrid}>
@@ -632,11 +636,11 @@ export default function CalendarManagerScreen() {
                               {calendar.isShared && (
                                 <View style={styles.calendarMeta}>
                                   <View style={[styles.metaBadge, { backgroundColor: "#2196F3" }]}>
-                                    <Text style={styles.metaBadgeText}>SHARED</Text>
+                                    <Text style={styles.metaBadgeText}>{t.calendarManager.badges.shared}</Text>
                                   </View>
                                   {calendar.sharedWith.length > 0 && (
                                     <View style={[styles.metaBadge, { backgroundColor: "#9C27B0" }]}>
-                                      <Text style={styles.metaBadgeText}>{calendar.sharedWith.length} USERS</Text>
+                                      <Text style={styles.metaBadgeText}>{t.calendarManager.badges.users.replace('{count}', calendar.sharedWith.length.toString())}</Text>
                                     </View>
                                   )}
                                 </View>
@@ -659,7 +663,7 @@ export default function CalendarManagerScreen() {
                               )}
                                 <View style={styles.colorDotRow}>
                                   <View style={[styles.colorDot, { backgroundColor: calendar.color }]} />
-                                  <Text style={[styles.colorText, { color: colors.textSecondary }]}>Color Tag</Text>
+                                  <Text style={[styles.colorText, { color: colors.textSecondary }]}>{t.calendarManager.badges.colorTag}</Text>
                                 </View>
                               </View>
 
@@ -706,7 +710,7 @@ export default function CalendarManagerScreen() {
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <Shield color={colors.primary} size={20} strokeWidth={2} />
-                  <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Features</Text>
+                  <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.calendarManager.features}</Text>
                 </View>
 
                 <View style={styles.featuresGrid}>
@@ -714,9 +718,9 @@ export default function CalendarManagerScreen() {
                     <View style={[styles.featureIcon, { backgroundColor: colors.primary + '20' }]}>
                       <Shield color={colors.primary} size={24} strokeWidth={2} />
                     </View>
-                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Encrypted</Text>
+                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.calendarManager.featureCards.encrypted}</Text>
                     <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                      AES-256 encryption
+                      {t.calendarManager.featureCards.encryptionDesc}
                     </Text>
                   </View>
 
@@ -724,9 +728,9 @@ export default function CalendarManagerScreen() {
                     <View style={[styles.featureIcon, { backgroundColor: colors.primary + '20' }]}>
                       <Globe color={colors.primary} size={24} strokeWidth={2} />
                     </View>
-                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Smart Sync</Text>
+                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.calendarManager.featureCards.smartSync}</Text>
                     <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                      Auto synchronization
+                      {t.calendarManager.featureCards.syncDesc}
                     </Text>
                   </View>
 
@@ -734,9 +738,9 @@ export default function CalendarManagerScreen() {
                     <View style={[styles.featureIcon, { backgroundColor: colors.primary + '20' }]}>
                       <Users color={colors.primary} size={24} strokeWidth={2} />
                     </View>
-                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Collaborate</Text>
+                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.calendarManager.featureCards.collaborate}</Text>
                     <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                      Real-time updates
+                      {t.calendarManager.featureCards.collaborateDesc}
                     </Text>
                   </View>
 
@@ -744,9 +748,9 @@ export default function CalendarManagerScreen() {
                     <View style={[styles.featureIcon, { backgroundColor: colors.primary + '20' }]}>
                       <Clock color={colors.primary} size={24} strokeWidth={2} />
                     </View>
-                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Smart Plans</Text>
+                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.calendarManager.featureCards.smartPlans}</Text>
                     <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                      AI-powered planning
+                      {t.calendarManager.featureCards.plansDesc}
                     </Text>
                   </View>
                 </View>
@@ -754,7 +758,7 @@ export default function CalendarManagerScreen() {
 
               <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
                 <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-                  Stay organized and productive
+                  {t.calendarManager.footer}
                 </Text>
               </Animated.View>
             </Animated.View>
@@ -784,7 +788,7 @@ export default function CalendarManagerScreen() {
           <ScrollView contentContainerStyle={styles.modalScrollContent} bounces={false}>
             <View style={[styles.modalContent, { backgroundColor: theme.colors.cardBackground, paddingBottom: insets.bottom + 20 }]}>
               <View style={styles.modalHeader}>
-                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Create Calendar</Text>
+                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{t.calendarManager.createModal.title}</Text>
                 <View style={styles.modalHeaderActions}>
                   <KeyboardDismissButton color={theme.colors.text.primary} size={20} />
                   <QuickPressable onPress={() => { setCreateModalVisible(false); setNewCalendarName(""); setIsSharedCalendar(false); }}>
@@ -794,7 +798,7 @@ export default function CalendarManagerScreen() {
               </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>Calendar Name</Text>
+              <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>{t.calendarManager.createModal.nameLabel}</Text>
               <TextInput
                 style={[
                   styles.textInput, 
@@ -804,7 +808,7 @@ export default function CalendarManagerScreen() {
                     borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : theme.colors.border 
                   }
                 ]}
-                placeholder="Work, Personal, Family..."
+                placeholder={t.calendarManager.createModal.namePlaceholder}
                 placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                 value={newCalendarName}
                 onChangeText={setNewCalendarName}
@@ -832,7 +836,7 @@ export default function CalendarManagerScreen() {
                   <View style={styles.checkboxInner} />
                 )}
               </View>
-              <Text style={[styles.checkboxLabel, { color: theme.colors.text.primary }]}>Create as shared calendar</Text>
+              <Text style={[styles.checkboxLabel, { color: theme.colors.text.primary }]}>{t.calendarManager.createModal.sharedLabel}</Text>
             </TouchableOpacity>
 
               <TouchableOpacity
@@ -840,7 +844,7 @@ export default function CalendarManagerScreen() {
                 onPress={handleCreateCalendar}
               >
                 <LinearGradient colors={[colors.accent, "#a855f7"]} style={styles.submitButtonGradient}>
-                  <Text style={styles.submitButtonText}>Create Calendar</Text>
+                  <Text style={styles.submitButtonText}>{t.calendarManager.createModal.submit}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -867,7 +871,7 @@ export default function CalendarManagerScreen() {
                 <View style={[styles.modalIconCircle, { backgroundColor: isNightMode ? 'rgba(255, 215, 0, 0.2)' : `${theme.colors.primary}20` }]}>
                   <Share2 color={theme.colors.primary} size={20} strokeWidth={2.5} />
                 </View>
-                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Share Calendar</Text>
+                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{t.calendarManager.shareModal.title}</Text>
               </View>
               <View style={styles.modalHeaderActions}>
                 <KeyboardDismissButton color={theme.colors.text.primary} size={20} style={[styles.keyboardDismissButton, { backgroundColor: isNightMode ? 'rgba(255, 215, 0, 0.15)' : `${theme.colors.primary}15` }]} />
@@ -914,7 +918,7 @@ export default function CalendarManagerScreen() {
                     { color: shareMethod === "email" ? "#FFFFFF" : theme.colors.text.secondary }
                   ]}
                 >
-                  Email
+                  {t.calendarManager.shareModal.email}
                 </Text>
               </TouchableOpacity>
 
@@ -944,14 +948,14 @@ export default function CalendarManagerScreen() {
                     { color: shareMethod === "phone" ? "#FFFFFF" : theme.colors.text.secondary }
                   ]}
                 >
-                  Phone
+                  {t.calendarManager.shareModal.phone}
                 </Text>
               </TouchableOpacity>
             </View>
 
             {shareMethod === "email" ? (
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>Email Address</Text>
+                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>{t.calendarManager.shareModal.emailLabel}</Text>
                 <View style={[
                   styles.inputContainer, 
                   { 
@@ -962,7 +966,7 @@ export default function CalendarManagerScreen() {
                   <Mail color={isNightMode ? "#FFD700" : theme.colors.text.secondary} size={18} strokeWidth={2} />
                   <TextInput
                     style={[styles.input, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}
-                    placeholder="user@example.com"
+                    placeholder={t.calendarManager.shareModal.emailPlaceholder}
                     placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                     value={shareEmail}
                     onChangeText={setShareEmail}
@@ -974,7 +978,7 @@ export default function CalendarManagerScreen() {
               </View>
             ) : (
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>Phone Number</Text>
+                <Text style={[styles.formLabel, { color: theme.colors.text.primary }]}>{t.calendarManager.shareModal.phoneLabel}</Text>
                 <View style={[
                   styles.inputContainer, 
                   { 
@@ -985,7 +989,7 @@ export default function CalendarManagerScreen() {
                   <Phone color={isNightMode ? "#FFD700" : theme.colors.text.secondary} size={18} strokeWidth={2} />
                   <TextInput
                     style={[styles.input, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}
-                    placeholder="+1 234 567 8900"
+                    placeholder={t.calendarManager.shareModal.phonePlaceholder}
                     placeholderTextColor={isNightMode ? "rgba(255, 215, 0, 0.5)" : theme.colors.text.light}
                     value={sharePhone}
                     onChangeText={setSharePhone}
@@ -1000,8 +1004,8 @@ export default function CalendarManagerScreen() {
               <Share2 color={theme.colors.primary} size={18} strokeWidth={2} />
               <Text style={[styles.infoText, { color: theme.colors.text.secondary }]}>
                 {shareMethod === "email"
-                  ? "They will receive an invitation to view and manage this calendar"
-                  : "An SMS with the app link will be sent to join this calendar"}
+                  ? t.calendarManager.shareModal.emailInfo
+                  : t.calendarManager.shareModal.smsInfo}
               </Text>
             </View>
 
@@ -1010,7 +1014,7 @@ export default function CalendarManagerScreen() {
                 colors={[theme.colors.primary, theme.colors.secondary]}
                 style={styles.primaryButtonGradient}
               >
-                <Text style={styles.primaryButtonText}>Send Invitation</Text>
+                <Text style={styles.primaryButtonText}>{t.calendarManager.shareModal.submit}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -1033,7 +1037,7 @@ export default function CalendarManagerScreen() {
                 <View style={[styles.modalIconCircle, { backgroundColor: isNightMode ? 'rgba(255, 215, 0, 0.2)' : `${theme.colors.primary}20` }]}>
                   <Settings color={theme.colors.primary} size={20} strokeWidth={2.5} />
                 </View>
-                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Settings</Text>
+                <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{t.calendarManager.settingsModal.title}</Text>
               </View>
               <TouchableOpacity
                 onPress={() => {
@@ -1048,9 +1052,9 @@ export default function CalendarManagerScreen() {
             </View>
 
             <View style={styles.settingsSection}>
-              <Text style={[styles.settingsTitle, { color: theme.colors.text.primary }]}>Attachment Permissions</Text>
+              <Text style={[styles.settingsTitle, { color: theme.colors.text.primary }]}>{t.calendarManager.settingsModal.permissionsTitle}</Text>
               <Text style={[styles.settingsDescription, { color: theme.colors.text.secondary }]}>
-                Control how shared users can interact with attachments
+                {t.calendarManager.settingsModal.permissionsDesc}
               </Text>
 
               <TouchableOpacity
@@ -1067,9 +1071,9 @@ export default function CalendarManagerScreen() {
                     <Download color={theme.colors.primary} size={18} strokeWidth={2} />
                   </View>
                   <View>
-                    <Text style={[styles.settingOptionTitle, { color: theme.colors.text.primary }]}>Allow Download</Text>
+                    <Text style={[styles.settingOptionTitle, { color: theme.colors.text.primary }]}>{t.calendarManager.settingsModal.allowDownload}</Text>
                     <Text style={[styles.settingOptionDescription, { color: theme.colors.text.secondary }]}>
-                      Users can view and download
+                      {t.calendarManager.settingsModal.allowDownloadDesc}
                     </Text>
                   </View>
                 </View>
@@ -1097,9 +1101,9 @@ export default function CalendarManagerScreen() {
                     <Eye color={theme.colors.primary} size={18} strokeWidth={2} />
                   </View>
                   <View>
-                    <Text style={[styles.settingOptionTitle, { color: theme.colors.text.primary }]}>View Only</Text>
+                    <Text style={[styles.settingOptionTitle, { color: theme.colors.text.primary }]}>{t.calendarManager.settingsModal.viewOnly}</Text>
                     <Text style={[styles.settingOptionDescription, { color: theme.colors.text.secondary }]}>
-                      Users can only view
+                      {t.calendarManager.settingsModal.viewOnlyDesc}
                     </Text>
                   </View>
                 </View>
@@ -1119,7 +1123,7 @@ export default function CalendarManagerScreen() {
                 colors={[theme.colors.primary, theme.colors.secondary]}
                 style={styles.primaryButtonGradient}
               >
-                <Text style={styles.primaryButtonText}>Save Settings</Text>
+                <Text style={styles.primaryButtonText}>{t.calendarManager.settingsModal.save}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
