@@ -21,16 +21,15 @@ export type AudioStyleOption = {
   tracks: string[];
 };
 
+const DEFAULT_AUDIO = "https://rork.app/pa/ier8mze8ucoqq9oktvadp/song_442hz_1";
+
 export const AUDIO_STYLES: AudioStyleOption[] = [
   {
     id: "hz-frequencies",
     name: "Hz Frequencies",
     description: "Binaural beats and frequency healing",
     tracks: [
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/harmony",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/breeze",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/booster",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/frequency",
+      DEFAULT_AUDIO,
     ],
   },
   {
@@ -38,10 +37,7 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Christmas Music",
     description: "Festive holiday music",
     tracks: [
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/jolly",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/festive",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/celebration",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/snowfall",
+      DEFAULT_AUDIO,
     ],
   },
   {
@@ -49,9 +45,7 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Halloween Music",
     description: "Spooky atmospheric sounds",
     tracks: [
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/monster",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/spooky",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/haunted",
+      DEFAULT_AUDIO,
     ],
   },
   {
@@ -59,8 +53,7 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Morning Music",
     description: "Uplifting morning tunes",
     tracks: [
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/sunrise",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/awakening",
+      DEFAULT_AUDIO,
     ],
   },
   {
@@ -68,8 +61,7 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Piano Electronic",
     description: "Modern electronic piano music",
     tracks: [
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/keys",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/melody",
+      DEFAULT_AUDIO,
     ],
   },
   {
@@ -77,7 +69,7 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Night Time Music",
     description: "Calming evening melodies",
     tracks: [
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/moonlight",
+      DEFAULT_AUDIO,
     ],
   },
   {
@@ -85,8 +77,7 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Rain Relaxing Music",
     description: "Soothing rain and ambient sounds",
     tracks: [
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/rainfall",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/drizzle",
+      DEFAULT_AUDIO,
     ],
   },
   {
@@ -94,9 +85,7 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Country Music",
     description: "Classic country vibes",
     tracks: [
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/western",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/ranch",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/prairie",
+      DEFAULT_AUDIO,
     ],
   },
   {
@@ -104,8 +93,7 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Relaxing Music",
     description: "Peaceful and calming music",
     tracks: [
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/serenity",
-      "https://rork.app/pa/ier8mze8ucoqq9oktvadp/tranquil",
+      DEFAULT_AUDIO,
     ],
   },
 ];

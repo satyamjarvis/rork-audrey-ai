@@ -9,6 +9,7 @@ import { usePathname } from 'expo-router';
 const MUTE_KEY = "@music_muted";
 const DEFAULT_AUDIO_URI = "https://rork.app/pa/ier8mze8ucoqq9oktvadp/song_442hz_1";
 const INTRO_SPLASH_OPENED_KEY = "@intro_splash_opened";
+const MAX_RETRY_ATTEMPTS = 3;
 
 export const [MusicPlayerProvider, useMusicPlayer] = createContextHook(() => {
   const { theme } = useTheme();
@@ -27,6 +28,7 @@ export const [MusicPlayerProvider, useMusicPlayer] = createContextHook(() => {
 
   const isMutedRef = useRef(isMuted);
   isMutedRef.current = isMuted;
+  const retryCountRef = useRef(0);
 
   const playNextTrack = useCallback(async () => {
     if (!isInitializedRef.current || !soundRef.current) {
@@ -137,46 +139,65 @@ export const [MusicPlayerProvider, useMusicPlayer] = createContextHook(() => {
         console.log("Loading audio:", audioUri, "(track", startIndex + 1, "of", musicUris.length, ")");
         currentUriRef.current = audioUri;
         
-        try {
-          const { sound: newSound } = await Audio.Sound.createAsync(
-            { uri: audioUri },
-            { 
-              shouldPlay: false,
-              isLooping: false,
-              volume: 0.4
-            },
-            (status) => {
-              if (!status.isLoaded && 'error' in status) {
-                console.error("Audio loading error:", status.error);
+        const loadAudioWithRetry = async (uri: string, attempt: number = 0): Promise<boolean> => {
+          try {
+            console.log(`[MusicPlayer] Loading audio (attempt ${attempt + 1}/${MAX_RETRY_ATTEMPTS}):`, uri);
+            
+            const { sound: newSound } = await Audio.Sound.createAsync(
+              { uri },
+              { 
+                shouldPlay: false,
+                isLooping: false,
+                volume: 0.4
+              },
+              (status) => {
+                if (!status.isLoaded && 'error' in status) {
+                  console.log('[MusicPlayer] Audio status error:', status.error);
+                }
               }
+            );
+
+            if (!isMounted) {
+              await newSound?.unloadAsync().catch(() => {});
+              return false;
             }
-          );
 
-          if (!isMounted) {
-            await newSound?.unloadAsync().catch(() => {});
-            return;
+            if (newSound) {
+              soundRef.current = newSound;
+              isInitializedRef.current = true;
+              retryCountRef.current = 0;
+              
+              newSound.setOnPlaybackStatusUpdate((status) => {
+                if (status.isLoaded && status.didJustFinish && !status.isLooping) {
+                  playNextTrack();
+                }
+              });
+              
+              await newSound.pauseAsync();
+              console.log('[MusicPlayer] Music loaded successfully, waiting for calendar page');
+              return true;
+            }
+            return false;
+          } catch (audioError: any) {
+            console.log('[MusicPlayer] Audio load error:', audioError?.message || audioError);
+            
+            if (attempt < MAX_RETRY_ATTEMPTS - 1 && isMounted) {
+              console.log(`[MusicPlayer] Retrying with default audio...`);
+              await new Promise(resolve => setTimeout(resolve, 500));
+              return loadAudioWithRetry(DEFAULT_AUDIO_URI, attempt + 1);
+            }
+            
+            return false;
           }
+        };
 
-          if (newSound) {
-            soundRef.current = newSound;
-            isInitializedRef.current = true;
-            
-            newSound.setOnPlaybackStatusUpdate((status) => {
-              if (status.isLoaded && status.didJustFinish && !status.isLooping) {
-                playNextTrack();
-              }
-            });
-            
-            await newSound.pauseAsync();
-            console.log('[MusicPlayer] Music loaded but paused, waiting for calendar page');
-          }
-        } catch (audioError: any) {
-          console.log('[MusicPlayer] Audio source not supported or unavailable:', audioError?.message || audioError);
-          if (isMounted) {
-            setIsDisabled(true);
-            soundRef.current = null;
-            isInitializedRef.current = false;
-          }
+        const success = await loadAudioWithRetry(audioUri);
+        
+        if (!success && isMounted) {
+          console.log('[MusicPlayer] All audio load attempts failed, sound disabled');
+          setIsDisabled(true);
+          soundRef.current = null;
+          isInitializedRef.current = false;
         }
       } catch (error) {
         console.log("Music player initialization error:", error);
