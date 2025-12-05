@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Crown, Star, Sparkles, X, CheckCircle, ShieldCheck } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, useTranslation } from '@/contexts/LanguageContext';
 
 type SubscriptionTier = 'basic-monthly' | 'basic-yearly' | 'advanced-monthly' | 'advanced-yearly';
 
@@ -22,66 +22,66 @@ type SubscriptionPlan = {
   comingSoon?: boolean;
 };
 
-const plans: SubscriptionPlan[] = [
+const getPlans = (translate: (key: string) => string): SubscriptionPlan[] => [
   {
     id: 'basic-monthly',
-    name: 'Basic Monthly',
+    name: translate('subscription.basicMonthly'),
     price: '$25.99',
-    period: '/month',
+    period: translate('subscription.perMonth'),
     type: 'basic',
     features: [
-      'Full access to all features',
-      'AI-powered assistant',
-      'Unlimited planning & tracking',
-      'Cloud sync across devices',
-      'Priority support',
+      translate('subscription.fullAccessToFeatures'),
+      translate('subscription.aiPoweredAssistant'),
+      translate('subscription.unlimitedPlanning'),
+      translate('subscription.cloudSync'),
+      translate('subscription.prioritySupport'),
     ],
   },
   {
     id: 'basic-yearly',
-    name: 'Basic Yearly',
+    name: translate('subscription.basicYearly'),
     price: '$259.99',
-    period: '/year',
+    period: translate('subscription.perYear'),
     type: 'basic',
-    badge: 'Save $52',
+    badge: translate('subscription.saveAmount') + ' $52',
     features: [
-      'Everything in Basic Monthly',
-      'Save $52 per year',
-      'Exclusive yearly bonuses',
-      'Early access to new features',
-      'Priority support',
+      translate('subscription.everythingInBasic'),
+      translate('subscription.saveAmount') + ' $52',
+      translate('subscription.yearlyBonuses'),
+      translate('subscription.earlyAccess'),
+      translate('subscription.prioritySupport'),
     ],
   },
   {
     id: 'advanced-monthly',
-    name: 'Advanced Monthly',
+    name: translate('subscription.advancedMonthly'),
     price: '$75.99',
-    period: '/month',
+    period: translate('subscription.perMonth'),
     type: 'advanced',
     comingSoon: true,
     features: [
-      'Everything in Basic',
-      'Access to all online courses',
-      'Excel in any field of life',
-      'Become extraordinary',
-      'VIP support',
+      translate('subscription.everythingInBasic'),
+      translate('subscription.accessOnlineCourses'),
+      translate('subscription.excelInLife'),
+      translate('subscription.becomeExtraordinary'),
+      translate('subscription.vipSupport'),
     ],
   },
   {
     id: 'advanced-yearly',
-    name: 'Advanced Yearly',
+    name: translate('subscription.advancedYearly'),
     price: '$759.99',
-    period: '/year',
+    period: translate('subscription.perYear'),
     type: 'advanced',
-    badge: 'Save $152',
+    badge: translate('subscription.saveAmount') + ' $152',
     popular: true,
     comingSoon: true,
     features: [
-      'Everything in Advanced Monthly',
-      'Save $152 per year',
-      'Premium online courses',
-      'Exclusive content updates',
-      'Personal success coaching',
+      translate('subscription.everythingInBasic'),
+      translate('subscription.saveAmount') + ' $152',
+      translate('subscription.premiumCourses'),
+      translate('subscription.exclusiveContent'),
+      translate('subscription.personalCoaching'),
     ],
   },
 ];
@@ -91,12 +91,13 @@ export default function SubscriptionSelectionScreen() {
 
   const { theme } = useTheme();
   const { t } = useLanguage();
+  const { t: translate } = useTranslation();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionTier>('basic-yearly');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
-  const scaleAnims = useRef(plans.map(() => new Animated.Value(1))).current;
+  const scaleAnims = useRef([0, 1, 2, 3].map(() => new Animated.Value(1))).current;
   
   const isNightMode = theme.id === 'night-mode';
 
@@ -160,6 +161,7 @@ export default function SubscriptionSelectionScreen() {
     });
   };
 
+  const plans = getPlans(translate);
   const selectedPlanDetails = plans.find(p => p.id === selectedPlan);
 
   return (
