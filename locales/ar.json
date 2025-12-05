@@ -395,7 +395,21 @@
     "lastSeen": "آخر ظهور",
     "online": "متصل",
     "offline": "غير متصل",
-    "typing": "يكتب..."
+    "typing": "يكتب...",
+    "encrypted": "مشفر",
+    "endToEndEncrypted": "تشفير من طرف لطرف",
+    "syncedWithCalendars": "متزامن مع التقويمات",
+    "sharedCalendar": "تقويم مشترك",
+    "conversation": "محادثة",
+    "conversations": "محادثات",
+    "noConversationsYet": "لا توجد محادثات بعد",
+    "shareCalendarToStart": "شارك تقويماً لبدء محادثة آمنة",
+    "voiceMessage": "رسالة صوتية",
+    "encryptedMessage": "رسالة مشفرة",
+    "attachment": "مرفق",
+    "justNow": "الآن",
+    "yesterday": "أمس",
+    "loading": "جاري التحميل..."
   },
   "contacts": {
     "contacts": "جهات الاتص��ل",

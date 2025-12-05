@@ -32,6 +32,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useFontSize } from "@/contexts/FontSizeContext";
 import AppBackgroundWrapper from "@/components/AppBackgroundWrapper";
 import { useAppBackground } from "@/contexts/AppBackgroundContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -55,6 +56,7 @@ export default function ChatsListScreen() {
   const { getMessagesForCalendar, getDecryptedMessage } = useChat();
   const { calendars, selectedBackground } = useCalendar();
   const { hasCustomBackground } = useAppBackground();
+  const { translations } = useLanguage();
   
   const [chatNotifications, setChatNotifications] = useState<{[key: string]: boolean}>({});
   const [lastMessagePreviews, setLastMessagePreviews] = useState<{[key: string]: string}>({});
@@ -170,7 +172,7 @@ export default function ChatsListScreen() {
             try {
               const decrypted = await getDecryptedMessage(lastMessage);
               if (decrypted.includes("🎤VOICE_MSG🎤")) {
-                previews[cal.id] = "🎤 Voice message";
+                previews[cal.id] = `🎤 ${translations.chat.voiceMessage}`;
               } else {
                 const truncated = decrypted.length > 45 
                   ? decrypted.substring(0, 45) + "..." 
@@ -179,10 +181,10 @@ export default function ChatsListScreen() {
               }
             } catch (error) {
               console.error("Error decrypting preview:", error);
-              previews[cal.id] = "🔒 Encrypted message";
+              previews[cal.id] = `🔒 ${translations.chat.encryptedMessage}`;
             }
           } else {
-            const text = lastMessage.text || "📎 Attachment";
+            const text = lastMessage.text || `📎 ${translations.chat.attachment}`;
             previews[cal.id] = text.length > 45 ? text.substring(0, 45) + "..." : text;
           }
         }
@@ -193,7 +195,7 @@ export default function ChatsListScreen() {
     };
     
     loadLastMessagePreviews();
-  }, [calendars, getMessagesForCalendar, getDecryptedMessage]);
+  }, [calendars, getMessagesForCalendar, getDecryptedMessage, translations.chat]);
 
   const toggleNotifications = useCallback((chatId: string) => {
     if (Platform.OS !== "web") {
@@ -238,7 +240,7 @@ export default function ChatsListScreen() {
     router.push(`/calendar-chat?calendarId=${chatId}`);
   }, []);
 
-  const formatTime = (timestamp?: number) => {
+  const formatTime = useCallback((timestamp?: number) => {
     if (!timestamp) return "";
     
     const date = new Date(timestamp);
@@ -248,14 +250,14 @@ export default function ChatsListScreen() {
     
     if (hours < 1) {
       const minutes = Math.floor(diff / (1000 * 60));
-      return minutes < 1 ? "Just now" : `${minutes}m`;
+      return minutes < 1 ? translations.chat.justNow : `${minutes}m`;
     } else if (hours < 24) {
       return `${hours}h`;
     } else {
       const days = Math.floor(hours / 24);
-      return days === 1 ? "Yesterday" : `${days}d`;
+      return days === 1 ? translations.chat.yesterday : `${days}d`;
     }
-  };
+  }, [translations.chat.justNow, translations.chat.yesterday]);
 
   const renderChatContent = useCallback((item: ChatItemData) => (
     <View style={styles.chatItemContent}>
@@ -305,7 +307,7 @@ export default function ChatsListScreen() {
                   }
                 ]}
               >
-                Shared calendar
+                {translations.chat.sharedCalendar}
               </Text>
             </View>
           </View>
@@ -374,7 +376,7 @@ export default function ChatsListScreen() {
             ]} 
             numberOfLines={2}
           >
-            {loadingPreviews ? "Loading..." : item.lastMessage}
+            {loadingPreviews ? translations.chat.loading : item.lastMessage}
           </Text>
         )}
       </View>
@@ -387,7 +389,7 @@ export default function ChatsListScreen() {
         />
       </View>
     </View>
-  ), [isNightMode, theme.colors, getFontSize, formatTime, loadingPreviews, toggleNotifications]);
+  ), [isNightMode, theme.colors, getFontSize, formatTime, loadingPreviews, toggleNotifications, translations.chat]);
 
   const renderChatItem = useCallback(({ item, index }: { item: ChatItemData; index: number }) => {
     const cardAnim = new Animated.Value(0);
@@ -507,7 +509,7 @@ export default function ChatsListScreen() {
                     }
                   ]}
                 >
-                  Messages
+                  {translations.chat.messages}
                 </Text>
                 <Text 
                   style={[
@@ -518,7 +520,7 @@ export default function ChatsListScreen() {
                     }
                   ]}
                 >
-                  {chatsWithMessages.length} {chatsWithMessages.length === 1 ? "conversation" : "conversations"}
+                  {chatsWithMessages.length} {chatsWithMessages.length === 1 ? translations.chat.conversation : translations.chat.conversations}
                 </Text>
               </View>
             </View>
@@ -550,7 +552,7 @@ export default function ChatsListScreen() {
                   }
                 ]}
               >
-                Encrypted
+                {translations.chat.encrypted}
               </Text>
             </View>
           </View>
@@ -579,7 +581,7 @@ export default function ChatsListScreen() {
                 }
               ]}
             >
-              End-to-end encrypted • Synced with calendars
+              {translations.chat.endToEndEncrypted} • {translations.chat.syncedWithCalendars}
             </Text>
           </View>
         </Animated.View>
@@ -616,7 +618,7 @@ export default function ChatsListScreen() {
                   }
                 ]}
               >
-                No conversations yet
+                {translations.chat.noConversationsYet}
               </Text>
               <Text 
                 style={[
@@ -627,7 +629,7 @@ export default function ChatsListScreen() {
                   }
                 ]}
               >
-                Share a calendar to start a secure conversation
+                {translations.chat.shareCalendarToStart}
               </Text>
             </Animated.View>
           }

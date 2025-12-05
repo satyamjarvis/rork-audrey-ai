@@ -395,7 +395,21 @@
     "lastSeen": "最后在线",
     "online": "在线",
     "offline": "离线",
-    "typing": "正在输入..."
+    "typing": "正在输入...",
+    "encrypted": "已加密",
+    "endToEndEncrypted": "端到端加密",
+    "syncedWithCalendars": "与日历同步",
+    "sharedCalendar": "共享日历",
+    "conversation": "对话",
+    "conversations": "对话",
+    "noConversationsYet": "暂无对话",
+    "shareCalendarToStart": "分享日历开始安全对话",
+    "voiceMessage": "语音消息",
+    "encryptedMessage": "加密消息",
+    "attachment": "附件",
+    "justNow": "刚刚",
+    "yesterday": "昨天",
+    "loading": "加载中..."
   },
   "contacts": {
     "contacts": "联系人",

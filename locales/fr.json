@@ -395,7 +395,21 @@
     "lastSeen": "Dernière connexion",
     "online": "En ligne",
     "offline": "Hors ligne",
-    "typing": "Écrit..."
+    "typing": "Écrit...",
+    "encrypted": "Chiffré",
+    "endToEndEncrypted": "Chiffrement de bout en bout",
+    "syncedWithCalendars": "Synchronisé avec les calendriers",
+    "sharedCalendar": "Calendrier partagé",
+    "conversation": "conversation",
+    "conversations": "conversations",
+    "noConversationsYet": "Pas encore de conversations",
+    "shareCalendarToStart": "Partagez un calendrier pour démarrer une conversation sécurisée",
+    "voiceMessage": "Message vocal",
+    "encryptedMessage": "Message chiffré",
+    "attachment": "Pièce jointe",
+    "justNow": "À l'instant",
+    "yesterday": "Hier",
+    "loading": "Chargement..."
   },
   "contacts": {
     "contacts": "Contacts",
