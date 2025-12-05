@@ -33,7 +33,7 @@ import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 
 import { useTheme } from "@/contexts/ThemeContext";
-import { useLanguage, Language as LanguageType } from "@/contexts/LanguageContext";
+import { useLanguage, useTranslation, Language as LanguageType } from "@/contexts/LanguageContext";
 import { useAudioStyle, AudioStyle, AUDIO_STYLES } from "@/contexts/AudioStyleContext";
 import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
 import { useCalendar } from "@/contexts/CalendarContext";
@@ -104,6 +104,7 @@ export default function SettingsScreen() {
   const { theme, setTheme, autoThemeEnabled, toggleAutoTheme, availableThemes, activeHolidayTheme } = useTheme();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
   const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
   const { 
     audioStyle, 
@@ -236,11 +237,11 @@ export default function SettingsScreen() {
             <View style={styles.headerContent}>
               <Music2 color={theme.colors.primary} size={32} strokeWidth={2.5} />
               <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-                {AUDIO_STYLES.find(s => s.id === selectedStyleForTracks)?.name} Tracks
+                {AUDIO_STYLES.find(s => s.id === selectedStyleForTracks)?.name} {t('settings.tracks') || 'Tracks'}
               </Text>
             </View>
             <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-              Select which track to play
+              {t('settings.selectTrackToPlay') || 'Select which track to play'}
             </Text>
           </View>
 
@@ -303,7 +304,7 @@ export default function SettingsScreen() {
               activeOpacity={0.7}
             >
               <Text style={[styles.backButtonText, { color: theme.colors.text.primary }]}>
-                Back to Audio Styles
+                {t('settings.backToAudioStyles') || 'Back to Audio Styles'}
               </Text>
             </TouchableOpacity>
           </ScrollView>
@@ -320,11 +321,11 @@ export default function SettingsScreen() {
             <View style={styles.headerContent}>
               <Music2 color={theme.colors.primary} size={32} strokeWidth={2.5} />
               <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-                Audio Style
+                {t('settings.audioStyle')}
               </Text>
             </View>
             <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-              Choose your preferred audio style
+              {t('settings.choosePreferredAudioStyle')}
             </Text>
           </View>
 
@@ -390,7 +391,7 @@ export default function SettingsScreen() {
               activeOpacity={0.7}
             >
               <Text style={[styles.backButtonText, { color: theme.colors.text.primary }]}>
-                Back to Tools
+                {t('settings.backToTools')}
               </Text>
             </TouchableOpacity>
           </ScrollView>
@@ -407,11 +408,11 @@ export default function SettingsScreen() {
             <View style={styles.headerContent}>
               <Languages color={theme.colors.primary} size={32} strokeWidth={2.5} />
               <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-                Language
+                {t('settings.language')}
               </Text>
             </View>
             <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-              Choose your preferred language
+              {t('language.chooseYourPreferredLanguage')}
             </Text>
           </View>
 
@@ -467,7 +468,7 @@ export default function SettingsScreen() {
               activeOpacity={0.7}
             >
               <Text style={[styles.backButtonText, { color: theme.colors.text.primary }]}>
-                Back to Tools
+                {t('settings.backToTools')}
               </Text>
             </TouchableOpacity>
           </ScrollView>
@@ -484,11 +485,11 @@ export default function SettingsScreen() {
             <View style={styles.headerContent}>
               <Type color={theme.colors.primary} size={32} strokeWidth={2.5} />
               <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-                Text Size
+                {t('settings.textSize')}
               </Text>
             </View>
             <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-              Choose a comfortable reading size
+              {t('settings.chooseComfortableSize')}
             </Text>
           </View>
 
@@ -547,7 +548,7 @@ export default function SettingsScreen() {
               activeOpacity={0.7}
             >
               <Text style={[styles.backButtonText, { color: theme.colors.text.primary }]}>
-                Back to Tools
+                {t('settings.backToTools')}
               </Text>
             </TouchableOpacity>
           </ScrollView>
@@ -564,11 +565,11 @@ export default function SettingsScreen() {
             <View style={styles.headerContent}>
               <Palette color={theme.colors.primary} size={32} strokeWidth={2.5} />
               <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-                Theme
+                {t('settings.theme')}
               </Text>
             </View>
             <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-              Customize your app appearance
+              {t('settings.customizeAppAppearance')}
             </Text>
           </View>
 
@@ -581,11 +582,11 @@ export default function SettingsScreen() {
               <View style={styles.autoThemeHeader}>
                 <Sparkles color={theme.colors.primary} size={24} strokeWidth={2} />
                 <Text style={[styles.autoThemeTitle, { color: theme.colors.text.primary }]}>
-                  Auto Theme
+                  {t('settings.autoTheme')}
                 </Text>
               </View>
               <Text style={[styles.autoThemeDescription, { color: theme.colors.text.secondary }]}>
-                Automatically change theme based on holidays and seasons
+                {t('settings.autoThemeDescription')}
               </Text>
               {activeHolidayTheme && autoThemeEnabled && (
                 <View style={[styles.activeHolidayBadge, { backgroundColor: `${theme.colors.primary}15` }]}>
@@ -606,7 +607,7 @@ export default function SettingsScreen() {
 
             <View style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-                Account
+                {t('settings.account')}
               </Text>
             </View>
 
@@ -616,7 +617,7 @@ export default function SettingsScreen() {
                   <UserCircle2 color={theme.colors.primary} size={20} strokeWidth={2} />
                 </View>
                 <View style={styles.accountInfo}>
-                  <Text style={[styles.accountLabel, { color: theme.colors.text.secondary }]}>Name</Text>
+                  <Text style={[styles.accountLabel, { color: theme.colors.text.secondary }]}>{t('settings.name')}</Text>
                   <Text style={[styles.accountValue, { color: theme.colors.text.primary }]}>{name}</Text>
                 </View>
               </View>
@@ -626,7 +627,7 @@ export default function SettingsScreen() {
                   <User color={theme.colors.secondary} size={20} strokeWidth={2} />
                 </View>
                 <View style={styles.accountInfo}>
-                  <Text style={[styles.accountLabel, { color: theme.colors.text.secondary }]}>Email</Text>
+                  <Text style={[styles.accountLabel, { color: theme.colors.text.secondary }]}>{t('settings.email')}</Text>
                   <Text style={[styles.accountValue, { color: theme.colors.text.primary }]}>{email}</Text>
                 </View>
               </View>
@@ -634,10 +635,10 @@ export default function SettingsScreen() {
 
             <View style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-                App Background
+                {t('settings.appBackground') || 'App Background'}
               </Text>
               <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>
-                Choose a background for all app screens (except chats)
+                {t('settings.appBackgroundDescription') || 'Choose a background for all app screens (except chats)'}
               </Text>
             </View>
 
@@ -692,10 +693,10 @@ export default function SettingsScreen() {
 
             <View style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-                Calendar Themes
+                {t('settings.calendarThemes')}
               </Text>
               <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>
-                Your calendars
+                {t('settings.yourCalendars')}
               </Text>
             </View>
 
@@ -733,7 +734,7 @@ export default function SettingsScreen() {
                       </Text>
                       {cal.isShared && (
                         <Text style={[styles.calendarSharedBadge, { color: theme.colors.text.secondary }]}>
-                          Shared
+                          {t('common.shared')}
                         </Text>
                       )}
                     </View>
@@ -744,10 +745,10 @@ export default function SettingsScreen() {
 
             <View style={styles.sectionHeader}>
               <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>
-                Color Themes
+                {t('settings.colorThemes')}
               </Text>
               <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>
-                {availableThemes.length} themes available
+                {availableThemes.length} {t('settings.themesAvailable')}
               </Text>
             </View>
 
@@ -801,7 +802,7 @@ export default function SettingsScreen() {
               activeOpacity={0.7}
             >
               <Text style={[styles.backButtonText, { color: theme.colors.text.primary }]}>
-                Back to Tools
+                {t('settings.backToTools')}
               </Text>
             </TouchableOpacity>
           </ScrollView>
@@ -827,9 +828,9 @@ export default function SettingsScreen() {
               <Sparkles color="#FFFFFF" size={24} strokeWidth={2.5} />
             </LinearGradient>
             <View style={styles.headerTextContainer}>
-              <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>Tools & Settings</Text>
+              <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>{t('settings.toolsAndSettings')}</Text>
               <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
-                Customize your experience
+                {t('settings.customizeYourExperience')}
               </Text>
             </View>
           </View>
@@ -860,7 +861,7 @@ export default function SettingsScreen() {
                 <Text style={[styles.profileName, { color: theme.colors.text.primary }]}>{name || "User"}</Text>
                 <View style={[styles.verifiedBadge, { borderColor: theme.colors.primary, backgroundColor: isNightMode ? 'rgba(255, 215, 0, 0.1)' : 'rgba(0,0,0,0.03)' }]}>
                   <Check color={theme.colors.primary} size={10} strokeWidth={2.5} />
-                  <Text style={[styles.verifiedText, { color: theme.colors.primary }]}>Verified</Text>
+                  <Text style={[styles.verifiedText, { color: theme.colors.primary }]}>{t('settings.verified')}</Text>
                 </View>
               </View>
               <Text style={[styles.profileEmail, { color: theme.colors.text.secondary }]}>{email || "user@example.com"}</Text>
@@ -872,7 +873,7 @@ export default function SettingsScreen() {
               <View style={[styles.sectionIconContainer, { backgroundColor: `${theme.colors.primary}15` }]}>
                 <Crown color={theme.colors.primary} size={18} strokeWidth={2.5} />
               </View>
-              <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Membership</Text>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>{t('settings.membership')}</Text>
             </View>
           </View>
 
@@ -896,9 +897,9 @@ export default function SettingsScreen() {
                   <Crown color="#FFD700" size={22} strokeWidth={2} />
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>Premium Plan</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.premiumPlan')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
-                    Active subscription
+                    {t('settings.activeSubscription')}
                   </Text>
                 </View>
               </View>
@@ -912,8 +913,8 @@ export default function SettingsScreen() {
                 <Palette color={theme.colors.secondary} size={18} strokeWidth={2.5} />
               </View>
               <View>
-                <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>Settings</Text>
-                <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>Manage your preferences</Text>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text.primary }]}>{t('navigation.settings')}</Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.colors.text.secondary }]}>{t('settings.managePreferences') || 'Manage your preferences'}</Text>
               </View>
             </View>
           </View>
@@ -938,9 +939,9 @@ export default function SettingsScreen() {
                   <UserCircle2 color={theme.colors.primary} size={22} strokeWidth={2} />
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>Account Settings</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.accountSettings')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
-                    Manage your account information
+                    {t('settings.manageYourAccount')}
                   </Text>
                 </View>
               </View>
@@ -963,9 +964,9 @@ export default function SettingsScreen() {
                   <Sparkles color={theme.colors.primary} size={22} strokeWidth={2} />
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>App Tour</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.appTour')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
-                    Watch video tour & listen to Audrey&apos;s song
+                    {t('settings.watchVideoTour')}
                   </Text>
                 </View>
               </View>
@@ -986,9 +987,9 @@ export default function SettingsScreen() {
                   <Bell color={theme.colors.primary} size={22} strokeWidth={2} />
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>Notifications</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.notifications')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
-                    Manage event reminders
+                    {t('settings.manageEventReminders')}
                   </Text>
                 </View>
               </View>
@@ -1006,9 +1007,9 @@ export default function SettingsScreen() {
                   )}
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>Night Mode</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.nightMode')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
-                    {theme.id === "night-mode" ? "Enabled" : "Disabled"}
+                    {theme.id === "night-mode" ? t('settings.enabled') : t('settings.disabled')}
                   </Text>
                 </View>
               </View>
@@ -1057,7 +1058,7 @@ export default function SettingsScreen() {
                   <Palette color={theme.colors.morning} size={22} strokeWidth={2} />
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>Theme</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.theme')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
                     {theme.name}
                   </Text>
@@ -1077,7 +1078,7 @@ export default function SettingsScreen() {
                   <Languages color={theme.colors.secondary} size={22} strokeWidth={2} />
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>Language</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.language')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
                     {currentLanguage?.nativeName || 'English'}
                   </Text>
@@ -1097,7 +1098,7 @@ export default function SettingsScreen() {
                   <Music2 color={theme.colors.primary} size={22} strokeWidth={2} />
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>Audio Style</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.audioStyle')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
                     {currentStyleData.name}
                   </Text>
@@ -1125,9 +1126,9 @@ export default function SettingsScreen() {
                   )}
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>Sound</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.sound')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
-                    {isMusicDisabled ? 'Unavailable' : isMuted ? 'Muted' : 'Enabled'}
+                    {isMusicDisabled ? t('settings.unavailable') : isMuted ? t('settings.muted') : t('settings.enabled')}
                   </Text>
                 </View>
               </View>
@@ -1145,7 +1146,7 @@ export default function SettingsScreen() {
                   <Type color={theme.colors.morning} size={22} strokeWidth={2} />
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>Text Size</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.textSize')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>  
                     {fontSizeConfig.name}
                   </Text>
@@ -1161,9 +1162,9 @@ export default function SettingsScreen() {
                   <Sparkles color={universeMode === "universe" ? "#9D4EDD" : "#4A90E2"} size={22} strokeWidth={2} />
                 </View>
                 <View style={styles.settingTextContainer}>
-                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>App Mode</Text>
+                  <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.appMode')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
-                    {universeMode === "universe" ? "Universe Mode" : "Classic Mode"}
+                    {universeMode === "universe" ? t('settings.universeMode') : t('settings.classicMode')}
                   </Text>
                 </View>
               </View>
@@ -1209,7 +1210,7 @@ export default function SettingsScreen() {
             disabled={true}
           >
             <LogOut color="#F77F8B" size={20} strokeWidth={2} />
-            <Text style={styles.logoutText}>Log Out</Text>
+            <Text style={styles.logoutText}>{t('settings.logOut')}</Text>
           </TouchableOpacity>
 
           <View style={[styles.signedInBadge, { 
@@ -1217,7 +1218,7 @@ export default function SettingsScreen() {
             borderColor: isNightMode ? "rgba(255, 215, 0, 0.2)" : theme.colors.border 
           }]}>
             <Text style={[styles.signedInText, { color: theme.colors.text.secondary }]}>
-              You are signed in with a demo account
+              {t('settings.signedInWithDemo')}
             </Text>
           </View>
         </ScrollView>
