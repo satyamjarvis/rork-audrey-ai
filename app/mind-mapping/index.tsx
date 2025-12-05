@@ -144,7 +144,7 @@ const MindMapCard = React.memo(({ map, onPress, onDelete, index }: {
         useNativeDriver: true,
       })
     ]).start();
-  }, []);
+  }, [scaleAnim, opacityAnim, index]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -233,7 +233,7 @@ export default function MindMappingList() {
   const { theme } = useTheme();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
   const insets = useSafeAreaInsets();
-  const { mindMaps, createMindMap, deleteMindMap, isLoading } = useMindMap();
+  const { mindMaps, createMindMap, deleteMindMap } = useMindMap();
   
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -256,7 +256,7 @@ export default function MindMappingList() {
       setNewMapTitle("");
       setIsModalVisible(false);
       router.push(`/mind-mapping/${id}` as any);
-    } catch (e) {
+    } catch {
       Alert.alert("Error", "Failed to create mind map");
     } finally {
       setIsCreating(false);
