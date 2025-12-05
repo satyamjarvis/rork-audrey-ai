@@ -551,14 +551,14 @@ export default function SettingsScreen() {
                     </View>
                     <View style={styles.audioStyleCardInfo}>
                       <Text style={[styles.audioStyleName, { color: theme.colors.text.primary }]}>
-                        {option.name}
+                        {t(`fontSize.options.${option.scale}.name`) || option.name}
                       </Text>
                       <Text style={[styles.audioStyleDescription, { color: theme.colors.text.secondary }]}>
-                        {option.description}
+                        {t(`fontSize.options.${option.scale}.description`) || option.description}
                       </Text>
                       <View style={{ marginTop: 12, padding: 12, backgroundColor: `${theme.colors.primary}08`, borderRadius: 12 }}>
                         <Text style={{ fontSize: demoFontSize, color: theme.colors.text.primary, lineHeight: demoFontSize * 1.5 }}>
-                          The quick brown fox jumps over the lazy dog
+                          {t('fontSize.previewText') || 'The quick brown fox jumps over the lazy dog'}
                         </Text>
                       </View>
                     </View>
@@ -1173,7 +1173,7 @@ export default function SettingsScreen() {
                 <View style={styles.settingTextContainer}>
                   <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.textSize')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>  
-                    {fontSizeConfig.name}
+                    {t(`fontSize.options.${fontSizeConfig.scale}.name`) || fontSizeConfig.name}
                   </Text>
                 </View>
               </View>

@@ -988,6 +988,31 @@
     "noTracksAvailable": "No tracks available for this style yet",
     "trackOf": "Track {current} of {total}"
   },
+  "fontSize": {
+    "previewText": "The quick brown fox jumps over the lazy dog",
+    "options": {
+      "small": {
+        "name": "Small",
+        "description": "Compact text"
+      },
+      "medium": {
+        "name": "Medium (Default)",
+        "description": "Standard size"
+      },
+      "large": {
+        "name": "Large",
+        "description": "Easier to read"
+      },
+      "xlarge": {
+        "name": "Extra Large",
+        "description": "Enhanced readability"
+      },
+      "xxlarge": {
+        "name": "XXL",
+        "description": "Maximum readability"
+      }
+    }
+  },
   "learn": {
     "title": "Learn & Grow",
     "subtitle": "Expand your mind with expert-led courses",
