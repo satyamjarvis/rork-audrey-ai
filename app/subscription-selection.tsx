@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   planCardWrapper: {
-    width: 140,
+    width: 160,
   },
   planCard: {
     flex: 1,
@@ -552,7 +552,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 6,
-    height: 120,
+    height: 140,
     justifyContent: 'center',
   },
   planCardSelected: {
