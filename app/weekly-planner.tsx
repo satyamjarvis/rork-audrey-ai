@@ -42,6 +42,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import colors from "@/constants/colors";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useTranslation } from "@/contexts/LanguageContext";
 import KeyboardDismissButton from "@/components/KeyboardDismissButton";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -122,6 +123,9 @@ const STORAGE_KEY = "@weekly_tasks";
 export default function WeeklyPlannerScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useTranslation();
+  
+  const [tasks, setTasks] = useState<WeeklyTask[]>([]);
   
   const isNightMode = theme.id === "night-mode";
   const modalColors = isNightMode 
@@ -144,7 +148,26 @@ export default function WeeklyPlannerScreen() {
         labelColor: '#9D4EDD',
       };
   
-  const [tasks, setTasks] = useState<WeeklyTask[]>([]);
+  const getStatusLabel = (status: Status) => {
+    return t(`weeklyPlanner.statuses.${status}`);
+  };
+
+  const getCategoryLabel = (category: string) => {
+    return t(`weeklyPlanner.categories.${category}`) || category;
+  };
+
+  const getPriorityLabel = (priority: Priority) => {
+    return t(`weeklyPlanner.priorities.${priority}`);
+  };
+
+  const getColorSchemeLabel = (scheme: ColorScheme) => {
+    return t(`weeklyPlanner.colorSchemes.${scheme}`);
+  };
+
+  const getDayLabel = (dayIndex: number) => {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    return t(`weeklyPlanner.days.${days[dayIndex]}`);
+  };
   const [viewMode, setViewMode] = useState<ViewMode>("timeline");
   const [colorScheme, setColorScheme] = useState<ColorScheme>("default");
   const [showCompleted, setShowCompleted] = useState<boolean>(true);
@@ -252,7 +275,7 @@ export default function WeeklyPlannerScreen() {
     const total = tasks.length;
     const completed = tasks.filter((t) => t.status === "completed").length;
     const inProgress = tasks.filter((t) => t.status === "in-progress").length;
-    const avgProgress = total > 0 ? tasks.reduce((sum, t) => sum + t.progress, 0) / total : 0;
+    const avgProgress = total > 0 ? tasks.reduce((sum, task) => sum + task.progress, 0) / total : 0;
 
     return { total, completed, inProgress, avgProgress: Math.round(avgProgress) };
   }, [tasks]);
@@ -287,7 +310,7 @@ export default function WeeklyPlannerScreen() {
 
   const handleAddTask = async () => {
     if (!taskTitle.trim()) {
-      Alert.alert("Error", "Please enter a task title");
+      Alert.alert(t('weeklyPlanner.error'), t('weeklyPlanner.enterTitleError'));
       return;
     }
 
@@ -347,7 +370,7 @@ export default function WeeklyPlannerScreen() {
 
   const handleUpdateTask = async () => {
     if (!taskTitle.trim() || !taskToEdit) {
-      Alert.alert("Error", "Please enter a task title");
+      Alert.alert(t('weeklyPlanner.error'), t('weeklyPlanner.enterTitleError'));
       return;
     }
 
@@ -384,10 +407,10 @@ export default function WeeklyPlannerScreen() {
   };
 
   const handleDeleteTask = (taskId: string) => {
-    Alert.alert("Delete Task", "Are you sure you want to delete this task?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t('weeklyPlanner.deleteTask'), t('weeklyPlanner.deleteConfirmation'), [
+      { text: t('weeklyPlanner.cancel'), style: "cancel" },
       {
-        text: "Delete",
+        text: t('weeklyPlanner.delete'),
         style: "destructive",
         onPress: async () => {
           if (Platform.OS !== "web") {
@@ -434,7 +457,7 @@ export default function WeeklyPlannerScreen() {
                     isToday && styles.dayNameToday,
                     { color: isToday ? theme.colors.primary : theme.colors.text.primary }
                   ]}>
-                    {day}
+                    {getDayLabel(idx)}
                   </Text>
                   <Text style={[styles.dayDate, { color: theme.colors.text.secondary }]}>
                     {weekDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -452,7 +475,7 @@ export default function WeeklyPlannerScreen() {
               {dayTasks.length === 0 ? (
                 <View style={[styles.emptyDay, { backgroundColor: theme.colors.cardBackground }]}>
                   <Text style={[styles.emptyDayText, { color: theme.colors.text.light }]}>
-                    No tasks scheduled
+                    {t('weeklyPlanner.noTasksScheduled')}
                   </Text>
                 </View>
               ) : (
@@ -496,10 +519,10 @@ export default function WeeklyPlannerScreen() {
 
           <View style={styles.taskMeta}>
             <View style={[styles.categoryBadge, { backgroundColor: cardColor }]}>
-              <Text style={styles.categoryText}>{task.category}</Text>
+              <Text style={styles.categoryText}>{getCategoryLabel(task.category)}</Text>
             </View>
             <View style={[styles.priorityBadge, { backgroundColor: PRIORITY_COLORS[task.priority] }]}>
-              <Text style={styles.priorityText}>{task.priority.toUpperCase()}</Text>
+              <Text style={styles.priorityText}>{getPriorityLabel(task.priority).toUpperCase()}</Text>
             </View>
           </View>
 
@@ -520,7 +543,7 @@ export default function WeeklyPlannerScreen() {
 
           <View style={styles.progressContainer}>
             <View style={styles.progressHeader}>
-              <Text style={[styles.progressLabel, { color: theme.colors.text.secondary }]}>Progress</Text>
+              <Text style={[styles.progressLabel, { color: theme.colors.text.secondary }]}>{t('weeklyPlanner.progress')}</Text>
               <Text style={[styles.progressValue, { color: cardColor }]}>{task.progress}%</Text>
             </View>
             <View style={styles.progressBarBg}>
@@ -529,7 +552,7 @@ export default function WeeklyPlannerScreen() {
           </View>
 
           <View style={[styles.statusBadge, { backgroundColor: `${cardColor}20` }]}>
-            <Text style={[styles.statusText, { color: cardColor }]}>{STATUS_LABELS[task.status]}</Text>
+            <Text style={[styles.statusText, { color: cardColor }]}>{getStatusLabel(task.status)}</Text>
           </View>
         </View>
       </View>
@@ -561,11 +584,11 @@ export default function WeeklyPlannerScreen() {
           <View style={styles.listBottom}>
             <View style={[styles.listCategoryChip, { backgroundColor: `${cardColor}15` }]}>
               <Text style={[styles.listCategoryText, { color: cardColor }]}>
-                {DAYS_OF_WEEK[task.dayOfWeek].substring(0, 3)} • {task.category}
+                {getDayLabel(task.dayOfWeek).substring(0, 3)} • {getCategoryLabel(task.category)}
               </Text>
             </View>
             <Text style={[styles.listStatusText, { color: theme.colors.text.secondary }]}>
-              {STATUS_LABELS[task.status]}
+              {getStatusLabel(task.status)}
             </Text>
           </View>
         </View>
@@ -587,7 +610,7 @@ export default function WeeklyPlannerScreen() {
 
           <View style={styles.headerTitleContainer}>
             <Calendar color="#FFFFFF" size={28} strokeWidth={2.5} />
-            <Text style={styles.headerTitle}>Weekly Planner</Text>
+            <Text style={styles.headerTitle}>{t('weeklyPlanner.title')}</Text>
           </View>
 
           <TouchableOpacity
@@ -604,7 +627,7 @@ export default function WeeklyPlannerScreen() {
             <ChevronLeft color={theme.colors.primary} size={24} />
           </TouchableOpacity>
           <Text style={[styles.weekText, { color: theme.colors.text.primary }]}>
-            Week of {selectedWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            {t('weeklyPlanner.weekOf')} {selectedWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </Text>
           <TouchableOpacity onPress={nextWeek} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <ChevronRight color={theme.colors.primary} size={24} />
@@ -616,22 +639,22 @@ export default function WeeklyPlannerScreen() {
             <View style={styles.statItem}>
               <Target color={theme.colors.primary} size={24} />
               <Text style={[styles.statValue, { color: theme.colors.primary }]}>{weekStats.total}</Text>
-              <Text style={[styles.statLabel, { color: theme.colors.text.secondary }]}>Total Tasks</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.text.secondary }]}>{t('weeklyPlanner.totalTasks')}</Text>
             </View>
             <View style={styles.statItem}>
               <CheckCircle2 color="#30CFD0" size={24} />
               <Text style={[styles.statValue, { color: "#30CFD0" }]}>{weekStats.completed}</Text>
-              <Text style={[styles.statLabel, { color: theme.colors.text.secondary }]}>Completed</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.text.secondary }]}>{t('weeklyPlanner.completed')}</Text>
             </View>
             <View style={styles.statItem}>
               <TrendingUp color="#FFB84D" size={24} />
               <Text style={[styles.statValue, { color: "#FFB84D" }]}>{weekStats.inProgress}</Text>
-              <Text style={[styles.statLabel, { color: theme.colors.text.secondary }]}>In Progress</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.text.secondary }]}>{t('weeklyPlanner.inProgress')}</Text>
             </View>
             <View style={styles.statItem}>
               <Star color="#FA709A" size={24} />
               <Text style={[styles.statValue, { color: "#FA709A" }]}>{weekStats.avgProgress}%</Text>
-              <Text style={[styles.statLabel, { color: theme.colors.text.secondary }]}>Avg Progress</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.text.secondary }]}>{t('weeklyPlanner.avgProgress')}</Text>
             </View>
           </View>
         </View>
@@ -676,7 +699,7 @@ export default function WeeklyPlannerScreen() {
             >
               {showCompleted ? <Eye color={theme.colors.text.secondary} size={18} /> : <EyeOff color="#FFFFFF" size={18} />}
               <Text style={[styles.filterButtonText, { color: showCompleted ? theme.colors.text.secondary : "#FFFFFF" }]}>
-                Completed
+                {t('weeklyPlanner.filterCompleted')}
               </Text>
             </TouchableOpacity>
 
@@ -686,7 +709,7 @@ export default function WeeklyPlannerScreen() {
                 onPress={() => setFilterCategory(null)}
               >
                 <X color="#FFFFFF" size={16} />
-                <Text style={styles.filterButtonTextActive}>{filterCategory}</Text>
+                <Text style={styles.filterButtonTextActive}>{getCategoryLabel(filterCategory)}</Text>
               </TouchableOpacity>
             ) : null}
 
@@ -696,7 +719,7 @@ export default function WeeklyPlannerScreen() {
                 onPress={() => setFilterPriority(null)}
               >
                 <X color="#FFFFFF" size={16} />
-                <Text style={styles.filterButtonTextActive}>{filterPriority}</Text>
+                <Text style={styles.filterButtonTextActive}>{getPriorityLabel(filterPriority)}</Text>
               </TouchableOpacity>
             ) : null}
           </ScrollView>
@@ -708,9 +731,9 @@ export default function WeeklyPlannerScreen() {
           ) : filteredTasks.length === 0 ? (
             <View style={styles.emptyState}>
               <Target color={theme.colors.text.light} size={64} strokeWidth={1.5} />
-              <Text style={[styles.emptyTitle, { color: theme.colors.text.primary }]}>No Tasks Yet</Text>
+              <Text style={[styles.emptyTitle, { color: theme.colors.text.primary }]}>{t('weeklyPlanner.noTasksYet')}</Text>
               <Text style={[styles.emptySubtitle, { color: theme.colors.text.secondary }]}>
-                Start planning your week by adding your first task
+                {t('weeklyPlanner.startPlanning')}
               </Text>
             </View>
           ) : viewMode === "grid" ? (
@@ -747,7 +770,7 @@ export default function WeeklyPlannerScreen() {
                 borderTopColor: modalColors.cardBorder 
               }]}>
                 <View style={styles.modalHeader}>
-                  <Text style={[styles.modalTitle, { color: modalColors.text }]}>{editModalVisible ? "Edit Task" : "Create Task"}</Text>
+                  <Text style={[styles.modalTitle, { color: modalColors.text }]}>{editModalVisible ? t('weeklyPlanner.editTask') : t('weeklyPlanner.createTask')}</Text>
                   <View style={styles.modalHeaderActions}>
                     {keyboardVisible && (
                       <TouchableOpacity onPress={() => Keyboard.dismiss()} style={styles.modernIconButton}>
@@ -761,14 +784,14 @@ export default function WeeklyPlannerScreen() {
                 </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Task Title *</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.taskTitle')} *</Text>
                 <TextInput
                   style={[styles.textInput, { 
                     backgroundColor: modalColors.inputBg, 
                     borderColor: modalColors.inputBorder,
                     color: modalColors.text 
                   }]}
-                  placeholder="e.g., Team meeting"
+                  placeholder={t('weeklyPlanner.taskTitlePlaceholder')}
                   placeholderTextColor={isNightMode ? '#999999' : colors.text.light}
                   value={taskTitle}
                   onChangeText={setTaskTitle}
@@ -777,14 +800,14 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Description</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.description')}</Text>
                 <TextInput
                   style={[styles.textInput, styles.textArea, { 
                     backgroundColor: modalColors.inputBg, 
                     borderColor: modalColors.inputBorder,
                     color: modalColors.text 
                   }]}
-                  placeholder="Describe your task..."
+                  placeholder={t('weeklyPlanner.descriptionPlaceholder')}
                   placeholderTextColor={isNightMode ? '#999999' : colors.text.light}
                   value={taskDescription}
                   onChangeText={setTaskDescription}
@@ -794,7 +817,7 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Day of Week</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.dayOfWeek')}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <View style={styles.dayScroll}>
                     {DAYS_OF_WEEK.map((day, idx) => (
@@ -807,7 +830,7 @@ export default function WeeklyPlannerScreen() {
                         onPress={() => setTaskDayOfWeek(idx)}
                       >
                         <Text style={[styles.dayChipText, { color: taskDayOfWeek === idx ? '#FFFFFF' : modalColors.textSecondary }, taskDayOfWeek === idx && styles.dayChipTextActive]}>
-                          {day.substring(0, 3)}
+                          {getDayLabel(idx).substring(0, 3)}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -816,14 +839,14 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Time Slot (Optional)</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.timeSlot')}</Text>
                 <TextInput
                   style={[styles.textInput, { 
                     backgroundColor: modalColors.inputBg, 
                     borderColor: modalColors.inputBorder,
                     color: modalColors.text 
                   }]}
-                  placeholder="e.g., 10:00 AM - 11:00 AM"
+                  placeholder={t('weeklyPlanner.timeSlotPlaceholder')}
                   placeholderTextColor={isNightMode ? '#999999' : colors.text.light}
                   value={taskTimeSlot}
                   onChangeText={setTaskTimeSlot}
@@ -831,7 +854,7 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Category</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.category')}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <View style={styles.categoryScroll}>
                     {CATEGORIES.map((cat) => (
@@ -844,7 +867,7 @@ export default function WeeklyPlannerScreen() {
                         onPress={() => setTaskCategory(cat)}
                       >
                         <Text style={[styles.categoryChipText, { color: taskCategory === cat ? '#FFFFFF' : modalColors.textSecondary }, taskCategory === cat && styles.categoryChipTextActive]}>
-                          {cat}
+                          {getCategoryLabel(cat)}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -853,7 +876,7 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Priority</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.priority')}</Text>
                 <View style={styles.priorityGrid}>
                   {(Object.keys(PRIORITY_COLORS) as Priority[]).map((pri) => (
                     <TouchableOpacity
@@ -868,7 +891,7 @@ export default function WeeklyPlannerScreen() {
                       onPress={() => setTaskPriority(pri)}
                     >
                       <Text style={[styles.priorityChipText, { color: taskPriority === pri ? '#FFFFFF' : modalColors.textSecondary }, taskPriority === pri && styles.priorityChipTextActive]}>
-                        {pri.charAt(0).toUpperCase() + pri.slice(1)}
+                        {getPriorityLabel(pri)}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -876,7 +899,7 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Status</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.status')}</Text>
                 <View style={styles.statusGrid}>
                   {(Object.keys(STATUS_LABELS) as Status[]).map((stat) => (
                     <TouchableOpacity
@@ -888,7 +911,7 @@ export default function WeeklyPlannerScreen() {
                       onPress={() => setTaskStatus(stat)}
                     >
                       <Text style={[styles.statusChipText, { color: taskStatus === stat ? '#FFFFFF' : modalColors.textSecondary }, taskStatus === stat && styles.statusChipTextActive]}>
-                        {STATUS_LABELS[stat]}
+                        {getStatusLabel(stat)}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -896,7 +919,7 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Progress: {taskProgress}%</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.progress')}: {taskProgress}%</Text>
                 <View style={styles.progressSliderContainer}>
                   <TouchableOpacity
                     style={styles.progressButton}
@@ -919,7 +942,7 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Color</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.color')}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <View style={styles.colorScroll}>
                     {COLOR_SCHEMES[colorScheme].map((color, idx) => (
@@ -936,14 +959,14 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Tags (comma separated)</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.tags')}</Text>
                 <TextInput
                   style={[styles.textInput, { 
                     backgroundColor: modalColors.inputBg, 
                     borderColor: modalColors.inputBorder,
                     color: modalColors.text 
                   }]}
-                  placeholder="e.g., urgent, meeting, review"
+                  placeholder={t('weeklyPlanner.tagsPlaceholder')}
                   placeholderTextColor={isNightMode ? '#999999' : colors.text.light}
                   value={taskTags}
                   onChangeText={setTaskTags}
@@ -951,14 +974,14 @@ export default function WeeklyPlannerScreen() {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>Notes</Text>
+                <Text style={[styles.formLabel, { color: modalColors.labelColor }]}>{t('weeklyPlanner.notes')}</Text>
                 <TextInput
                   style={[styles.textInput, styles.textArea, { 
                     backgroundColor: modalColors.inputBg, 
                     borderColor: modalColors.inputBorder,
                     color: modalColors.text 
                   }]}
-                  placeholder="Additional notes..."
+                  placeholder={t('weeklyPlanner.notesPlaceholder')}
                   placeholderTextColor={isNightMode ? '#999999' : colors.text.light}
                   value={taskNotes}
                   onChangeText={setTaskNotes}
@@ -969,13 +992,13 @@ export default function WeeklyPlannerScreen() {
 
               <View style={styles.formGroup}>
                 <View style={styles.repeatHeader}>
-                  <Text style={styles.formLabel}>Repeat Weekly</Text>
+                  <Text style={styles.formLabel}>{t('weeklyPlanner.repeatWeekly')}</Text>
                   <TouchableOpacity
                     style={[styles.toggleButton, taskRepeatEnabled && styles.toggleButtonActive]}
                     onPress={() => setTaskRepeatEnabled(!taskRepeatEnabled)}
                   >
                     <Text style={[styles.toggleButtonText, taskRepeatEnabled && styles.toggleButtonTextActive]}>
-                      {taskRepeatEnabled ? "ON" : "OFF"}
+                      {taskRepeatEnabled ? t('weeklyPlanner.on') : t('weeklyPlanner.off')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -993,7 +1016,7 @@ export default function WeeklyPlannerScreen() {
                         styles.repeatTypeText,
                         taskRepeatType === "indefinite" && styles.repeatTypeTextActive
                       ]}>
-                        Repeat Indefinitely
+                        {t('weeklyPlanner.repeatIndefinite')}
                       </Text>
                     </TouchableOpacity>
 
@@ -1008,13 +1031,13 @@ export default function WeeklyPlannerScreen() {
                         styles.repeatTypeText,
                         taskRepeatType === "limited" && styles.repeatTypeTextActive
                       ]}>
-                        Repeat for Number of Weeks
+                        {t('weeklyPlanner.repeatLimited')}
                       </Text>
                     </TouchableOpacity>
 
                     {taskRepeatType === "limited" && (
                       <View style={styles.weeksCountContainer}>
-                        <Text style={styles.weeksCountLabel}>Number of Weeks: {taskRepeatWeeks}</Text>
+                        <Text style={styles.weeksCountLabel}>{t('weeklyPlanner.numberOfWeeks')}: {taskRepeatWeeks}</Text>
                         <View style={styles.weeksCountControl}>
                           <TouchableOpacity
                             style={styles.weeksCountButton}
@@ -1041,7 +1064,7 @@ export default function WeeklyPlannerScreen() {
                 onPress={editModalVisible ? handleUpdateTask : handleAddTask}
               >
                 <LinearGradient colors={theme.gradients.primary as any} style={styles.submitButtonGradient}>
-                  <Text style={styles.submitButtonText}>{editModalVisible ? "Update Task" : "Add Task"}</Text>
+                  <Text style={styles.submitButtonText}>{editModalVisible ? t('weeklyPlanner.updateTask') : t('weeklyPlanner.addTask')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
               </View>
@@ -1054,14 +1077,14 @@ export default function WeeklyPlannerScreen() {
         <View style={styles.modalOverlay}>
           <View style={[styles.settingsModal, { backgroundColor: theme.colors.cardBackground }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Settings</Text>
+              <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{t('weeklyPlanner.settings')}</Text>
               <TouchableOpacity onPress={() => setSettingsModalVisible(false)} style={styles.closeButton}>
                 <X color={theme.colors.text.primary} size={24} />
               </TouchableOpacity>
             </View>
 
             <View style={styles.settingsGroup}>
-              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>Color Scheme</Text>
+              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>{t('weeklyPlanner.colorScheme')}</Text>
               <View style={styles.colorSchemeOptions}>
                 {(Object.keys(COLOR_SCHEMES) as ColorScheme[]).map((scheme) => (
                   <TouchableOpacity
@@ -1073,7 +1096,7 @@ export default function WeeklyPlannerScreen() {
                     onPress={() => setColorScheme(scheme)}
                   >
                     <Text style={[styles.colorSchemeText, colorScheme === scheme && { color: "#FFFFFF" }]}>
-                      {scheme.charAt(0).toUpperCase() + scheme.slice(1)}
+                      {getColorSchemeLabel(scheme)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -1081,7 +1104,7 @@ export default function WeeklyPlannerScreen() {
             </View>
 
             <View style={styles.settingsGroup}>
-              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>Filter by Category</Text>
+              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>{t('weeklyPlanner.filterByCategory')}</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.categoryScroll}>
                   <TouchableOpacity
@@ -1089,7 +1112,7 @@ export default function WeeklyPlannerScreen() {
                     onPress={() => setFilterCategory(null)}
                   >
                     <Text style={[styles.categoryChipText, !filterCategory && styles.categoryChipTextActive]}>
-                      All
+                      {t('weeklyPlanner.all')}
                     </Text>
                   </TouchableOpacity>
                   {CATEGORIES.map((cat) => (
@@ -1099,7 +1122,7 @@ export default function WeeklyPlannerScreen() {
                       onPress={() => setFilterCategory(cat)}
                     >
                       <Text style={[styles.categoryChipText, filterCategory === cat && styles.categoryChipTextActive]}>
-                        {cat}
+                        {getCategoryLabel(cat)}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -1108,14 +1131,14 @@ export default function WeeklyPlannerScreen() {
             </View>
 
             <View style={styles.settingsGroup}>
-              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>Filter by Priority</Text>
+              <Text style={[styles.settingsLabel, { color: theme.colors.text.primary }]}>{t('weeklyPlanner.filterByPriority')}</Text>
               <View style={styles.priorityGrid}>
                 <TouchableOpacity
                   style={[styles.priorityChip, !filterPriority && { backgroundColor: theme.colors.primary }]}
                   onPress={() => setFilterPriority(null)}
                 >
                   <Text style={[styles.priorityChipText, !filterPriority && styles.priorityChipTextActive]}>
-                    All
+                    {t('weeklyPlanner.all')}
                   </Text>
                 </TouchableOpacity>
                 {(Object.keys(PRIORITY_COLORS) as Priority[]).map((pri) => (
@@ -1128,7 +1151,7 @@ export default function WeeklyPlannerScreen() {
                     onPress={() => setFilterPriority(pri)}
                   >
                     <Text style={[styles.priorityChipText, filterPriority === pri && styles.priorityChipTextActive]}>
-                      {pri.charAt(0).toUpperCase() + pri.slice(1)}
+                      {getPriorityLabel(pri)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -1139,7 +1162,7 @@ export default function WeeklyPlannerScreen() {
               style={[styles.closeSettingsButton, { backgroundColor: theme.colors.primary }]}
               onPress={() => setSettingsModalVisible(false)}
             >
-              <Text style={styles.closeSettingsButtonText}>Done</Text>
+              <Text style={styles.closeSettingsButtonText}>{t('weeklyPlanner.done')}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -14,11 +14,11 @@ export type TranslationFile = typeof en;
 
 const translations: Record<string, TranslationFile> = {
   en,
-  es,
-  fr,
-  ar,
-  zh,
-  pt,
+  es: es as unknown as TranslationFile,
+  fr: fr as unknown as TranslationFile,
+  ar: ar as unknown as TranslationFile,
+  zh: zh as unknown as TranslationFile,
+  pt: pt as unknown as TranslationFile,
   ja: en,
   he: en,
   ro: en,
