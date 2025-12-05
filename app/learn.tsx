@@ -234,7 +234,7 @@ export default function LearnScreen() {
     const courseCategories: CourseCategory[] = [
       {
         id: "wellness",
-        title: "Wellness & Health",
+        title: "Public Communication",
         icon: "Star" as any,
         color: isNightMode ? "#FFD700" : "#C71585",
         videos: [
