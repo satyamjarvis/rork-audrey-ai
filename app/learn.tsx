@@ -270,7 +270,7 @@ export default function LearnScreen() {
       },
       {
         id: "productivity",
-        title: "Productivity",
+        title: "Manage Your Time For Success",
         icon: "TrendingUp" as any,
         color: isNightMode ? "#00FF87" : "#C71585",
         videos: [
@@ -362,6 +362,11 @@ export default function LearnScreen() {
     if (wellnessCategory && wellnessCategory.title !== 'Public Communication') {
       console.log('Migrating wellness category title to Public Communication');
       updateCategory('wellness', { title: 'Public Communication' });
+    }
+    const productivityCategory = categories.find(c => c.id === 'productivity');
+    if (productivityCategory && productivityCategory.title !== 'Manage Your Time For Success') {
+      console.log('Migrating productivity category title to Manage Your Time For Success');
+      updateCategory('productivity', { title: 'Manage Your Time For Success' });
     }
   }, [categories, isLoading, updateCategory]);
 
