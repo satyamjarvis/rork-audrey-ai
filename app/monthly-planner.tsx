@@ -12,7 +12,6 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Dimensions,
-  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -33,6 +32,7 @@ import {
   Star,
   Flag,
   Repeat,
+  Plus,
 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -42,7 +42,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import colors from "@/constants/colors";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useCalendar } from "@/contexts/CalendarContext";
-import { useUniverseMode } from "@/contexts/UniverseModeContext";
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -120,7 +119,6 @@ export default function MonthlyPlannerScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { addEvent, selectedCalendar } = useCalendar();
-  const { mode: universeMode } = useUniverseMode();
   
   const isNightMode = theme.id === "night-mode";
   const modalColors = isNightMode 
@@ -464,8 +462,6 @@ export default function MonthlyPlannerScreen() {
         selectedMonth === new Date().getMonth() && 
         selectedYear === new Date().getFullYear();
 
-      const showAudreyButton = universeMode === 'classic' && isValidDay && (day === 28 || day === 29);
-
       days.push(
         <View key={i} style={styles.calendarDayWrapper}>
           <TouchableOpacity
@@ -524,31 +520,6 @@ export default function MonthlyPlannerScreen() {
               </>
             )}
           </TouchableOpacity>
-          {showAudreyButton && day === 28 && (
-            <View style={styles.audreyButtonContainer}>
-              <TouchableOpacity
-                style={styles.audreyButtonInCalendar}
-                onPress={() => {
-                  if (Platform.OS !== "web") {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  }
-                  router.push("/ai-assistant");
-                }}
-                activeOpacity={0.8}
-              >
-                <LinearGradient
-                  colors={["#00D9FF", "#00A8CC"]}
-                  style={styles.audreyButtonGradient}
-                >
-                  <Image
-                    source={{ uri: 'https://r2-pub.rork.com/generated-images/5a3f4488-9b7f-42f7-bd4f-cbcf57086ee9.png' }}
-                    style={{ width: 28, height: 28 }}
-                    resizeMode="contain"
-                  />
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
       );
     }
@@ -866,6 +837,19 @@ export default function MonthlyPlannerScreen() {
           )}
         </ScrollView>
       </LinearGradient>
+
+      <TouchableOpacity
+        style={[styles.fab, { bottom: insets.bottom + 24 }]}
+        onPress={openAddModal}
+        activeOpacity={0.85}
+      >
+        <LinearGradient
+          colors={theme.gradients.primary as any}
+          style={styles.fabGradient}
+        >
+          <Plus color="#FFFFFF" size={28} strokeWidth={2.5} />
+        </LinearGradient>
+      </TouchableOpacity>
 
       <Modal visible={addModalVisible || editModalVisible} transparent animationType="slide" onRequestClose={() => { setAddModalVisible(false); setEditModalVisible(false); }}>
         <KeyboardAvoidingView 
@@ -2151,30 +2135,4 @@ const styles = StyleSheet.create({
     color: colors.text.secondary,
     lineHeight: 16,
   },
-  audreyButtonContainer: {
-    position: "absolute" as const,
-    right: -16,
-    top: "50%",
-    transform: [{ translateY: -20 }],
-    zIndex: 100,
-  },
-  audreyButtonInCalendar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    overflow: "hidden" as const,
-    elevation: 6,
-    shadowColor: "#00D9FF",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-  },
-  audreyButtonGradient: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-    borderWidth: 2,
-    borderColor: "#00D9FF",
-  },
-});
+  });
