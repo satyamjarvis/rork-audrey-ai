@@ -44,6 +44,7 @@ import {
 
 import { useTheme } from "@/contexts/ThemeContext";
 import { encrypt, decrypt } from "@/utils/encryption";
+import KeyboardDismissButton from "@/components/KeyboardDismissButton";
 
 const STORAGE_KEY = "@rork_passwords";
 const PIN_KEY = "@rork_password_manager_pin";
@@ -685,9 +686,12 @@ export default function PasswordManagerScreen() {
                     <Text style={[styles.modalTitle, { color: isDark ? "#FFF" : "#000" }]}>
                       Security Settings
                     </Text>
-                    <TouchableOpacity onPress={() => setSettingsModalVisible(false)}>
-                       <Text style={{ color: theme.colors.primary, fontSize: 16 }}>Done</Text>
-                    </TouchableOpacity>
+                    <View style={styles.modalHeaderActions}>
+                       <KeyboardDismissButton isDark={isDark} />
+                       <TouchableOpacity onPress={() => setSettingsModalVisible(false)}>
+                          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>Done</Text>
+                       </TouchableOpacity>
+                    </View>
                  </View>
 
                  <View style={styles.settingsContainer}>
@@ -745,9 +749,12 @@ export default function PasswordManagerScreen() {
                     <Text style={[styles.modalTitle, { color: isDark ? "#FFF" : "#000" }]}>
                       {editingPassword ? "Edit Password" : "New Password"}
                     </Text>
-                    <TouchableOpacity onPress={() => setEditModalVisible(false)}>
-                       <Text style={{ color: theme.colors.primary, fontSize: 16 }}>Cancel</Text>
-                    </TouchableOpacity>
+                    <View style={styles.modalHeaderActions}>
+                       <KeyboardDismissButton isDark={isDark} />
+                       <TouchableOpacity onPress={() => setEditModalVisible(false)}>
+                          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>Cancel</Text>
+                       </TouchableOpacity>
+                    </View>
                  </View>
 
                  <ScrollView>
@@ -1081,6 +1088,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between" as const,
     alignItems: "center" as const,
     marginBottom: 24,
+  },
+  modalHeaderActions: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 8,
   },
   modalTitle: {
     fontSize: 20,
