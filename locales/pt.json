@@ -755,5 +755,19 @@
       "vibrant": "Vibrante",
       "monochrome": "Monocromático"
     }
+  },
+  "appTour": {
+    "title": "Tour do App",
+    "experienceJourney": "Experimente a jornada de Audrey",
+    "videoTour": "Tour em Vídeo",
+    "watchStory": "Assista à história de como você encontrou Audrey",
+    "playVideo": "Reproduzir Vídeo",
+    "audreySong": "Canção de Audrey",
+    "listenMelody": "Ouça uma bela melodia criada para você",
+    "listenNow": "Ouvir Agora",
+    "lostOverwhelmed": "Perdido e Sobrecarregado...",
+    "thenFoundAudrey": "Então você encontrou Audrey",
+    "showingTheWay": "Mostrando o caminho",
+    "readyForJourney": "Pronto para sua jornada!"
   }
 }

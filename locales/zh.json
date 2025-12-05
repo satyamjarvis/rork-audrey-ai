@@ -755,5 +755,19 @@
       "vibrant": "鲜艳",
       "monochrome": "单色"
     }
+  },
+  "appTour": {
+    "title": "应用导览",
+    "experienceJourney": "体验 Audrey 的旅程",
+    "videoTour": "视频导览",
+    "watchStory": "观看你如何找到 Audrey 的故事",
+    "playVideo": "播放视频",
+    "audreySong": "Audrey 之歌",
+    "listenMelody": "聆听为你创作的优美旋律",
+    "listenNow": "立即聆听",
+    "lostOverwhelmed": "迷失与不知所措...",
+    "thenFoundAudrey": "然后你找到了 Audrey",
+    "showingTheWay": "为你指引方向",
+    "readyForJourney": "准备好开始你的旅程！"
   }
 }

@@ -755,5 +755,19 @@
       "vibrant": "نابض",
       "monochrome": "أحادي اللون"
     }
+  },
+  "appTour": {
+    "title": "جولة في التطبيق",
+    "experienceJourney": "جرب رحلة أودري",
+    "videoTour": "جولة بالفيديو",
+    "watchStory": "شاهد قصة كيف وجدت أودري",
+    "playVideo": "تشغيل الفيديو",
+    "audreySong": "أغنية أودري",
+    "listenMelody": "استمع إلى لحن جميل صُمم لك",
+    "listenNow": "استمع الآن",
+    "lostOverwhelmed": "ضائع ومثقل...",
+    "thenFoundAudrey": "ثم وجدت أودري",
+    "showingTheWay": "تدلك على الطريق",
+    "readyForJourney": "جاهز لرحلتك!"
   }
 }

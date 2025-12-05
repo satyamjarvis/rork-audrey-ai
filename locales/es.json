@@ -906,5 +906,19 @@
         "lifestyleV2Desc": "Encuentra armonía entre el trabajo y la vida"
       }
     }
+  },
+  "appTour": {
+    "title": "Tour de la App",
+    "experienceJourney": "Experimenta el viaje de Audrey",
+    "videoTour": "Video Tour",
+    "watchStory": "Mira la historia de cómo encontraste a Audrey",
+    "playVideo": "Reproducir Video",
+    "audreySong": "Canción de Audrey",
+    "listenMelody": "Escucha una hermosa melodía creada para ti",
+    "listenNow": "Escuchar Ahora",
+    "lostOverwhelmed": "Perdido y Abrumado...",
+    "thenFoundAudrey": "Entonces encontraste a Audrey",
+    "showingTheWay": "Mostrándote el camino",
+    "readyForJourney": "¡Listo para tu viaje!"
   }
 }

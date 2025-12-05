@@ -803,5 +803,19 @@
       "vibrant": "Vibrant",
       "monochrome": "Monochrome"
     }
+  },
+  "appTour": {
+    "title": "Visite de l'application",
+    "experienceJourney": "Découvrez le parcours d'Audrey",
+    "videoTour": "Visite Vidéo",
+    "watchStory": "Regardez l'histoire de votre rencontre avec Audrey",
+    "playVideo": "Lire la vidéo",
+    "audreySong": "Chanson d'Audrey",
+    "listenMelody": "Écoutez une belle mélodie créée pour vous",
+    "listenNow": "Écouter maintenant",
+    "lostOverwhelmed": "Perdu et dépassé...",
+    "thenFoundAudrey": "Puis vous avez trouvé Audrey",
+    "showingTheWay": "Vous montrant le chemin",
+    "readyForJourney": "Prêt pour votre voyage !"
   }
 }
