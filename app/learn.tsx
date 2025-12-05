@@ -297,7 +297,7 @@ export default function LearnScreen() {
       },
       {
         id: "mindfulness",
-        title: "Mindfulness",
+        title: "Becoming Extraordinary",
         icon: "Brain" as any,
         color: isNightMode ? "#FF1493" : "#C71585",
         videos: [
@@ -367,6 +367,11 @@ export default function LearnScreen() {
     if (productivityCategory && productivityCategory.title !== 'Manage Your Time For Success') {
       console.log('Migrating productivity category title to Manage Your Time For Success');
       updateCategory('productivity', { title: 'Manage Your Time For Success' });
+    }
+    const mindfulnessCategory = categories.find(c => c.id === 'mindfulness');
+    if (mindfulnessCategory && mindfulnessCategory.title !== 'Becoming Extraordinary') {
+      console.log('Migrating mindfulness category title to Becoming Extraordinary');
+      updateCategory('mindfulness', { title: 'Becoming Extraordinary' });
     }
   }, [categories, isLoading, updateCategory]);
 
