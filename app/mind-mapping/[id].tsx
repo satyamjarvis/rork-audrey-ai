@@ -43,6 +43,7 @@ import { useMindMap, MindMap, Node, Edge } from '@/contexts/MindMapContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useChat } from '@/contexts/ChatContext';
 import { useCalendar } from '@/contexts/CalendarContext';
+import KeyboardDismissButton from '@/components/KeyboardDismissButton';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -842,12 +843,15 @@ export default function MindMapEditor() {
                multiline
              />
              <View style={styles.modalActions}>
-               <TouchableOpacity onPress={() => setIsEditModalVisible(false)} style={styles.modalButton}>
-                 <Text style={{ color: theme.colors.text.secondary }}>Cancel</Text>
-               </TouchableOpacity>
-               <TouchableOpacity onPress={saveNodeText} style={[styles.modalButton, { backgroundColor: theme.colors.primary }]}>
-                 <Text style={{ color: "#FFF", fontWeight: "600" as const }}>Save</Text>
-               </TouchableOpacity>
+               <KeyboardDismissButton isDark={isNightMode} />
+               <View style={styles.modalButtonsRow}>
+                 <TouchableOpacity onPress={() => setIsEditModalVisible(false)} style={styles.modalButton}>
+                   <Text style={{ color: theme.colors.text.secondary }}>Cancel</Text>
+                 </TouchableOpacity>
+                 <TouchableOpacity onPress={saveNodeText} style={[styles.modalButton, { backgroundColor: theme.colors.primary }]}>
+                   <Text style={{ color: "#FFF", fontWeight: "600" as const }}>Save</Text>
+                 </TouchableOpacity>
+               </View>
              </View>
            </View>
         </View>
@@ -1373,9 +1377,13 @@ const styles = StyleSheet.create({
   },
   modalActions: {
     flexDirection: 'row',
-    gap: 16,
+    alignItems: 'center',
+    justifyContent: 'space-between',
     width: '100%',
-    justifyContent: 'flex-end',
+  },
+  modalButtonsRow: {
+    flexDirection: 'row',
+    gap: 16,
   },
   modalButton: {
     paddingVertical: 12,
