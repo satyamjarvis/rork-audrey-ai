@@ -26,6 +26,7 @@ export type RoutineStep = {
   order: number;
   completed: boolean;
   isCustom: boolean;
+  translationKey?: string;
 };
 
 const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
@@ -38,6 +39,7 @@ const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
     order: 0,
     completed: false,
     isCustom: false,
+    translationKey: "morning.routines.steps.wake_up",
   },
   {
     id: "hydrate",
@@ -48,6 +50,7 @@ const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
     order: 1,
     completed: false,
     isCustom: false,
+    translationKey: "morning.routines.steps.hydrate",
   },
   {
     id: "morning_routine",
@@ -58,6 +61,7 @@ const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
     order: 2,
     completed: false,
     isCustom: false,
+    translationKey: "morning.routines.steps.morning_routine",
   },
   {
     id: "get_dressed",
@@ -68,6 +72,7 @@ const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
     order: 3,
     completed: false,
     isCustom: false,
+    translationKey: "morning.routines.steps.get_dressed",
   },
   {
     id: "meditation",
@@ -78,6 +83,7 @@ const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
     order: 4,
     completed: false,
     isCustom: false,
+    translationKey: "morning.routines.steps.meditation",
   },
   {
     id: "exercise",
@@ -88,6 +94,7 @@ const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
     order: 5,
     completed: false,
     isCustom: false,
+    translationKey: "morning.routines.steps.exercise",
   },
   {
     id: "breakfast",
@@ -98,6 +105,7 @@ const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
     order: 6,
     completed: false,
     isCustom: false,
+    translationKey: "morning.routines.steps.breakfast",
   },
   {
     id: "coffee",
@@ -108,6 +116,7 @@ const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
     order: 7,
     completed: false,
     isCustom: false,
+    translationKey: "morning.routines.steps.coffee",
   },
   {
     id: "reading",
@@ -118,6 +127,7 @@ const DEFAULT_ROUTINE_STEPS: RoutineStep[] = [
     order: 8,
     completed: false,
     isCustom: false,
+    translationKey: "morning.routines.steps.reading",
   },
 ];
 

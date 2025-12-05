@@ -279,6 +279,46 @@
         "5": "The sun is new each day, and so are you.",
         "6": "Your morning routine shapes your entire day."
       }
+    },
+    "routines": {
+      "steps": {
+        "wake_up": {
+          "title": "Wake Up & Stretch",
+          "description": "Start your day with gentle stretches"
+        },
+        "hydrate": {
+          "title": "Drink Water",
+          "description": "Hydrate with a glass of water"
+        },
+        "morning_routine": {
+          "title": "Morning Hygiene",
+          "description": "Brush teeth, wash face, shower"
+        },
+        "get_dressed": {
+          "title": "Get Dressed",
+          "description": "Choose and wear your outfit"
+        },
+        "meditation": {
+          "title": "Meditation",
+          "description": "5 minutes of mindfulness"
+        },
+        "exercise": {
+          "title": "Exercise",
+          "description": "Quick workout or yoga session"
+        },
+        "breakfast": {
+          "title": "Healthy Breakfast",
+          "description": "Prepare and eat a nutritious meal"
+        },
+        "coffee": {
+          "title": "Morning Beverage",
+          "description": "Enjoy coffee or tea"
+        },
+        "reading": {
+          "title": "Read or Plan",
+          "description": "Review goals or read inspiring content"
+        }
+      }
     }
   },
   "night": {

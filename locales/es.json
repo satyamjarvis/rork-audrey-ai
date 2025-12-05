@@ -140,6 +140,46 @@
     "goalPlaceholder": "ej., Fondo de Emergencia"
   },
   "morning": {
+    "routines": {
+      "steps": {
+        "wake_up": {
+          "title": "Despertar y Estirar",
+          "description": "Comienza tu día con estiramientos suaves"
+        },
+        "hydrate": {
+          "title": "Beber Agua",
+          "description": "Hidrátate con un vaso de agua"
+        },
+        "morning_routine": {
+          "title": "Higiene Matutina",
+          "description": "Cepillar dientes, lavar cara, ducharse"
+        },
+        "get_dressed": {
+          "title": "Vestirse",
+          "description": "Elige y ponte tu atuendo"
+        },
+        "meditation": {
+          "title": "Meditación",
+          "description": "5 minutos de atención plena"
+        },
+        "exercise": {
+          "title": "Ejercicio",
+          "description": "Entrenamiento rápido o sesión de yoga"
+        },
+        "breakfast": {
+          "title": "Desayuno Saludable",
+          "description": "Prepara y come una comida nutritiva"
+        },
+        "coffee": {
+          "title": "Bebida Matutina",
+          "description": "Disfruta de un café o té"
+        },
+        "reading": {
+          "title": "Leer o Planificar",
+          "description": "Revisar metas o leer contenido inspirador"
+        }
+      }
+    },
     "riseAndShine": "Levántate y Brilla",
     "goodMorning": "Buenos Días",
     "seizeTheDay": "Aprovecha el Día",

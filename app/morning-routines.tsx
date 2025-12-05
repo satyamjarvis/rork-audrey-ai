@@ -232,7 +232,7 @@ export default function MorningRoutinesScreen() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString([], {
       hour: "numeric",
       minute: "2-digit",
     });
@@ -531,6 +531,12 @@ export default function MorningRoutinesScreen() {
             <View style={styles.stepsContainer}>
               {routineSteps.map((step, index) => {
                 const Icon = getIconComponent(step.icon);
+                const stepTitle = step.translationKey 
+                  ? translate(`${step.translationKey}.title`) 
+                  : step.title;
+                const stepDescription = step.translationKey 
+                  ? translate(`${step.translationKey}.description`) 
+                  : step.description;
 
                 return (
                   <Animated.View key={step.id} style={styles.stepCard}>
@@ -561,10 +567,10 @@ export default function MorningRoutinesScreen() {
                                 step.completed && styles.stepTitleCompleted,
                               ]}
                             >
-                              {step.title}
+                              {stepTitle}
                             </Text>
                             <Text style={styles.stepDescription}>
-                              {step.description}
+                              {stepDescription}
                             </Text>
                             <View style={styles.stepMeta}>
                               <Clock color="#8B6914" size={14} strokeWidth={2} />
@@ -629,10 +635,10 @@ export default function MorningRoutinesScreen() {
                                 step.completed && styles.stepTitleCompleted,
                               ]}
                             >
-                              {step.title}
+                              {stepTitle}
                             </Text>
                             <Text style={styles.stepDescription}>
-                              {step.description}
+                              {stepDescription}
                             </Text>
                             <View style={styles.stepMeta}>
                               <Clock color="#8B6914" size={14} strokeWidth={2} />
