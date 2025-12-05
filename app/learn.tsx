@@ -59,7 +59,7 @@ export default function LearnScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { mode: universeMode } = useUniverseMode();
-  const { categories, initializeDefaultCategories, updateVideo, addVideo, isLoading } = useLearn();
+  const { categories, initializeDefaultCategories, updateVideo, addVideo, isLoading, updateCategory } = useLearn();
   const [hasSubscription] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<CourseCategory | null>(null);
@@ -353,6 +353,17 @@ export default function LearnScreen() {
 
     initializeDefaultCategories(courseCategories);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Update category titles if they don't match (migration)
+  useEffect(() => {
+    if (isLoading) return;
+    
+    const wellnessCategory = categories.find(c => c.id === 'wellness');
+    if (wellnessCategory && wellnessCategory.title !== 'Public Communication') {
+      console.log('Migrating wellness category title to Public Communication');
+      updateCategory('wellness', { title: 'Public Communication' });
+    }
+  }, [categories, isLoading, updateCategory]);
 
   const handleVideoPress = (video: VideoItem) => {
     if (Platform.OS !== "web") {
