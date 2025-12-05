@@ -279,6 +279,84 @@
       "quote4": "أيقظ إمكاناتك، احتضن اليوم.",
       "quote5": "ضوء الصباح يجلب إمكانيات لا نهائية.",
       "quote6": "أشع إيجابية، أنر العالم."
+    },
+    "routinesPage": {
+      "title": "الروتين الصباحي",
+      "todaysInspiration": "إلهام اليوم",
+      "yourMorningFlow": "تدفقك الصباحي",
+      "stepsCompleted": "خطوات مكتملة",
+      "addStep": "إضافة خطوة",
+      "createYourMorningRoutine": "أنشئ روتينك الصباحي",
+      "tapAddStepToBegin": "اضغط على \"إضافة خطوة\" للبدء",
+      "perfectMorning": "صباح مثالي!",
+      "completedEntireRoutine": "لقد أكملت روتينك بالكامل",
+      "startDayWithIntention": "ابدأ يومك بنية وطاقة",
+      "loading": "جاري التحميل...",
+      "min": "دقيقة",
+      "addRoutineStep": "إضافة خطوة روتين",
+      "editRoutineStep": "تحرير خطوة الروتين",
+      "stepName": "اسم الخطوة",
+      "stepNamePlaceholder": "مثال: يوجا الصباح",
+      "descriptionLabel": "الوصف",
+      "descriptionPlaceholder": "وصف موجز لهذه الخطوة",
+      "durationLabel": "المدة (بالدقائق)",
+      "durationPlaceholder": "5",
+      "chooseIcon": "اختر أيقونة",
+      "cancel": "إلغاء",
+      "saveChanges": "حفظ التغييرات",
+      "deleteStep": "حذف الخطوة",
+      "deleteStepConfirmation": "هل أنت متأكد من أنك تريد حذف هذه الخطوة من الروتين؟",
+      "error": "خطأ",
+      "enterStepName": "الرجاء إدخال اسم الخطوة",
+      "enterValidDuration": "الرجاء إدخال مدة صالحة",
+      "quotes": {
+        "1": "كل صباح هو بداية جديدة. اجعلها مهمة.",
+        "2": "انهض، ابدأ من جديد، انظر إلى الفرصة المشرقة في كل يوم.",
+        "3": "الصباح هو عندما أكون مستيقظًا وهناك فجر بداخلي.",
+        "4": "كل صباح يجلب إمكانات جديدة، احتضنها بفرح.",
+        "5": "الشمس جديدة كل يوم، وأنت كذلك.",
+        "6": "روتينك الصباحي يشكل يومك بأكمله."
+      }
+    },
+    "routines": {
+      "steps": {
+        "wake_up": {
+          "title": "الاستيقاظ والتمدد",
+          "description": "ابدأ يومك بتمارين تمدد لطيفة"
+        },
+        "hydrate": {
+          "title": "شرب الماء",
+          "description": "ترطيب بكوب من الماء"
+        },
+        "morning_routine": {
+          "title": "النظافة الصباحية",
+          "description": "تنظيف الأسنان، غسل الوجه، الاستحمام"
+        },
+        "get_dressed": {
+          "title": "ارتداء الملابس",
+          "description": "اختر وارتدِ ملابسك"
+        },
+        "meditation": {
+          "title": "التأمل",
+          "description": "5 دقائق من اليقظة الذهنية"
+        },
+        "exercise": {
+          "title": "التمرين",
+          "description": "تمرين سريع أو جلسة يوجا"
+        },
+        "breakfast": {
+          "title": "فطور صحي",
+          "description": "قم بإعداد وتناول وجبة مغذية"
+        },
+        "coffee": {
+          "title": "مشروب الصباح",
+          "description": "استمتع بالقهوة أو الشاي"
+        },
+        "reading": {
+          "title": "القراءة أو التخطيط",
+          "description": "راجع الأهداف أو اقرأ محتوى ملهم"
+        }
+      }
     }
   },
   "night": {

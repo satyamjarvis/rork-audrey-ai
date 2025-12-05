@@ -279,6 +279,84 @@
       "quote4": "Éveillez votre potentiel, embrassez la journée.",
       "quote5": "La lumière du matin apporte des possibilités infinies.",
       "quote6": "Rayonnez de positivité, illuminez le monde."
+    },
+    "routinesPage": {
+      "title": "Routines Matinales",
+      "todaysInspiration": "Inspiration du Jour",
+      "yourMorningFlow": "Votre Flux Matinal",
+      "stepsCompleted": "étapes terminées",
+      "addStep": "Ajouter une Étape",
+      "createYourMorningRoutine": "Créez votre routine matinale",
+      "tapAddStepToBegin": "Appuyez sur \"Ajouter une Étape\" pour commencer",
+      "perfectMorning": "Matinée Parfaite!",
+      "completedEntireRoutine": "Vous avez terminé toute votre routine",
+      "startDayWithIntention": "Commencez votre journée avec intention et énergie",
+      "loading": "Chargement...",
+      "min": "min",
+      "addRoutineStep": "Ajouter une Étape de Routine",
+      "editRoutineStep": "Modifier l'Étape de Routine",
+      "stepName": "Nom de l'Étape",
+      "stepNamePlaceholder": "ex., Yoga Matinal",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Brève description de cette étape",
+      "durationLabel": "Durée (minutes)",
+      "durationPlaceholder": "5",
+      "chooseIcon": "Choisir une Icône",
+      "cancel": "Annuler",
+      "saveChanges": "Enregistrer les Modifications",
+      "deleteStep": "Supprimer l'Étape",
+      "deleteStepConfirmation": "Êtes-vous sûr de vouloir supprimer cette étape de routine?",
+      "error": "Erreur",
+      "enterStepName": "Veuillez entrer un nom d'étape",
+      "enterValidDuration": "Veuillez entrer une durée valide",
+      "quotes": {
+        "1": "Chaque matin est un nouveau départ. Faites-en compter.",
+        "2": "Levez-vous, recommencez, voyez l'opportunité brillante dans chaque jour.",
+        "3": "Le matin est quand je suis éveillé et qu'il y a une aube en moi.",
+        "4": "Chaque matin apporte un nouveau potentiel, embrassez-le avec joie.",
+        "5": "Le soleil est nouveau chaque jour, et vous aussi.",
+        "6": "Votre routine matinale façonne toute votre journée."
+      }
+    },
+    "routines": {
+      "steps": {
+        "wake_up": {
+          "title": "Se Réveiller et S'Étirer",
+          "description": "Commencez votre journée avec des étirements doux"
+        },
+        "hydrate": {
+          "title": "Boire de l'Eau",
+          "description": "Hydratez-vous avec un verre d'eau"
+        },
+        "morning_routine": {
+          "title": "Hygiène Matinale",
+          "description": "Se brosser les dents, se laver le visage, douche"
+        },
+        "get_dressed": {
+          "title": "S'Habiller",
+          "description": "Choisissez et portez votre tenue"
+        },
+        "meditation": {
+          "title": "Méditation",
+          "description": "5 minutes de pleine conscience"
+        },
+        "exercise": {
+          "title": "Exercice",
+          "description": "Séance d'entraînement rapide ou yoga"
+        },
+        "breakfast": {
+          "title": "Petit Déjeuner Sain",
+          "description": "Préparez et mangez un repas nutritif"
+        },
+        "coffee": {
+          "title": "Boisson Matinale",
+          "description": "Profitez d'un café ou d'un thé"
+        },
+        "reading": {
+          "title": "Lire ou Planifier",
+          "description": "Révisez les objectifs ou lisez du contenu inspirant"
+        }
+      }
     }
   },
   "night": {

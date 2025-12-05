@@ -319,6 +319,84 @@
       "quote4": "Despierta tu potencial, abraza el día.",
       "quote5": "La luz de la mañana trae infinitas posibilidades.",
       "quote6": "Irradia positividad, ilumina el mundo."
+    },
+    "routinesPage": {
+      "title": "Rutinas Matutinas",
+      "todaysInspiration": "Inspiración de Hoy",
+      "yourMorningFlow": "Tu Flujo Matutino",
+      "stepsCompleted": "pasos completados",
+      "addStep": "Agregar Paso",
+      "createYourMorningRoutine": "Crea tu rutina matutina",
+      "tapAddStepToBegin": "Toca \"Agregar Paso\" para comenzar",
+      "perfectMorning": "¡Mañana Perfecta!",
+      "completedEntireRoutine": "Has completado toda tu rutina",
+      "startDayWithIntention": "Comienza tu día con intención y energía",
+      "loading": "Cargando...",
+      "min": "min",
+      "addRoutineStep": "Agregar Paso de Rutina",
+      "editRoutineStep": "Editar Paso de Rutina",
+      "stepName": "Nombre del Paso",
+      "stepNamePlaceholder": "ej., Yoga Matutino",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Breve descripción de este paso",
+      "durationLabel": "Duración (minutos)",
+      "durationPlaceholder": "5",
+      "chooseIcon": "Elegir Icono",
+      "cancel": "Cancelar",
+      "saveChanges": "Guardar Cambios",
+      "deleteStep": "Eliminar Paso",
+      "deleteStepConfirmation": "¿Estás seguro de que quieres eliminar este paso de la rutina?",
+      "error": "Error",
+      "enterStepName": "Por favor ingresa un nombre del paso",
+      "enterValidDuration": "Por favor ingresa una duración válida",
+      "quotes": {
+        "1": "Cada mañana es un nuevo comienzo. Hazlo valer.",
+        "2": "Levántate, comienza de nuevo, ve la brillante oportunidad en cada día.",
+        "3": "La mañana es cuando estoy despierto y hay un amanecer en mí.",
+        "4": "Cada mañana trae nuevo potencial, abrázalo con alegría.",
+        "5": "El sol es nuevo cada día, y tú también.",
+        "6": "Tu rutina matutina da forma a todo tu día."
+      }
+    },
+    "routines": {
+      "steps": {
+        "wake_up": {
+          "title": "Despertar y Estirar",
+          "description": "Comienza tu día con estiramientos suaves"
+        },
+        "hydrate": {
+          "title": "Beber Agua",
+          "description": "Hidrátate con un vaso de agua"
+        },
+        "morning_routine": {
+          "title": "Higiene Matutina",
+          "description": "Cepillar dientes, lavar cara, ducha"
+        },
+        "get_dressed": {
+          "title": "Vestirse",
+          "description": "Elige y ponte tu atuendo"
+        },
+        "meditation": {
+          "title": "Meditación",
+          "description": "5 minutos de atención plena"
+        },
+        "exercise": {
+          "title": "Ejercicio",
+          "description": "Entrenamiento rápido o sesión de yoga"
+        },
+        "breakfast": {
+          "title": "Desayuno Saludable",
+          "description": "Prepara y come una comida nutritiva"
+        },
+        "coffee": {
+          "title": "Bebida Matutina",
+          "description": "Disfruta de café o té"
+        },
+        "reading": {
+          "title": "Leer o Planear",
+          "description": "Revisa metas o lee contenido inspirador"
+        }
+      }
     }
   },
   "night": {
