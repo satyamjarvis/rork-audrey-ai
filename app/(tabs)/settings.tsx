@@ -34,7 +34,7 @@ import { router } from "expo-router";
 
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage, useTranslation, Language as LanguageType } from "@/contexts/LanguageContext";
-import { useAudioStyle, AudioStyle, AUDIO_STYLES } from "@/contexts/AudioStyleContext";
+import { useAudioStyle, AudioStyle, AUDIO_STYLES, AudioStyleOption } from "@/contexts/AudioStyleContext";
 import { useMusicPlayer } from "@/contexts/MusicPlayerContext";
 import { useCalendar } from "@/contexts/CalendarContext";
 import { useAppBackground } from "@/contexts/AppBackgroundContext";
@@ -225,6 +225,31 @@ export default function SettingsScreen() {
 
   const currentLanguage = languages.find(lang => lang.code === language);
 
+  const getAudioStyleTranslationKey = (styleId: AudioStyle): string => {
+    const keyMap: Record<AudioStyle, string> = {
+      'hz-frequencies': 'hzFrequencies',
+      'christmas': 'christmas',
+      'halloween': 'halloween',
+      'morning': 'morning',
+      'piano-electronic': 'pianoElectronic',
+      'night-time': 'nightTime',
+      'rain-relaxing': 'rainRelaxing',
+      'country': 'country',
+      'relaxing': 'relaxing',
+    };
+    return keyMap[styleId] || styleId;
+  };
+
+  const getTranslatedStyleName = (style: AudioStyleOption): string => {
+    const key = getAudioStyleTranslationKey(style.id);
+    return t(`audioStyles.${key}.name`) || style.name;
+  };
+
+  const getTranslatedStyleDescription = (style: AudioStyleOption): string => {
+    const key = getAudioStyleTranslationKey(style.id);
+    return t(`audioStyles.${key}.description`) || style.description;
+  };
+
 
 
   if (selectedStyleForTracks) {
@@ -237,7 +262,7 @@ export default function SettingsScreen() {
             <View style={styles.headerContent}>
               <Music2 color={theme.colors.primary} size={32} strokeWidth={2.5} />
               <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-                {AUDIO_STYLES.find(s => s.id === selectedStyleForTracks)?.name} {t('settings.tracks') || 'Tracks'}
+                {getTranslatedStyleName(AUDIO_STYLES.find(s => s.id === selectedStyleForTracks) || AUDIO_STYLES[0])} {t('settings.tracks')}
               </Text>
             </View>
             <Text style={[styles.headerSubtitle, { color: theme.colors.text.secondary }]}>
@@ -282,7 +307,7 @@ export default function SettingsScreen() {
                           {trackName}
                         </Text>
                         <Text style={[styles.audioStyleDescription, { color: theme.colors.text.secondary }]}>
-                          Track {index + 1} of {tracks.length}
+                          {t('audioStyles.trackOf')?.replace('{current}', String(index + 1)).replace('{total}', String(tracks.length)) || `Track ${index + 1} of ${tracks.length}`}
                         </Text>
                       </View>
                     </TouchableOpacity>
@@ -293,7 +318,7 @@ export default function SettingsScreen() {
               <View style={[styles.emptyTracksCard, { backgroundColor: theme.colors.cardBackground, borderColor: theme.colors.border }]}>
                 <Music2 color={theme.colors.text.light} size={48} strokeWidth={1.5} />
                 <Text style={[styles.emptyTracksText, { color: theme.colors.text.secondary }]}>
-                  No tracks available for this style yet
+                  {t('audioStyles.noTracksAvailable')}
                 </Text>
               </View>
             )}
@@ -362,7 +387,7 @@ export default function SettingsScreen() {
                     <View style={styles.audioStyleCardInfo}>
                       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Text style={[styles.audioStyleName, { color: theme.colors.text.primary }]}>
-                          {style.name}
+                          {getTranslatedStyleName(style)}
                         </Text>
                         <TouchableOpacity
                           onPress={(e) => {
@@ -377,7 +402,7 @@ export default function SettingsScreen() {
                         </TouchableOpacity>
                       </View>
                       <Text style={[styles.audioStyleDescription, { color: theme.colors.text.secondary }]}>
-                        {style.description}
+                        {getTranslatedStyleDescription(style)}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -1100,7 +1125,7 @@ export default function SettingsScreen() {
                 <View style={styles.settingTextContainer}>
                   <Text style={[styles.settingText, { color: theme.colors.text.primary }]}>{t('settings.audioStyle')}</Text>
                   <Text style={[styles.settingSubtext, { color: theme.colors.text.secondary }]}>
-                    {currentStyleData.name}
+                    {getTranslatedStyleName(currentStyleData)}
                   </Text>
                 </View>
               </View>

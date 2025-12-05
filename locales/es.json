@@ -764,6 +764,46 @@
     "notificationSound": "Sonido de Notificación",
     "plannersNotification": "Notificación de Planificadores"
   },
+  "audioStyles": {
+    "hzFrequencies": {
+      "name": "Frecuencias Hz",
+      "description": "Ritmos binaurales y sanación por frecuencia"
+    },
+    "christmas": {
+      "name": "Música Navideña",
+      "description": "Música festiva de las fiestas"
+    },
+    "halloween": {
+      "name": "Música de Halloween",
+      "description": "Sonidos atmosféricos espeluznantes"
+    },
+    "morning": {
+      "name": "Música Matutina",
+      "description": "Melodías matutinas edificantes"
+    },
+    "pianoElectronic": {
+      "name": "Piano Electrónico",
+      "description": "Música moderna de piano electrónico"
+    },
+    "nightTime": {
+      "name": "Música Nocturna",
+      "description": "Melodías relajantes de la noche"
+    },
+    "rainRelaxing": {
+      "name": "Música de Lluvia Relajante",
+      "description": "Sonidos relajantes de lluvia y ambiente"
+    },
+    "country": {
+      "name": "Música Country",
+      "description": "Ambiente country clásico"
+    },
+    "relaxing": {
+      "name": "Música Relajante",
+      "description": "Música pacífica y calmante"
+    },
+    "noTracksAvailable": "Aún no hay pistas disponibles para este estilo",
+    "trackOf": "Pista {current} de {total}"
+  },
   "learn": {
     "title": "Aprender y Crecer",
     "subtitle": "Expande tu mente con cursos guiados por expertos",

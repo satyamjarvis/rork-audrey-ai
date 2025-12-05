@@ -948,6 +948,46 @@
         "message": "Are you sure you want to delete \"{name}\"?"
     }
   },
+  "audioStyles": {
+    "hzFrequencies": {
+      "name": "Hz Frequencies",
+      "description": "Binaural beats and frequency healing"
+    },
+    "christmas": {
+      "name": "Christmas Music",
+      "description": "Festive holiday music"
+    },
+    "halloween": {
+      "name": "Halloween Music",
+      "description": "Spooky atmospheric sounds"
+    },
+    "morning": {
+      "name": "Morning Music",
+      "description": "Uplifting morning tunes"
+    },
+    "pianoElectronic": {
+      "name": "Piano Electronic",
+      "description": "Modern electronic piano music"
+    },
+    "nightTime": {
+      "name": "Night Time Music",
+      "description": "Calming evening melodies"
+    },
+    "rainRelaxing": {
+      "name": "Rain Relaxing Music",
+      "description": "Soothing rain and ambient sounds"
+    },
+    "country": {
+      "name": "Country Music",
+      "description": "Classic country vibes"
+    },
+    "relaxing": {
+      "name": "Relaxing Music",
+      "description": "Peaceful and calming music"
+    },
+    "noTracksAvailable": "No tracks available for this style yet",
+    "trackOf": "Track {current} of {total}"
+  },
   "learn": {
     "title": "Learn & Grow",
     "subtitle": "Expand your mind with expert-led courses",

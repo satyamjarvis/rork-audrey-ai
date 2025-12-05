@@ -667,6 +667,46 @@
       "message": "Êtes-vous sûr de vouloir supprimer \"{name}\" ?"
     }
   },
+  "audioStyles": {
+    "hzFrequencies": {
+      "name": "Fréquences Hz",
+      "description": "Battements binauraux et guérison par fréquence"
+    },
+    "christmas": {
+      "name": "Musique de Noël",
+      "description": "Musique festive des fêtes"
+    },
+    "halloween": {
+      "name": "Musique d'Halloween",
+      "description": "Sons atmosphériques effrayants"
+    },
+    "morning": {
+      "name": "Musique du Matin",
+      "description": "Mélodies matinales stimulantes"
+    },
+    "pianoElectronic": {
+      "name": "Piano Électronique",
+      "description": "Musique moderne de piano électronique"
+    },
+    "nightTime": {
+      "name": "Musique de Nuit",
+      "description": "Mélodies apaisantes du soir"
+    },
+    "rainRelaxing": {
+      "name": "Musique de Pluie Relaxante",
+      "description": "Sons de pluie et ambiance apaisants"
+    },
+    "country": {
+      "name": "Musique Country",
+      "description": "Ambiance country classique"
+    },
+    "relaxing": {
+      "name": "Musique Relaxante",
+      "description": "Musique paisible et apaisante"
+    },
+    "noTracksAvailable": "Aucune piste disponible pour ce style pour le moment",
+    "trackOf": "Piste {current} sur {total}"
+  },
   "metrics": {
     "metrics": "Métriques",
     "dashboard": "Tableau de Bord",
