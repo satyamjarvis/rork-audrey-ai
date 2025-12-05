@@ -21,7 +21,7 @@ export type AudioStyleOption = {
   tracks: string[];
 };
 
-const DEFAULT_AUDIO = "https://rork.app/pa/ier8mze8ucoqq9oktvadp/song_442hz_1";
+const PROJECT_BASE = "https://rork.app/pa/ier8mze8ucoqq9oktvadp";
 
 export const AUDIO_STYLES: AudioStyleOption[] = [
   {
@@ -29,7 +29,10 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Hz Frequencies",
     description: "Binaural beats and frequency healing",
     tracks: [
-      DEFAULT_AUDIO,
+      `${PROJECT_BASE}/song_442hz_1`,
+      `${PROJECT_BASE}/hz_528_healing`,
+      `${PROJECT_BASE}/hz_432_meditation`,
+      `${PROJECT_BASE}/hz_396_liberation`,
     ],
   },
   {
@@ -37,7 +40,9 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Christmas Music",
     description: "Festive holiday music",
     tracks: [
-      DEFAULT_AUDIO,
+      `${PROJECT_BASE}/christmas_bells`,
+      `${PROJECT_BASE}/christmas_piano`,
+      `${PROJECT_BASE}/christmas_ambient`,
     ],
   },
   {
@@ -45,7 +50,9 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Halloween Music",
     description: "Spooky atmospheric sounds",
     tracks: [
-      DEFAULT_AUDIO,
+      `${PROJECT_BASE}/halloween_spooky`,
+      `${PROJECT_BASE}/halloween_ambient`,
+      `${PROJECT_BASE}/halloween_eerie`,
     ],
   },
   {
@@ -53,7 +60,10 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Morning Music",
     description: "Uplifting morning tunes",
     tracks: [
-      DEFAULT_AUDIO,
+      `${PROJECT_BASE}/morning_sunrise`,
+      `${PROJECT_BASE}/morning_peaceful`,
+      `${PROJECT_BASE}/morning_birds`,
+      `${PROJECT_BASE}/morning_energy`,
     ],
   },
   {
@@ -61,7 +71,9 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Piano Electronic",
     description: "Modern electronic piano music",
     tracks: [
-      DEFAULT_AUDIO,
+      `${PROJECT_BASE}/piano_electronic_1`,
+      `${PROJECT_BASE}/piano_synth_ambient`,
+      `${PROJECT_BASE}/piano_modern_chill`,
     ],
   },
   {
@@ -69,7 +81,10 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Night Time Music",
     description: "Calming evening melodies",
     tracks: [
-      DEFAULT_AUDIO,
+      `${PROJECT_BASE}/night_stars`,
+      `${PROJECT_BASE}/night_moon_ambient`,
+      `${PROJECT_BASE}/night_peaceful_sleep`,
+      `${PROJECT_BASE}/night_dreamy`,
     ],
   },
   {
@@ -77,7 +92,10 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Rain Relaxing Music",
     description: "Soothing rain and ambient sounds",
     tracks: [
-      DEFAULT_AUDIO,
+      `${PROJECT_BASE}/rain_gentle`,
+      `${PROJECT_BASE}/rain_thunder_soft`,
+      `${PROJECT_BASE}/rain_forest`,
+      `${PROJECT_BASE}/rain_window`,
     ],
   },
   {
@@ -85,7 +103,9 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Country Music",
     description: "Classic country vibes",
     tracks: [
-      DEFAULT_AUDIO,
+      `${PROJECT_BASE}/country_acoustic`,
+      `${PROJECT_BASE}/country_guitar`,
+      `${PROJECT_BASE}/country_folk`,
     ],
   },
   {
@@ -93,7 +113,10 @@ export const AUDIO_STYLES: AudioStyleOption[] = [
     name: "Relaxing Music",
     description: "Peaceful and calming music",
     tracks: [
-      DEFAULT_AUDIO,
+      `${PROJECT_BASE}/relaxing_spa`,
+      `${PROJECT_BASE}/relaxing_meditation`,
+      `${PROJECT_BASE}/relaxing_nature`,
+      `${PROJECT_BASE}/relaxing_zen`,
     ],
   },
 ];

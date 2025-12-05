@@ -7,7 +7,8 @@ import { useAudioStyle } from "./AudioStyleContext";
 import { usePathname } from 'expo-router';
 
 const MUTE_KEY = "@music_muted";
-const DEFAULT_AUDIO_URI = "https://rork.app/pa/ier8mze8ucoqq9oktvadp/song_442hz_1";
+const PROJECT_BASE = "https://rork.app/pa/ier8mze8ucoqq9oktvadp";
+const DEFAULT_AUDIO_URI = `${PROJECT_BASE}/song_442hz_1`;
 const INTRO_SPLASH_OPENED_KEY = "@intro_splash_opened";
 const MAX_RETRY_ATTEMPTS = 3;
 
