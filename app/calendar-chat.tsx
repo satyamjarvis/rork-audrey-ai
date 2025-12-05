@@ -38,6 +38,9 @@ import {
   Circle,
   Type,
   Palette,
+  Image,
+  Video,
+  Music,
 } from "lucide-react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -1733,9 +1736,113 @@ export default function CalendarChatScreen() {
             
             <TouchableOpacity
               style={[styles.attachMenuItem, { 
+                backgroundColor: isNightMode ? "rgba(76, 175, 80, 0.1)" : "#4CAF5008",
+                borderWidth: 1,
+                borderColor: isNightMode ? "rgba(76, 175, 80, 0.3)" : "rgba(76, 175, 80, 0.2)"
+              }]}
+              onPress={() => {
+                setShowAttachMenu(false);
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                }
+                handlePickDocument("image");
+              }}
+              disabled={isPickingDocument}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.attachMenuIcon, { backgroundColor: "#4CAF5020" }]}>
+                <Image color={isNightMode ? "#4CAF50" : "#4CAF50"} size={28} strokeWidth={2.5} />
+              </View>
+              <View style={styles.attachMenuTextContainer}>
+                <Text style={[styles.attachMenuText, { color: isNightMode ? "#FFFFFF" : theme.colors.text.primary }]}>Photo</Text>
+                <Text style={[styles.attachMenuSubtext, { color: isNightMode ? "#AAAAAA" : theme.colors.text.secondary }]}>Share images from your device</Text>
+              </View>
+              <ChevronRight color={isNightMode ? "#666666" : theme.colors.text.light} size={20} strokeWidth={2} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.attachMenuItem, { 
+                backgroundColor: isNightMode ? "rgba(156, 39, 176, 0.1)" : "#9C27B008",
+                borderWidth: 1,
+                borderColor: isNightMode ? "rgba(156, 39, 176, 0.3)" : "rgba(156, 39, 176, 0.2)"
+              }]}
+              onPress={() => {
+                setShowAttachMenu(false);
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                }
+                handlePickDocument("video");
+              }}
+              disabled={isPickingDocument}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.attachMenuIcon, { backgroundColor: "#9C27B020" }]}>
+                <Video color={isNightMode ? "#9C27B0" : "#9C27B0"} size={28} strokeWidth={2.5} />
+              </View>
+              <View style={styles.attachMenuTextContainer}>
+                <Text style={[styles.attachMenuText, { color: isNightMode ? "#FFFFFF" : theme.colors.text.primary }]}>Video</Text>
+                <Text style={[styles.attachMenuSubtext, { color: isNightMode ? "#AAAAAA" : theme.colors.text.secondary }]}>Share video clips</Text>
+              </View>
+              <ChevronRight color={isNightMode ? "#666666" : theme.colors.text.light} size={20} strokeWidth={2} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.attachMenuItem, { 
+                backgroundColor: isNightMode ? "rgba(255, 152, 0, 0.1)" : "#FF980008",
+                borderWidth: 1,
+                borderColor: isNightMode ? "rgba(255, 152, 0, 0.3)" : "rgba(255, 152, 0, 0.2)"
+              }]}
+              onPress={() => {
+                setShowAttachMenu(false);
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                }
+                handlePickDocument("audio");
+              }}
+              disabled={isPickingDocument}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.attachMenuIcon, { backgroundColor: "#FF980020" }]}>
+                <Music color={isNightMode ? "#FF9800" : "#FF9800"} size={28} strokeWidth={2.5} />
+              </View>
+              <View style={styles.attachMenuTextContainer}>
+                <Text style={[styles.attachMenuText, { color: isNightMode ? "#FFFFFF" : theme.colors.text.primary }]}>Audio</Text>
+                <Text style={[styles.attachMenuSubtext, { color: isNightMode ? "#AAAAAA" : theme.colors.text.secondary }]}>Share music or audio files</Text>
+              </View>
+              <ChevronRight color={isNightMode ? "#666666" : theme.colors.text.light} size={20} strokeWidth={2} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.attachMenuItem, { 
                 backgroundColor: isNightMode ? "rgba(33, 150, 243, 0.1)" : "#2196F308",
                 borderWidth: 1,
                 borderColor: isNightMode ? "rgba(33, 150, 243, 0.3)" : "rgba(33, 150, 243, 0.2)"
+              }]}
+              onPress={() => {
+                setShowAttachMenu(false);
+                if (Platform.OS !== "web") {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                }
+                handlePickDocument("document");
+              }}
+              disabled={isPickingDocument}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.attachMenuIcon, { backgroundColor: "#2196F320" }]}>
+                <FileText color={isNightMode ? "#2196F3" : "#2196F3"} size={28} strokeWidth={2.5} />
+              </View>
+              <View style={styles.attachMenuTextContainer}>
+                <Text style={[styles.attachMenuText, { color: isNightMode ? "#FFFFFF" : theme.colors.text.primary }]}>Document</Text>
+                <Text style={[styles.attachMenuSubtext, { color: isNightMode ? "#AAAAAA" : theme.colors.text.secondary }]}>PDF, Word, Excel, Text files</Text>
+              </View>
+              <ChevronRight color={isNightMode ? "#666666" : theme.colors.text.light} size={20} strokeWidth={2} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.attachMenuItem, { 
+                backgroundColor: isNightMode ? "rgba(96, 125, 139, 0.1)" : "#607D8B08",
+                borderWidth: 1,
+                borderColor: isNightMode ? "rgba(96, 125, 139, 0.3)" : "rgba(96, 125, 139, 0.2)"
               }]}
               onPress={() => {
                 setShowAttachMenu(false);
@@ -1747,12 +1854,12 @@ export default function CalendarChatScreen() {
               disabled={isPickingDocument}
               activeOpacity={0.7}
             >
-              <View style={[styles.attachMenuIcon, { backgroundColor: "#2196F320" }]}>
-                <Paperclip color={isNightMode ? "#FFFFFF" : theme.colors.primary} size={28} strokeWidth={2.5} />
+              <View style={[styles.attachMenuIcon, { backgroundColor: "#607D8B20" }]}>
+                <Paperclip color={isNightMode ? "#607D8B" : "#607D8B"} size={28} strokeWidth={2.5} />
               </View>
               <View style={styles.attachMenuTextContainer}>
-                <Text style={[styles.attachMenuText, { color: isNightMode ? "#FFFFFF" : theme.colors.text.primary }]}>Attachment</Text>
-                <Text style={[styles.attachMenuSubtext, { color: isNightMode ? "#AAAAAA" : theme.colors.text.secondary }]}>Photos, Videos, Documents</Text>
+                <Text style={[styles.attachMenuText, { color: isNightMode ? "#FFFFFF" : theme.colors.text.primary }]}>Any File</Text>
+                <Text style={[styles.attachMenuSubtext, { color: isNightMode ? "#AAAAAA" : theme.colors.text.secondary }]}>Browse all file types</Text>
               </View>
               <ChevronRight color={isNightMode ? "#666666" : theme.colors.text.light} size={20} strokeWidth={2} />
             </TouchableOpacity>
