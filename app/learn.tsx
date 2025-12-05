@@ -16,7 +16,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Brain, Play, Lock, Star, Clock, Users, TrendingUp, Award, BookOpen, Target, Zap, ArrowLeft, X, Plus, Edit3, Check, Camera, Image as ImageIcon, Upload, Hourglass, Link, Globe } from "lucide-react-native";
+import { Brain, Play, Lock, Star, Clock, Users, TrendingUp, Award, BookOpen, Target, Zap, ArrowLeft, X, Plus, Edit3, Check, Camera, Image as ImageIcon, Upload, Hourglass, Link, Globe, Activity } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { Video, ResizeMode, Audio } from "expo-av";
@@ -376,6 +376,33 @@ export default function LearnScreen() {
         ],
         isSubscriptionRequired: true,
       },
+      {
+        id: "pattern-interrupt",
+        title: "Pattern Interrupt And Manifesting",
+        icon: "Activity" as any,
+        color: isNightMode ? "#FF4500" : "#C71585",
+        videos: [
+          {
+            id: "pi1",
+            title: "Breaking Old Patterns",
+            duration: "14:20",
+            thumbnail: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            isLocked: false,
+            description: "Learn how to interrupt negative thought loops",
+          },
+          {
+            id: "pi2",
+            title: "Advanced Manifesting",
+            duration: "25:45",
+            thumbnail: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            isLocked: true,
+            description: "Techniques for manifesting your dream reality",
+          },
+        ],
+        isSubscriptionRequired: true,
+      },
     ];
 
     initializeDefaultCategories(courseCategories);
@@ -432,6 +459,39 @@ export default function LearnScreen() {
             videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
             isLocked: true,
             description: "Learn the basics of manifesting your desires",
+          },
+        ],
+        isSubscriptionRequired: true,
+      };
+      setCategories(prev => [...prev, newCategory]);
+    }
+
+    // Add Pattern Interrupt category if missing
+    if (!categories.find(c => c.id === 'pattern-interrupt')) {
+      console.log('Adding Pattern Interrupt category');
+      const newCategory: CourseCategory = {
+        id: "pattern-interrupt",
+        title: "Pattern Interrupt And Manifesting",
+        icon: "Activity" as any,
+        color: isNightMode ? "#FF4500" : "#C71585",
+        videos: [
+          {
+            id: "pi1",
+            title: "Breaking Old Patterns",
+            duration: "14:20",
+            thumbnail: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            isLocked: false,
+            description: "Learn how to interrupt negative thought loops",
+          },
+          {
+            id: "pi2",
+            title: "Advanced Manifesting",
+            duration: "25:45",
+            thumbnail: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            isLocked: true,
+            description: "Techniques for manifesting your dream reality",
           },
         ],
         isSubscriptionRequired: true,
@@ -1016,6 +1076,7 @@ export default function LearnScreen() {
                   Brain: Brain,
                   Award: Award,
                   Zap: Zap,
+                  Activity: Activity,
                 };
                 const Icon = iconMap[category.icon as string] || Star;
                 return (
@@ -1156,6 +1217,7 @@ export default function LearnScreen() {
                     Brain: Brain,
                     Award: Award,
                     Zap: Zap,
+                    Activity: Activity,
                   };
                   const Icon = iconMap[selectedCategory.icon as string] || Star;
                   return <Icon color={isNightMode ? "#FFD700" : "#C71585"} size={32} strokeWidth={2.5} />;
