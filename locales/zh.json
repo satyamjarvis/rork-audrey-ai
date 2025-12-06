@@ -415,7 +415,8 @@
     "confirm": "确认",
     "areYouSure": "你确定吗？",
     "yes": "是",
-    "no": "否"
+    "no": "否",
+    "ok": "好的"
   },
   "account": {
     "welcomeToAudrey": "欢迎来到Audrey",

@@ -245,7 +245,9 @@ export default function HowAmIFeelingScreen() {
 
   const handleSubmitCheckIn = async () => {
     if (!selectedMood || !selectedEnergy || !selectedStress || !selectedSleep) {
-      Alert.alert(t("howAmIFeeling.incomplete"), t("howAmIFeeling.fillAllParameters"));
+      Alert.alert(t("howAmIFeeling.incomplete"), t("howAmIFeeling.fillAllParameters"), [
+        { text: t("common.ok") },
+      ]);
       return;
     }
 
@@ -271,7 +273,7 @@ export default function HowAmIFeelingScreen() {
 
     Alert.alert(t("howAmIFeeling.success"), t("howAmIFeeling.checkInLogged"), [
       {
-        text: "OK",
+        text: t("common.ok"),
         onPress: () => router.back(),
       },
     ]);

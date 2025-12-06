@@ -474,7 +474,8 @@
     "confirm": "Confirmer",
     "areYouSure": "Êtes-vous sûr?",
     "yes": "Oui",
-    "no": "Non"
+    "no": "Non",
+    "ok": "OK"
   },
   "account": {
     "welcomeToAudrey": "Bienvenue sur Audrey",

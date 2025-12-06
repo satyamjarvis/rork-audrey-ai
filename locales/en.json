@@ -537,7 +537,8 @@
     "confirm": "Confirm",
     "areYouSure": "Are you sure?",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "ok": "OK"
   },
   "account": {
     "welcomeToAudrey": "Welcome to Audrey",
