@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -23,20 +23,82 @@ import {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
-type SoundType = {
+type SleepSound = {
   id: string;
   title: string;
   duration: string;
   description: string;
-  isPlaying: boolean;
 };
+
+type SleepMeditationPageTranslations = {
+  title?: string;
+  sleepWisdom?: string;
+  peacefulSounds?: string;
+  chooseSound?: string;
+  emptyTitle?: string;
+  emptySubtitle?: string;
+  footer?: string;
+  quotes?: Record<string, string>;
+  sounds?: Record<string, Partial<SleepSound>>;
+};
+
+const FALLBACK_QUOTES: readonly string[] = [
+  "Let the sounds guide you to peaceful rest.",
+  "In stillness and silence, we find deep peace.",
+  "Allow your mind to drift into gentle dreams.",
+  "Rest is the foundation of a vibrant tomorrow.",
+  "Breathe deeply, release the day, welcome sleep.",
+  "May peaceful sounds carry you to restful sleep.",
+];
+
+const FALLBACK_SOUNDS: readonly SleepSound[] = [
+  {
+    id: "oceanWaves",
+    title: "Ocean Waves",
+    duration: "30 min",
+    description: "Gentle waves lapping on shore",
+  },
+  {
+    id: "rainSounds",
+    title: "Rain Sounds",
+    duration: "45 min",
+    description: "Soft rainfall on a quiet night",
+  },
+  {
+    id: "forestNight",
+    title: "Forest Night",
+    duration: "60 min",
+    description: "Peaceful forest ambience",
+  },
+  {
+    id: "guidedSleep",
+    title: "Guided Sleep",
+    duration: "20 min",
+    description: "Calming voice-guided meditation",
+  },
+  {
+    id: "whiteNoise",
+    title: "White Noise",
+    duration: "All night",
+    description: "Continuous calming white noise",
+  },
+];
+
+const FALLBACK_SOUND_MAP = FALLBACK_SOUNDS.reduce<Record<string, SleepSound>>((acc, sound) => {
+  acc[sound.id] = sound;
+  return acc;
+}, {});
 
 export default function SleepMeditationScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { translations } = useLanguage();
+  const sleepMeditationPage = (translations.night?.sleepMeditationPage as SleepMeditationPageTranslations | undefined) ?? {};
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const musicPulse = useRef(new Animated.Value(1)).current;
@@ -44,43 +106,47 @@ export default function SleepMeditationScreen() {
   const sparkleOpacity = useRef(new Animated.Value(0)).current;
 
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [sounds, setSounds] = useState<SoundType[]>([
-    {
-      id: "1",
-      title: "Ocean Waves",
-      duration: "30 min",
-      description: "Gentle waves lapping on shore",
-      isPlaying: false,
-    },
-    {
-      id: "2",
-      title: "Rain Sounds",
-      duration: "45 min",
-      description: "Soft rainfall on a quiet night",
-      isPlaying: false,
-    },
-    {
-      id: "3",
-      title: "Forest Night",
-      duration: "60 min",
-      description: "Peaceful forest ambience",
-      isPlaying: false,
-    },
-    {
-      id: "4",
-      title: "Guided Sleep",
-      duration: "20 min",
-      description: "Calming voice-guided meditation",
-      isPlaying: false,
-    },
-    {
-      id: "5",
-      title: "White Noise",
-      duration: "All night",
-      description: "Continuous calming white noise",
-      isPlaying: false,
-    },
-  ]);
+  const [activeSoundId, setActiveSoundId] = useState<string | null>(null);
+
+  const meditationQuotes = useMemo(() => {
+    const quoteValues = sleepMeditationPage.quotes ? Object.values(sleepMeditationPage.quotes).filter(Boolean) : [];
+    return quoteValues.length > 0 ? quoteValues : [...FALLBACK_QUOTES];
+  }, [sleepMeditationPage.quotes]);
+
+  const [meditationQuote, setMeditationQuote] = useState<string>(meditationQuotes[0] ?? FALLBACK_QUOTES[0]);
+
+  useEffect(() => {
+    if (meditationQuotes.length === 0) {
+      return;
+    }
+    const randomQuote = meditationQuotes[Math.floor(Math.random() * meditationQuotes.length)];
+    setMeditationQuote(randomQuote);
+  }, [meditationQuotes]);
+
+  const soundOptions = useMemo<SleepSound[]>(() => {
+    if (sleepMeditationPage.sounds) {
+      const translatedSounds = Object.entries(sleepMeditationPage.sounds).map(([id, value]) => {
+        const fallback = FALLBACK_SOUND_MAP[id] ?? {
+          id,
+          title: id,
+          duration: "",
+          description: "",
+        };
+        return {
+          id,
+          title: value?.title ?? fallback.title,
+          duration: value?.duration ?? fallback.duration,
+          description: value?.description ?? fallback.description,
+        };
+      });
+
+      if (translatedSounds.length > 0) {
+        return translatedSounds;
+      }
+    }
+
+    return [...FALLBACK_SOUNDS];
+  }, [sleepMeditationPage.sounds]);
 
   const glitterParticles = useMemo(() => {
     return Array.from({ length: 30 }, () => {
@@ -98,18 +164,6 @@ export default function SleepMeditationScreen() {
       };
     });
   }, []);
-
-  const [meditationQuote] = useState(() => {
-    const quotes = [
-      "Let the sounds guide you to peaceful rest.",
-      "In stillness and silence, we find deep peace.",
-      "Allow your mind to drift into gentle dreams.",
-      "Rest is the foundation of a vibrant tomorrow.",
-      "Breathe deeply, release the day, welcome sleep.",
-      "May peaceful sounds carry you to restful sleep.",
-    ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
-  });
 
   const starPositions = useMemo(() => {
     return Array.from({ length: 25 }, () => ({
@@ -222,21 +276,20 @@ export default function SleepMeditationScreen() {
     });
   }, [fadeAnim, slideAnim, musicPulse, starsRotate, sparkleOpacity, glitterParticles]);
 
-  const handleTogglePlay = (id: string) => {
+  const handleTogglePlay = useCallback((id: string) => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
-    setSounds((prev) =>
-      prev.map((sound) =>
-        sound.id === id
-          ? { ...sound, isPlaying: !sound.isPlaying }
-          : { ...sound, isPlaying: false }
-      )
-    );
-  };
+
+    setActiveSoundId((current) => {
+      const nextId = current === id ? null : id;
+      console.log("[SleepMeditation] Toggling sound", { id, nextId });
+      return nextId;
+    });
+  }, []);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString(undefined, {
       hour: "numeric",
       minute: "2-digit",
     });
@@ -247,11 +300,20 @@ export default function SleepMeditationScreen() {
     outputRange: ["0deg", "360deg"],
   });
 
+  const headerTitle = translations.night?.sleepMeditation ?? "Sleep Meditation";
+  const quoteLabel = sleepMeditationPage.sleepWisdom ?? "Sleep Wisdom";
+  const sectionTitle = sleepMeditationPage.peacefulSounds ?? translations.night?.peacefulRestSounds ?? "Peaceful Sounds";
+  const sectionSubtitle = sleepMeditationPage.chooseSound ?? "Choose a sound to drift into sleep";
+  const emptyTitle = sleepMeditationPage.emptyTitle ?? "No sounds available";
+  const emptySubtitle = sleepMeditationPage.emptySubtitle ?? "Check back later for calming sounds";
+  const footerText = sleepMeditationPage.footer ?? "Let peaceful sounds guide you to restful sleep";
+
   return (
     <View style={styles.container}>
       <Stack.Screen
         options={{
           headerShown: false,
+          title: headerTitle,
         }}
       />
 
@@ -304,6 +366,7 @@ export default function SleepMeditationScreen() {
             router.back();
           }}
           activeOpacity={0.7}
+          testID="sleepMeditationBackButton"
         >
           <ArrowLeft color="#b8a8d8" size={28} strokeWidth={2.5} />
         </TouchableOpacity>
@@ -331,7 +394,7 @@ export default function SleepMeditationScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>Sleep Meditation</Text>
+                  <Text style={styles.headerTitle}>{headerTitle}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -345,127 +408,124 @@ export default function SleepMeditationScreen() {
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
+            testID="sleepMeditationScrollView"
           >
             <Animated.View
               style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}
             >
               {Platform.OS === "web" ? (
-                <View style={styles.quoteCard}>
+                <View style={styles.quoteCard} testID="sleepMeditationQuoteCard">
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Moon color="#b8a8d8" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Sleep Wisdom</Text>
+                      <Text style={styles.quoteLabel}>{quoteLabel}</Text>
                     </View>
                     <Text style={styles.quoteText}>{meditationQuote}</Text>
                   </View>
                 </View>
               ) : (
-                <BlurView intensity={20} tint="dark" style={styles.quoteCard}>
+                <BlurView intensity={20} tint="dark" style={styles.quoteCard} testID="sleepMeditationQuoteCard">
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Moon color="#b8a8d8" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Sleep Wisdom</Text>
+                      <Text style={styles.quoteLabel}>{quoteLabel}</Text>
                     </View>
                     <Text style={styles.quoteText}>{meditationQuote}</Text>
                   </View>
                 </BlurView>
               )}
 
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Peaceful Sounds</Text>
-                <Text style={styles.sectionSubtitle}>
-                  Choose a sound to drift into sleep
-                </Text>
+              <View style={styles.sectionHeader} testID="sleepMeditationSectionHeader">
+                <Text style={styles.sectionTitle}>{sectionTitle}</Text>
+                <Text style={styles.sectionSubtitle}>{sectionSubtitle}</Text>
               </View>
             </Animated.View>
 
             <View style={styles.soundsContainer}>
-              {sounds.map((sound, index) => (
-                <Animated.View key={sound.id} style={styles.soundCard}>
-                  {Platform.OS === "web" ? (
-                    <View style={styles.soundCardInner}>
-                      <View style={styles.soundHeader}>
-                        <View style={styles.soundInfo}>
-                          <Animated.View
-                            style={{
-                              opacity: sparkleOpacity,
-                            }}
-                          >
-                            <Volume2
-                              color="#b8a8d8"
-                              size={20}
-                              strokeWidth={2}
-                            />
-                          </Animated.View>
-                          <View style={styles.soundTextContainer}>
-                            <Text style={styles.soundTitle}>{sound.title}</Text>
-                            <Text style={styles.soundDuration}>{sound.duration}</Text>
-                          </View>
-                        </View>
-                        <TouchableOpacity
-                          onPress={() => handleTogglePlay(sound.id)}
-                          style={styles.playButton}
-                          activeOpacity={0.7}
-                        >
-                          <LinearGradient
-                            colors={sound.isPlaying ? ["#8e24aa", "#6a1b9a"] : ["#5e35b1", "#4527a0"]}
-                            style={styles.playButtonGradient}
-                          >
-                            {sound.isPlaying ? (
-                              <Pause color="#FFFFFF" size={20} strokeWidth={2.5} />
-                            ) : (
-                              <Play color="#FFFFFF" size={20} strokeWidth={2.5} />
-                            )}
-                          </LinearGradient>
-                        </TouchableOpacity>
-                      </View>
-                      <Text style={styles.soundDescription}>{sound.description}</Text>
-                    </View>
-                  ) : (
-                    <BlurView intensity={15} tint="dark" style={styles.soundCardInner}>
-                      <View style={styles.soundHeader}>
-                        <View style={styles.soundInfo}>
-                          <Animated.View
-                            style={{
-                              opacity: sparkleOpacity,
-                            }}
-                          >
-                            <Volume2
-                              color="#b8a8d8"
-                              size={20}
-                              strokeWidth={2}
-                            />
-                          </Animated.View>
-                          <View style={styles.soundTextContainer}>
-                            <Text style={styles.soundTitle}>{sound.title}</Text>
-                            <Text style={styles.soundDuration}>{sound.duration}</Text>
-                          </View>
-                        </View>
-                        <TouchableOpacity
-                          onPress={() => handleTogglePlay(sound.id)}
-                          style={styles.playButton}
-                          activeOpacity={0.7}
-                        >
-                          <LinearGradient
-                            colors={sound.isPlaying ? ["#8e24aa", "#6a1b9a"] : ["#5e35b1", "#4527a0"]}
-                            style={styles.playButtonGradient}
-                          >
-                            {sound.isPlaying ? (
-                              <Pause color="#FFFFFF" size={20} strokeWidth={2.5} />
-                            ) : (
-                              <Play color="#FFFFFF" size={20} strokeWidth={2.5} />
-                            )}
-                          </LinearGradient>
-                        </TouchableOpacity>
-                      </View>
-                      <Text style={styles.soundDescription}>{sound.description}</Text>
-                    </BlurView>
-                  )}
-                </Animated.View>
-              ))}
+              {soundOptions.map((sound) => {
+                const isPlaying = activeSoundId === sound.id;
 
-              {sounds.length === 0 && (
-                <View style={styles.emptyState}>
+                return (
+                  <Animated.View key={sound.id} style={styles.soundCard} testID={`sleepMeditationSoundCard-${sound.id}`}>
+                    {Platform.OS === "web" ? (
+                      <View style={styles.soundCardInner}>
+                        <View style={styles.soundHeader}>
+                          <View style={styles.soundInfo}>
+                            <Animated.View
+                              style={{
+                                opacity: sparkleOpacity,
+                              }}
+                            >
+                              <Volume2 color="#b8a8d8" size={20} strokeWidth={2} />
+                            </Animated.View>
+                            <View style={styles.soundTextContainer}>
+                              <Text style={styles.soundTitle}>{sound.title}</Text>
+                              <Text style={styles.soundDuration}>{sound.duration}</Text>
+                            </View>
+                          </View>
+                          <TouchableOpacity
+                            onPress={() => handleTogglePlay(sound.id)}
+                            style={styles.playButton}
+                            activeOpacity={0.7}
+                            testID={`sleepMeditationPlayButton-${sound.id}`}
+                          >
+                            <LinearGradient
+                              colors={isPlaying ? ["#8e24aa", "#6a1b9a"] : ["#5e35b1", "#4527a0"]}
+                              style={styles.playButtonGradient}
+                            >
+                              {isPlaying ? (
+                                <Pause color="#FFFFFF" size={20} strokeWidth={2.5} />
+                              ) : (
+                                <Play color="#FFFFFF" size={20} strokeWidth={2.5} />
+                              )}
+                            </LinearGradient>
+                          </TouchableOpacity>
+                        </View>
+                        <Text style={styles.soundDescription}>{sound.description}</Text>
+                      </View>
+                    ) : (
+                      <BlurView intensity={15} tint="dark" style={styles.soundCardInner}>
+                        <View style={styles.soundHeader}>
+                          <View style={styles.soundInfo}>
+                            <Animated.View
+                              style={{
+                                opacity: sparkleOpacity,
+                              }}
+                            >
+                              <Volume2 color="#b8a8d8" size={20} strokeWidth={2} />
+                            </Animated.View>
+                            <View style={styles.soundTextContainer}>
+                              <Text style={styles.soundTitle}>{sound.title}</Text>
+                              <Text style={styles.soundDuration}>{sound.duration}</Text>
+                            </View>
+                          </View>
+                          <TouchableOpacity
+                            onPress={() => handleTogglePlay(sound.id)}
+                            style={styles.playButton}
+                            activeOpacity={0.7}
+                            testID={`sleepMeditationPlayButton-${sound.id}`}
+                          >
+                            <LinearGradient
+                              colors={isPlaying ? ["#8e24aa", "#6a1b9a"] : ["#5e35b1", "#4527a0"]}
+                              style={styles.playButtonGradient}
+                            >
+                              {isPlaying ? (
+                                <Pause color="#FFFFFF" size={20} strokeWidth={2.5} />
+                              ) : (
+                                <Play color="#FFFFFF" size={20} strokeWidth={2.5} />
+                              )}
+                            </LinearGradient>
+                          </TouchableOpacity>
+                        </View>
+                        <Text style={styles.soundDescription}>{sound.description}</Text>
+                      </BlurView>
+                    )}
+                  </Animated.View>
+                );
+              })}
+
+              {soundOptions.length === 0 && (
+                <View style={styles.emptyState} testID="sleepMeditationEmptyState">
                   <Music
                     color="#b8a8d8"
                     size={64}
@@ -473,19 +533,15 @@ export default function SleepMeditationScreen() {
                     fill="#b8a8d8"
                     fillOpacity={0.1}
                   />
-                  <Text style={styles.emptyStateText}>
-                    No sounds available
-                  </Text>
-                  <Text style={styles.emptyStateSubtext}>
-                    Check back later for calming sounds
-                  </Text>
+                  <Text style={styles.emptyStateText}>{emptyTitle}</Text>
+                  <Text style={styles.emptyStateSubtext}>{emptySubtitle}</Text>
                 </View>
               )}
             </View>
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
-              <Text style={styles.footerText}>
-                Let peaceful sounds guide you to restful sleep
+              <Text style={styles.footerText} testID="sleepMeditationFooterText">
+                {footerText}
               </Text>
             </Animated.View>
           </ScrollView>
@@ -659,12 +715,14 @@ const styles = StyleSheet.create({
     fontWeight: "600" as const,
     color: "#b8a8d8",
     letterSpacing: 0.3,
+    textAlign: "center",
   },
   emptyStateSubtext: {
     fontSize: 15,
     fontWeight: "500" as const,
     color: "#9a8ac8",
     letterSpacing: 0.2,
+    textAlign: "center",
   },
   footerText: {
     fontSize: 14,
@@ -676,7 +734,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic" as const,
   },
   backButton: {
-    position: "absolute" as const,
+    position: "absolute",
     left: 20,
     zIndex: 10,
     width: 44,
@@ -687,7 +745,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(184, 168, 216, 0.15)",
   },
   glitterDot: {
-    position: "absolute" as const,
+    position: "absolute",
     backgroundColor: "#C0C0C0",
     borderRadius: 50,
     shadowColor: "#C0C0C0",

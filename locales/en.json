@@ -446,6 +446,50 @@
         "5": "Plant seeds of intention, watch them bloom tomorrow.",
         "6": "The future is created by what we do in the present moment."
       }
+    },
+    "sleepMeditationPage": {
+      "title": "Sleep Meditation",
+      "sleepWisdom": "Sleep Wisdom",
+      "peacefulSounds": "Peaceful Sounds",
+      "chooseSound": "Choose a sound to drift into sleep",
+      "emptyTitle": "No sounds available",
+      "emptySubtitle": "Check back later for calming sounds",
+      "footer": "Let peaceful sounds guide you to restful sleep",
+      "quotes": {
+        "1": "Let the sounds guide you to peaceful rest.",
+        "2": "In stillness and silence, we find deep peace.",
+        "3": "Allow your mind to drift into gentle dreams.",
+        "4": "Rest is the foundation of a vibrant tomorrow.",
+        "5": "Breathe deeply, release the day, welcome sleep.",
+        "6": "May peaceful sounds carry you to restful sleep."
+      },
+      "sounds": {
+        "oceanWaves": {
+          "title": "Ocean Waves",
+          "duration": "30 min",
+          "description": "Gentle waves lapping on shore"
+        },
+        "rainSounds": {
+          "title": "Rain Sounds",
+          "duration": "45 min",
+          "description": "Soft rainfall on a quiet night"
+        },
+        "forestNight": {
+          "title": "Forest Night",
+          "duration": "60 min",
+          "description": "Peaceful forest ambience"
+        },
+        "guidedSleep": {
+          "title": "Guided Sleep",
+          "duration": "20 min",
+          "description": "Calming voice-guided meditation"
+        },
+        "whiteNoise": {
+          "title": "White Noise",
+          "duration": "All night",
+          "description": "Continuous calming white noise"
+        }
+      }
     }
   },
   "settings": {
