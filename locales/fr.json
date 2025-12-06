@@ -1012,5 +1012,24 @@
     "thenFoundAudrey": "Puis vous avez trouvé Audrey",
     "showingTheWay": "Vous montrant le chemin",
     "readyForJourney": "Prêt pour votre voyage !"
+  },
+  "dreamJournal": {
+    "title": "Journal de Rêves",
+    "dreamWisdom": "Sagesse des rêves",
+    "sectionTitle": "Capture tes rêves",
+    "sectionSubtitle": "Quels rêves sont venus te visiter cette nuit ?",
+    "addDream": "Ajouter un rêve",
+    "inputPlaceholder": "Décris ton rêve...",
+    "emptyTitle": "Commence ton voyage onirique",
+    "emptySubtitle": "Appuie sur \"Ajouter un rêve\" pour commencer",
+    "footer": "Les rêves sont les pierres de touche de notre caractère",
+    "quotes": {
+      "1": "Les rêves sont des illustrations du livre que ton âme écrit.",
+      "2": "En rêve, nous entrons dans un monde qui nous appartient entièrement.",
+      "3": "L'avenir appartient à ceux qui croient à la beauté de leurs rêves.",
+      "4": "Les rêves sont les murmures de ton esprit subconscient.",
+      "5": "Chaque rêve est une porte vers une autre dimension.",
+      "6": "Laisse tes rêves te guider vers tes vérités les plus profondes."
+    }
   }
 }

@@ -1236,5 +1236,24 @@
       "5": "La mayor riqueza es la salud.",
       "6": "Escucha a tu cuerpo. Siempre está tratando de decirte algo."
     }
+  },
+  "dreamJournal": {
+    "title": "Diario de Sueños",
+    "dreamWisdom": "Sabiduría de los Sueños",
+    "sectionTitle": "Captura tus sueños",
+    "sectionSubtitle": "¿Qué sueños te visitaron anoche?",
+    "addDream": "Agregar sueño",
+    "inputPlaceholder": "Describe tu sueño...",
+    "emptyTitle": "Comienza tu viaje onírico",
+    "emptySubtitle": "Toca \"Agregar sueño\" para comenzar",
+    "footer": "Los sueños son las piedras de toque de nuestro carácter",
+    "quotes": {
+      "1": "Los sueños son ilustraciones del libro que escribe tu alma.",
+      "2": "En los sueños entramos en un mundo totalmente nuestro.",
+      "3": "El futuro pertenece a quienes creen en la belleza de sus sueños.",
+      "4": "Los sueños son los susurros de tu mente subconsciente.",
+      "5": "Cada sueño es una puerta a otra dimensión.",
+      "6": "Deja que tus sueños te guíen hacia tus verdades más profundas."
+    }
   }
 }

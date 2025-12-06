@@ -913,5 +913,24 @@
     "thenFoundAudrey": "然后你找到了 Audrey",
     "showingTheWay": "为你指引方向",
     "readyForJourney": "准备好开始你的旅程！"
+  },
+  "dreamJournal": {
+    "title": "梦境日记",
+    "dreamWisdom": "梦境智慧",
+    "sectionTitle": "记录你的梦境",
+    "sectionSubtitle": "昨晚有哪些梦来拜访你？",
+    "addDream": "添加梦境",
+    "inputPlaceholder": "描述你的梦境...",
+    "emptyTitle": "开启你的梦境旅程",
+    "emptySubtitle": "点击 \"添加梦境\" 开始记录",
+    "footer": "梦境是我们性格的试金石",
+    "quotes": {
+      "1": "梦境是灵魂正在书写的画作。",
+      "2": "在梦中，我们进入一个只属于自己的世界。",
+      "3": "未来属于相信梦之美的人。",
+      "4": "梦是潜意识的低语。",
+      "5": "每个梦都是通往另一个维度的门。",
+      "6": "让你的梦引领你走向内心最深的真相。"
+    }
   }
 }

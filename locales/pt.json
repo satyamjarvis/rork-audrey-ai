@@ -913,5 +913,24 @@
     "thenFoundAudrey": "Então você encontrou Audrey",
     "showingTheWay": "Mostrando o caminho",
     "readyForJourney": "Pronto para sua jornada!"
+  },
+  "dreamJournal": {
+    "title": "Diário de Sonhos",
+    "dreamWisdom": "Sabedoria dos Sonhos",
+    "sectionTitle": "Capture seus sonhos",
+    "sectionSubtitle": "Quais sonhos te visitaram na noite passada?",
+    "addDream": "Adicionar sonho",
+    "inputPlaceholder": "Descreva seu sonho...",
+    "emptyTitle": "Comece sua jornada onírica",
+    "emptySubtitle": "Toque em \"Adicionar sonho\" para iniciar",
+    "footer": "Os sonhos são a pedra de toque do nosso caráter",
+    "quotes": {
+      "1": "Os sonhos são ilustrações do livro que sua alma escreve.",
+      "2": "Nos sonhos, entramos em um mundo que é inteiramente nosso.",
+      "3": "O futuro pertence a quem acredita na beleza dos próprios sonhos.",
+      "4": "Os sonhos são os sussurros da sua mente subconsciente.",
+      "5": "Cada sonho é uma porta para outra dimensão.",
+      "6": "Deixe seus sonhos guiarem você para suas verdades mais profundas."
+    }
   }
 }
