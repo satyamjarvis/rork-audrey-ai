@@ -417,6 +417,27 @@
     "setGoalsForTomorrow": "Establece metas para mañana",
     "dailyHealthAssessment": "Evaluación de salud diaria",
     "takeYourTime": "Tómate tu tiempo. No hay prisa.",
+    "gratitudePage": {
+      "title": "Momentos de Gratitud",
+      "todaysReminder": "Recordatorio de Hoy",
+      "countBlessings": "Cuenta Tus Bendiciones",
+      "whatGratefulFor": "¿De qué estás agradecido hoy?",
+      "addGratitude": "Agregar Gratitud",
+      "inputPlaceholder": "Estoy agradecido por...",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "startJourney": "Comienza tu viaje de gratitud",
+      "tapToBegin": "Toca \"Agregar Gratitud\" para comenzar",
+      "footer": "La gratitud transforma los días ordinarios en bendiciones",
+      "quotes": {
+        "1": "La gratitud convierte lo que tenemos en suficiente.",
+        "2": "En cada momento, hay algo por lo que estar agradecido.",
+        "3": "Cuanto más agradecidos somos, más atraemos la abundancia.",
+        "4": "La gratitud es lo más dulce en la vida de un buscador.",
+        "5": "Que la gratitud sea la almohada sobre la que te arrodillas.",
+        "6": "La gratitud desbloquea la plenitud de la vida."
+      }
+    },
     "quotes": {
       "quote1": "Cuando las estrellas comienzan a brillar, deja que tu alma encuentre la paz.",
       "quote2": "La noche susurra secretos de descanso y renovación.",

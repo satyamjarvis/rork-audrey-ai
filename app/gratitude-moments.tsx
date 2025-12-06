@@ -23,6 +23,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -34,6 +35,7 @@ type GratitudeEntry = {
 
 export default function GratitudeMomentsScreen() {
   const router = useRouter();
+  const { t, language } = useTranslation();
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -63,17 +65,8 @@ export default function GratitudeMomentsScreen() {
     });
   }, []);
 
-  const [gratitudeQuote] = useState(() => {
-    const quotes = [
-      "Gratitude turns what we have into enough.",
-      "In every moment, there is something to be grateful for.",
-      "The more grateful we are, the more we attract abundance.",
-      "Gratitude is the sweetest thing in a seeker's life.",
-      "Let gratitude be the pillow upon which you kneel.",
-      "Gratitude unlocks the fullness of life.",
-    ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
-  });
+  const [quoteIndex] = useState(() => Math.floor(Math.random() * 6) + 1);
+  const gratitudeQuote = t(`night.gratitudePage.quotes.${quoteIndex}`);
 
   const starPositions = useMemo(() => {
     return Array.from({ length: 25 }, () => ({
@@ -212,7 +205,7 @@ export default function GratitudeMomentsScreen() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString(language, {
       hour: "numeric",
       minute: "2-digit",
     });
@@ -307,7 +300,7 @@ export default function GratitudeMomentsScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>Gratitude Moments</Text>
+                  <Text style={styles.headerTitle}>{t('night.gratitudePage.title')}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -330,7 +323,7 @@ export default function GratitudeMomentsScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#ffc0cb" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Reminder</Text>
+                      <Text style={styles.quoteLabel}>{t('night.gratitudePage.todaysReminder')}</Text>
                     </View>
                     <Text style={styles.quoteText}>{gratitudeQuote}</Text>
                   </View>
@@ -340,7 +333,7 @@ export default function GratitudeMomentsScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#ffc0cb" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Reminder</Text>
+                      <Text style={styles.quoteLabel}>{t('night.gratitudePage.todaysReminder')}</Text>
                     </View>
                     <Text style={styles.quoteText}>{gratitudeQuote}</Text>
                   </View>
@@ -348,9 +341,9 @@ export default function GratitudeMomentsScreen() {
               )}
 
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Count Your Blessings</Text>
+                <Text style={styles.sectionTitle}>{t('night.gratitudePage.countBlessings')}</Text>
                 <Text style={styles.sectionSubtitle}>
-                  What are you grateful for today?
+                  {t('night.gratitudePage.whatGratefulFor')}
                 </Text>
               </View>
             </Animated.View>
@@ -368,7 +361,7 @@ export default function GratitudeMomentsScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Plus color="#FFFFFF" size={24} strokeWidth={2.5} />
-                  <Text style={styles.addButtonText}>Add Gratitude</Text>
+                  <Text style={styles.addButtonText}>{t('night.gratitudePage.addGratitude')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             )}
@@ -379,7 +372,7 @@ export default function GratitudeMomentsScreen() {
                   <View style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="I am grateful for..."
+                      placeholder={t('night.gratitudePage.inputPlaceholder')}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={newEntry}
                       onChangeText={setNewEntry}
@@ -395,7 +388,7 @@ export default function GratitudeMomentsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{t('night.gratitudePage.cancel')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -406,7 +399,7 @@ export default function GratitudeMomentsScreen() {
                           colors={["#d946ef", "#a855f7"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{t('night.gratitudePage.save')}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -415,7 +408,7 @@ export default function GratitudeMomentsScreen() {
                   <BlurView intensity={20} tint="dark" style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="I am grateful for..."
+                      placeholder={t('night.gratitudePage.inputPlaceholder')}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={newEntry}
                       onChangeText={setNewEntry}
@@ -431,7 +424,7 @@ export default function GratitudeMomentsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{t('night.gratitudePage.cancel')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -442,7 +435,7 @@ export default function GratitudeMomentsScreen() {
                           colors={["#d946ef", "#a855f7"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{t('night.gratitudePage.save')}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -471,7 +464,7 @@ export default function GratitudeMomentsScreen() {
                           />
                         </Animated.View>
                         <Text style={styles.entryTime}>
-                          {entry.timestamp.toLocaleString("en-US", {
+                          {entry.timestamp.toLocaleString(language, {
                             month: "short",
                             day: "numeric",
                             hour: "numeric",
@@ -505,7 +498,7 @@ export default function GratitudeMomentsScreen() {
                           />
                         </Animated.View>
                         <Text style={styles.entryTime}>
-                          {entry.timestamp.toLocaleString("en-US", {
+                          {entry.timestamp.toLocaleString(language, {
                             month: "short",
                             day: "numeric",
                             hour: "numeric",
@@ -536,10 +529,10 @@ export default function GratitudeMomentsScreen() {
                     fillOpacity={0.1}
                   />
                   <Text style={styles.emptyStateText}>
-                    Start your gratitude journey
+                    {t('night.gratitudePage.startJourney')}
                   </Text>
                   <Text style={styles.emptyStateSubtext}>
-                    Tap &ldquo;Add Gratitude&rdquo; to begin
+                    {t('night.gratitudePage.tapToBegin')}
                   </Text>
                 </View>
               )}
@@ -547,7 +540,7 @@ export default function GratitudeMomentsScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Gratitude transforms ordinary days into blessings
+                {t('night.gratitudePage.footer')}
               </Text>
             </Animated.View>
           </ScrollView>

@@ -397,6 +397,27 @@
     "setGoalsForTomorrow": "Set goals for tomorrow",
     "dailyHealthAssessment": "Daily health assessment",
     "takeYourTime": "Take your time. There's no rush.",
+    "gratitudePage": {
+      "title": "Gratitude Moments",
+      "todaysReminder": "Today's Reminder",
+      "countBlessings": "Count Your Blessings",
+      "whatGratefulFor": "What are you grateful for today?",
+      "addGratitude": "Add Gratitude",
+      "inputPlaceholder": "I am grateful for...",
+      "cancel": "Cancel",
+      "save": "Save",
+      "startJourney": "Start your gratitude journey",
+      "tapToBegin": "Tap \"Add Gratitude\" to begin",
+      "footer": "Gratitude transforms ordinary days into blessings",
+      "quotes": {
+        "1": "Gratitude turns what we have into enough.",
+        "2": "In every moment, there is something to be grateful for.",
+        "3": "The more grateful we are, the more we attract abundance.",
+        "4": "Gratitude is the sweetest thing in a seeker's life.",
+        "5": "Let gratitude be the pillow upon which you kneel.",
+        "6": "Gratitude unlocks the fullness of life."
+      }
+    },
     "quotes": {
       "quote1": "As the stars begin to shine, let your soul find peace.",
       "quote2": "The night whispers secrets of rest and renewal.",
