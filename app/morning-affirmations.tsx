@@ -15,7 +15,6 @@ import { BlurView } from "expo-blur";
 import {
   Sun,
   Sparkles,
-  Heart,
   Star,
   Plus,
   Trash2,
@@ -24,8 +23,6 @@ import {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
-
-import { useAffirmations } from "@/contexts/AffirmationsContext";
 
 import { useTranslation } from "@/contexts/LanguageContext";
 
@@ -39,7 +36,7 @@ type AffirmationEntry = {
 
 export default function MorningAffirmationsScreen() {
   const router = useRouter();
-  const { translations } = useTranslation();
+  const { translations, language } = useTranslation();
   const t = translations.morning.affirmationsPage;
   const common = translations.common;
   
@@ -49,8 +46,6 @@ export default function MorningAffirmationsScreen() {
   const sunPulse = useRef(new Animated.Value(1)).current;
   const sparklesRotate = useRef(new Animated.Value(0)).current;
   const glowOpacity = useRef(new Animated.Value(0)).current;
-
-  const { dailyAffirmation, refreshDailyAffirmation } = useAffirmations();
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [affirmationEntries, setAffirmationEntries] = useState<AffirmationEntry[]>([]);
@@ -215,7 +210,7 @@ export default function MorningAffirmationsScreen() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString(language, {
       hour: "numeric",
       minute: "2-digit",
     });
@@ -474,7 +469,7 @@ export default function MorningAffirmationsScreen() {
                           />
                         </Animated.View>
                         <Text style={styles.entryTime}>
-                          {entry.timestamp.toLocaleString("en-US", {
+                          {entry.timestamp.toLocaleString(language, {
                             month: "short",
                             day: "numeric",
                             hour: "numeric",
@@ -508,7 +503,7 @@ export default function MorningAffirmationsScreen() {
                           />
                         </Animated.View>
                         <Text style={styles.entryTime}>
-                          {entry.timestamp.toLocaleString("en-US", {
+                          {entry.timestamp.toLocaleString(language, {
                             month: "short",
                             day: "numeric",
                             hour: "numeric",
