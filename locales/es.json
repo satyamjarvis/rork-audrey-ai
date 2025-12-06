@@ -645,7 +645,9 @@
     "clearChat": "Limpiar chat",
     "areYouSureClearChat": "¿Estás seguro de que quieres limpiar el chat?",
     "whatCanIHelp": "¿En qué puedo ayudarte?",
-    "audreyCapabilities": "Capacidades de Audrey"
+    "audreyCapabilities": "Capacidades de Audrey",
+    "aiAssistantButton": "Asistente de IA",
+    "chatWithAudreyDescription": "Obtén asistencia inteligente con tus tareas"
   },
   "planner": {
     "daily": "Diario",

@@ -693,7 +693,9 @@
     "phoneNumberRequiredScheduleDesc": "An active phone number needs to be updated in Account Settings before you can schedule SMS messages through Audrey.",
     "goToSettings": "Go to Settings",
     "failedToReadFile": "Failed to read file:",
-    "failedToSendMessage": "Failed to send message."
+    "failedToSendMessage": "Failed to send message.",
+    "aiAssistantButton": "AI Assistant",
+    "chatWithAudreyDescription": "Get intelligent assistance with your tasks"
   },
   "automations": {
     "title": "Automations Manager",
