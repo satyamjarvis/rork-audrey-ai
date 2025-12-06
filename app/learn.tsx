@@ -462,169 +462,169 @@ export default function LearnScreen() {
     initializeDefaultCategories(courseCategories);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Update category titles if they don't match (migration)
+  // Update category titles if they don't match (migration) and add missing categories
   useEffect(() => {
     if (isLoading) return;
     
-    const wellnessCategory = categories.find(c => c.id === 'wellness');
-    if (wellnessCategory && wellnessCategory.title !== 'Public Communication') {
-      console.log('Migrating wellness category title to Public Communication');
-      updateCategory('wellness', { title: 'Public Communication' });
-    }
-    const productivityCategory = categories.find(c => c.id === 'productivity');
-    if (productivityCategory && productivityCategory.title !== 'Manage Your Time For Success') {
-      console.log('Migrating productivity category title to Manage Your Time For Success');
-      updateCategory('productivity', { title: 'Manage Your Time For Success' });
-    }
-    const mindfulnessCategory = categories.find(c => c.id === 'mindfulness');
-    if (mindfulnessCategory && mindfulnessCategory.title !== 'Becoming Extraordinary') {
-      console.log('Migrating mindfulness category title to Becoming Extraordinary');
-      updateCategory('mindfulness', { title: 'Becoming Extraordinary' });
-    }
-    const lifestyleCategory = categories.find(c => c.id === 'lifestyle');
-    if (lifestyleCategory && lifestyleCategory.title !== 'Conversational Speaking') {
-      console.log('Migrating lifestyle category title to Conversational Speaking');
-      updateCategory('lifestyle', { title: 'Conversational Speaking' });
-    }
-
-    const metaCategory = categories.find(c => c.id === 'meta-learn');
-    if (metaCategory && metaCategory.title !== 'Meta Create Your Reality') {
-      console.log('Migrating meta-learn category title to Meta Create Your Reality');
-      updateCategory('meta-learn', { title: 'Meta Create Your Reality' });
-    }
-
-    // Add Meta Learn category if missing
-    if (!categories.find(c => c.id === 'meta-learn')) {
-      console.log('Adding Meta Learn category');
-      const newCategory: CourseCategory = {
-        id: "meta-learn",
-        title: "Meta Create Your Reality",
-        icon: "Zap" as any,
-        color: isNightMode ? "#FF8C00" : "#C71585",
-        videos: [
-          {
-            id: "ml1",
-            title: "The Power of Belief",
-            duration: "15:00",
-            thumbnail: "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=800&q=80",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-            isLocked: false,
-            description: "Understand how your beliefs shape your reality",
-          },
-          {
-            id: "ml2",
-            title: "Manifestation 101",
-            duration: "20:30",
-            thumbnail: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-            isLocked: true,
-            description: "Learn the basics of manifesting your desires",
-          },
-        ],
-        isSubscriptionRequired: true,
-      };
-      setCategories(prev => [...prev, newCategory]);
-    }
-
-    // Add Pattern Interrupt category if missing
-    if (!categories.find(c => c.id === 'pattern-interrupt')) {
-      console.log('Adding Pattern Interrupt category');
-      const newCategory: CourseCategory = {
-        id: "pattern-interrupt",
-        title: "Pattern Interrupt And Manifesting",
-        icon: "Activity" as any,
-        color: isNightMode ? "#FF4500" : "#C71585",
-        videos: [
-          {
-            id: "pi1",
-            title: "Breaking Old Patterns",
-            duration: "14:20",
-            thumbnail: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-            isLocked: false,
-            description: "Learn how to interrupt negative thought loops",
-          },
-          {
-            id: "pi2",
-            title: "Advanced Manifesting",
-            duration: "25:45",
-            thumbnail: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-            isLocked: true,
-            description: "Techniques for manifesting your dream reality",
-          },
-        ],
-        isSubscriptionRequired: true,
-      };
-      setCategories(prev => [...prev, newCategory]);
-    }
-
-    // Add Connect To A Higher Intelligence category if missing
-    if (!categories.find(c => c.id === 'connect-higher-intelligence')) {
-      console.log('Adding Connect To A Higher Intelligence category');
-      const newCategory: CourseCategory = {
-        id: "connect-higher-intelligence",
-        title: "Connect To A Higher Intelligence And Become Your Desires",
-        icon: "Sun" as any,
-        color: isNightMode ? "#9370DB" : "#C71585",
-        videos: [
-          {
-            id: "chi1",
-            title: "Connecting with Higher Self",
-            duration: "18:45",
-            thumbnail: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=800&q=80",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-            isLocked: false,
-            description: "Learn to connect with your higher intelligence",
-          },
-          {
-            id: "chi2",
-            title: "Manifesting Desires",
-            duration: "24:15",
-            thumbnail: "https://images.unsplash.com/photo-1499209974431-2761eb43a768?w=800&q=80",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-            isLocked: true,
-            description: "Become one with your desires",
-          },
-        ],
-        isSubscriptionRequired: true,
-      };
-      setCategories(prev => [...prev, newCategory]);
-    }
-
-    // Add Wealthy Mindset category if missing
-    if (!categories.find(c => c.id === 'wealthy-mindset')) {
-      console.log('Adding Wealthy Mindset category');
-      const newCategory: CourseCategory = {
-        id: "wealthy-mindset",
-        title: "Wealthy Mindset",
-        icon: "Gem" as any,
-        color: isNightMode ? "#50C878" : "#C71585",
-        videos: [
-          {
-            id: "wm1",
-            title: "The Psychology of Wealth",
-            duration: "16:20",
-            thumbnail: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-            isLocked: false,
-            description: "Understand the mindset of wealthy individuals",
-          },
-          {
-            id: "wm2",
-            title: "Attracting Abundance",
-            duration: "21:15",
-            thumbnail: "https://images.unsplash.com/photo-1565514020176-dbf2277f0d03?w=800&q=80",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-            isLocked: true,
-            description: "Learn to attract wealth into your life",
-          },
-        ],
-        isSubscriptionRequired: true,
-      };
-      setCategories(prev => [...prev, newCategory]);
-    }
-  }, [categories, isLoading, updateCategory, setCategories]);
+    // Collect all migrations and additions in one update
+    setCategories(prev => {
+      let updated = [...prev];
+      let hasChanges = false;
+      
+      // Update existing category titles
+      const titleMigrations: { id: string; newTitle: string }[] = [
+        { id: 'wellness', newTitle: 'Public Communication' },
+        { id: 'productivity', newTitle: 'Manage Your Time For Success' },
+        { id: 'mindfulness', newTitle: 'Becoming Extraordinary' },
+        { id: 'lifestyle', newTitle: 'Conversational Speaking' },
+        { id: 'meta-learn', newTitle: 'Meta Create Your Reality' },
+      ];
+      
+      titleMigrations.forEach(({ id, newTitle }) => {
+        const categoryIndex = updated.findIndex(c => c.id === id);
+        if (categoryIndex !== -1 && updated[categoryIndex].title !== newTitle) {
+          console.log(`Migrating ${id} category title to ${newTitle}`);
+          updated[categoryIndex] = { ...updated[categoryIndex], title: newTitle };
+          hasChanges = true;
+        }
+      });
+      
+      // Define missing categories to add
+      const missingCategories: CourseCategory[] = [];
+      
+      if (!updated.find(c => c.id === 'meta-learn')) {
+        console.log('Adding Meta Learn category');
+        missingCategories.push({
+          id: "meta-learn",
+          title: "Meta Create Your Reality",
+          icon: "Zap" as any,
+          color: isNightMode ? "#FF8C00" : "#C71585",
+          videos: [
+            {
+              id: "ml1",
+              title: "The Power of Belief",
+              duration: "15:00",
+              thumbnail: "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              isLocked: false,
+              description: "Understand how your beliefs shape your reality",
+            },
+            {
+              id: "ml2",
+              title: "Manifestation 101",
+              duration: "20:30",
+              thumbnail: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+              isLocked: true,
+              description: "Learn the basics of manifesting your desires",
+            },
+          ],
+          isSubscriptionRequired: true,
+        });
+      }
+      
+      if (!updated.find(c => c.id === 'pattern-interrupt')) {
+        console.log('Adding Pattern Interrupt category');
+        missingCategories.push({
+          id: "pattern-interrupt",
+          title: "Pattern Interrupt And Manifesting",
+          icon: "Activity" as any,
+          color: isNightMode ? "#FF4500" : "#C71585",
+          videos: [
+            {
+              id: "pi1",
+              title: "Breaking Old Patterns",
+              duration: "14:20",
+              thumbnail: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+              isLocked: false,
+              description: "Learn how to interrupt negative thought loops",
+            },
+            {
+              id: "pi2",
+              title: "Advanced Manifesting",
+              duration: "25:45",
+              thumbnail: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+              isLocked: true,
+              description: "Techniques for manifesting your dream reality",
+            },
+          ],
+          isSubscriptionRequired: true,
+        });
+      }
+      
+      if (!updated.find(c => c.id === 'connect-higher-intelligence')) {
+        console.log('Adding Connect To A Higher Intelligence category');
+        missingCategories.push({
+          id: "connect-higher-intelligence",
+          title: "Connect To A Higher Intelligence And Become Your Desires",
+          icon: "Sun" as any,
+          color: isNightMode ? "#9370DB" : "#C71585",
+          videos: [
+            {
+              id: "chi1",
+              title: "Connecting with Higher Self",
+              duration: "18:45",
+              thumbnail: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              isLocked: false,
+              description: "Learn to connect with your higher intelligence",
+            },
+            {
+              id: "chi2",
+              title: "Manifesting Desires",
+              duration: "24:15",
+              thumbnail: "https://images.unsplash.com/photo-1499209974431-2761eb43a768?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+              isLocked: true,
+              description: "Become one with your desires",
+            },
+          ],
+          isSubscriptionRequired: true,
+        });
+      }
+      
+      if (!updated.find(c => c.id === 'wealthy-mindset')) {
+        console.log('Adding Wealthy Mindset category');
+        missingCategories.push({
+          id: "wealthy-mindset",
+          title: "Wealthy Mindset",
+          icon: "Gem" as any,
+          color: isNightMode ? "#50C878" : "#C71585",
+          videos: [
+            {
+              id: "wm1",
+              title: "The Psychology of Wealth",
+              duration: "16:20",
+              thumbnail: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              isLocked: false,
+              description: "Understand the mindset of wealthy individuals",
+            },
+            {
+              id: "wm2",
+              title: "Attracting Abundance",
+              duration: "21:15",
+              thumbnail: "https://images.unsplash.com/photo-1565514020176-dbf2277f0d03?w=800&q=80",
+              videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+              isLocked: true,
+              description: "Learn to attract wealth into your life",
+            },
+          ],
+          isSubscriptionRequired: true,
+        });
+      }
+      
+      if (missingCategories.length > 0) {
+        hasChanges = true;
+        updated = [...updated, ...missingCategories];
+      }
+      
+      // Only return updated if there were changes
+      return hasChanges ? updated : prev;
+    });
+  }, [isLoading, isNightMode]);
 
   const handleVideoPress = (video: VideoItem) => {
     if (Platform.OS !== "web") {
