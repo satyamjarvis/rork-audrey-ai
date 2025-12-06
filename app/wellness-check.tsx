@@ -99,7 +99,7 @@ const SLEEP_OPTIONS: SleepOption[] = [
 
 export default function WellnessCheckScreen() {
   const router = useRouter();
-  const { translate } = useLanguage();
+  const { translate, language } = useLanguage();
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -287,7 +287,7 @@ export default function WellnessCheckScreen() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString(language, {
       hour: "numeric",
       minute: "2-digit",
     });
@@ -722,7 +722,7 @@ export default function WellnessCheckScreen() {
                   ) : (
                     <BlurView intensity={15} tint="dark" style={styles.quickInputInner}>
                       <Droplets color="#a8c5e8" size={20} strokeWidth={2.5} />
-                      <Text style={styles.quickInputLabel}>Water (glasses)</Text>
+                      <Text style={styles.quickInputLabel}>{translate("howAmIFeeling.waterLabel")}</Text>
                       <TextInput
                         style={styles.quickInput}
                         placeholder="0"
@@ -752,7 +752,7 @@ export default function WellnessCheckScreen() {
                   ) : (
                     <BlurView intensity={15} tint="dark" style={styles.quickInputInner}>
                       <Clock color="#a8c5e8" size={20} strokeWidth={2.5} />
-                      <Text style={styles.quickInputLabel}>Exercise (min)</Text>
+                      <Text style={styles.quickInputLabel}>{translate("howAmIFeeling.exerciseLabel")}</Text>
                       <TextInput
                         style={styles.quickInput}
                         placeholder="0"
@@ -781,10 +781,10 @@ export default function WellnessCheckScreen() {
                   </View>
                 ) : (
                   <BlurView intensity={15} tint="dark" style={styles.notesCardInner}>
-                    <Text style={styles.notesLabel}>Additional Notes</Text>
+                    <Text style={styles.notesLabel}>{translate("howAmIFeeling.additionalNotes")}</Text>
                     <TextInput
                       style={styles.notesTextArea}
-                      placeholder="Any thoughts or observations?"
+                      placeholder={translate("howAmIFeeling.notesPlaceholder")}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={notes}
                       onChangeText={setNotes}
