@@ -24,6 +24,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -35,6 +36,7 @@ type IntentionEntry = {
 
 export default function TomorrowsIntentionsScreen() {
   const router = useRouter();
+  const { t, language } = useTranslation();
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -64,17 +66,7 @@ export default function TomorrowsIntentionsScreen() {
     });
   }, []);
 
-  const [intentionQuote] = useState(() => {
-    const quotes = [
-      "Tomorrow is shaped by the intentions we set today.",
-      "What you focus on grows. Set your intentions with care.",
-      "Dream it tonight, live it tomorrow.",
-      "Your tomorrow begins with today's gentle vision.",
-      "Plant seeds of intention, watch them bloom tomorrow.",
-      "The future is created by what we do in the present moment.",
-    ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
-  });
+  const [quoteIndex] = useState(() => Math.floor(Math.random() * 6) + 1);
 
   const starPositions = useMemo(() => {
     return Array.from({ length: 25 }, () => ({
@@ -213,7 +205,7 @@ export default function TomorrowsIntentionsScreen() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString(language, {
       hour: "numeric",
       minute: "2-digit",
     });
@@ -308,7 +300,7 @@ export default function TomorrowsIntentionsScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>Tomorrow&apos;s Intentions</Text>
+                  <Text style={styles.headerTitle}>{t('night.tomorrowsIntentionsPage.title')}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -331,9 +323,9 @@ export default function TomorrowsIntentionsScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Moon color="#e8a8c5" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Intention Wisdom</Text>
+                      <Text style={styles.quoteLabel}>{t('night.tomorrowsIntentionsPage.intentionWisdom')}</Text>
                     </View>
-                    <Text style={styles.quoteText}>{intentionQuote}</Text>
+                    <Text style={styles.quoteText}>{t(`night.tomorrowsIntentionsPage.quotes.${quoteIndex}`)}</Text>
                   </View>
                 </View>
               ) : (
@@ -341,17 +333,17 @@ export default function TomorrowsIntentionsScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Moon color="#e8a8c5" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Intention Wisdom</Text>
+                      <Text style={styles.quoteLabel}>{t('night.tomorrowsIntentionsPage.intentionWisdom')}</Text>
                     </View>
-                    <Text style={styles.quoteText}>{intentionQuote}</Text>
+                    <Text style={styles.quoteText}>{t(`night.tomorrowsIntentionsPage.quotes.${quoteIndex}`)}</Text>
                   </View>
                 </BlurView>
               )}
 
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Set Your Intentions</Text>
+                <Text style={styles.sectionTitle}>{t('night.tomorrowsIntentionsPage.setYourIntentions')}</Text>
                 <Text style={styles.sectionSubtitle}>
-                  What do you want to create tomorrow?
+                  {t('night.tomorrowsIntentionsPage.whatDoYouWantToCreate')}
                 </Text>
               </View>
             </Animated.View>
@@ -369,7 +361,7 @@ export default function TomorrowsIntentionsScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Plus color="#FFFFFF" size={24} strokeWidth={2.5} />
-                  <Text style={styles.addButtonText}>Add Intention</Text>
+                  <Text style={styles.addButtonText}>{t('night.tomorrowsIntentionsPage.addIntention')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             )}
@@ -380,7 +372,7 @@ export default function TomorrowsIntentionsScreen() {
                   <View style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="What would you like to focus on tomorrow?"
+                      placeholder={t('night.tomorrowsIntentionsPage.placeholder')}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={newEntry}
                       onChangeText={setNewEntry}
@@ -396,7 +388,7 @@ export default function TomorrowsIntentionsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{t('night.tomorrowsIntentionsPage.cancel')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -407,7 +399,7 @@ export default function TomorrowsIntentionsScreen() {
                           colors={["#c2185b", "#e91e63"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{t('night.tomorrowsIntentionsPage.save')}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -416,7 +408,7 @@ export default function TomorrowsIntentionsScreen() {
                   <BlurView intensity={20} tint="dark" style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="What would you like to focus on tomorrow?"
+                      placeholder={t('night.tomorrowsIntentionsPage.placeholder')}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={newEntry}
                       onChangeText={setNewEntry}
@@ -432,7 +424,7 @@ export default function TomorrowsIntentionsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{t('night.tomorrowsIntentionsPage.cancel')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -443,7 +435,7 @@ export default function TomorrowsIntentionsScreen() {
                           colors={["#c2185b", "#e91e63"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{t('night.tomorrowsIntentionsPage.save')}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -472,7 +464,7 @@ export default function TomorrowsIntentionsScreen() {
                           />
                         </Animated.View>
                         <Text style={styles.entryTime}>
-                          {entry.timestamp.toLocaleString("en-US", {
+                          {entry.timestamp.toLocaleString(language, {
                             month: "short",
                             day: "numeric",
                             hour: "numeric",
@@ -506,7 +498,7 @@ export default function TomorrowsIntentionsScreen() {
                           />
                         </Animated.View>
                         <Text style={styles.entryTime}>
-                          {entry.timestamp.toLocaleString("en-US", {
+                          {entry.timestamp.toLocaleString(language, {
                             month: "short",
                             day: "numeric",
                             hour: "numeric",
@@ -537,10 +529,10 @@ export default function TomorrowsIntentionsScreen() {
                     fillOpacity={0.1}
                   />
                   <Text style={styles.emptyStateText}>
-                    Begin setting your intentions
+                    {t('night.tomorrowsIntentionsPage.beginSetting')}
                   </Text>
                   <Text style={styles.emptyStateSubtext}>
-                    Tap &quot;Add Intention&quot; to start
+                    {t('night.tomorrowsIntentionsPage.tapToAdd')}
                   </Text>
                 </View>
               )}
@@ -548,7 +540,7 @@ export default function TomorrowsIntentionsScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Tomorrow is shaped by the intentions we set today
+                {t('night.tomorrowsIntentionsPage.footer')}
               </Text>
             </Animated.View>
           </ScrollView>

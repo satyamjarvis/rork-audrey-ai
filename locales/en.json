@@ -425,6 +425,27 @@
       "quote4": "Let today's journey settle like moonlight on calm waters.",
       "quote5": "Dreams are the poetry written by a peaceful heart.",
       "quote6": "The moon reminds us: even darkness has its glow."
+    },
+    "tomorrowsIntentionsPage": {
+      "title": "Tomorrow's Intentions",
+      "intentionWisdom": "Intention Wisdom",
+      "setYourIntentions": "Set Your Intentions",
+      "whatDoYouWantToCreate": "What do you want to create tomorrow?",
+      "addIntention": "Add Intention",
+      "placeholder": "What would you like to focus on tomorrow?",
+      "cancel": "Cancel",
+      "save": "Save",
+      "beginSetting": "Begin setting your intentions",
+      "tapToAdd": "Tap \"Add Intention\" to start",
+      "footer": "Tomorrow is shaped by the intentions we set today",
+      "quotes": {
+        "1": "Tomorrow is shaped by the intentions we set today.",
+        "2": "What you focus on grows. Set your intentions with care.",
+        "3": "Dream it tonight, live it tomorrow.",
+        "4": "Your tomorrow begins with today's gentle vision.",
+        "5": "Plant seeds of intention, watch them bloom tomorrow.",
+        "6": "The future is created by what we do in the present moment."
+      }
     }
   },
   "settings": {
