@@ -1365,8 +1365,8 @@ export default function LearnScreen() {
                 {selectedCategory.title}
               </Text>
               <View style={styles.categoryVideosList}>
-                {selectedCategory.videos.map((video) => (
-                  <View key={video.id} style={styles.videoItemWrapper}>
+                {selectedCategory.videos.map((video, index) => (
+                  <View key={video.id || `video-${index}`} style={styles.videoItemWrapper}>
                     <TouchableOpacity
                       style={[styles.categoryVideoCard, {
                       backgroundColor: isNightMode ? "rgba(26, 10, 31, 0.8)" : theme.colors.cardBackground,
