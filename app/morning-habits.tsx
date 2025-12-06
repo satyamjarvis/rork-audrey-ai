@@ -415,7 +415,9 @@ export default function MorningHabitsScreen() {
                   </View>
                 </View>
                 <Text style={styles.progressText}>
-                  {completedCount} of {totalCount} habits completed
+                  {t.habitsCompleted
+                    .replace('{completed}', completedCount.toString())
+                    .replace('{total}', totalCount.toString())}
                 </Text>
               </View>
 
