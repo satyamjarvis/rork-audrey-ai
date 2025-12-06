@@ -156,6 +156,25 @@
     "wellnessCheck": "健康检查",
     "tuneIntoYourEnergy": "调整你的能量",
     "embraceTheLight": "拥抱光明。掌控你的一天。",
+    "affirmationsPage": {
+      "title": "每日肯定",
+      "todaysInspiration": "今日灵感",
+      "empowerYourDay": "赋能你的一天",
+      "whatAffirmations": "今天什么肯定语将指引你？",
+      "addAffirmation": "添加肯定",
+      "startJourney": "开始你的赋能之旅",
+      "tapToAdd": "点击“添加肯定”开始",
+      "footer": "积极的肯定创造强大的转变",
+      "inputPlaceholder": "我是...",
+      "quotes": {
+        "1": "今天充满了无限的可能性。",
+        "2": "我强大、自信且有能力。",
+        "3": "每个早晨都是新的开始。",
+        "4": "我散发着积极和光芒。",
+        "5": "我感谢这美好的一天。",
+        "6": "我的潜力是无限的。"
+      }
+    },
     "routinesPage": {
       "title": "晨间流程",
       "todaysInspiration": "今日灵感",
