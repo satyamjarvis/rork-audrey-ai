@@ -1154,5 +1154,65 @@
     "thenFoundAudrey": "Entonces encontraste a Audrey",
     "showingTheWay": "Mostrándote el camino",
     "readyForJourney": "¡Listo para tu viaje!"
+  },
+  "howAmIFeeling": {
+    "title": "Control de Bienestar",
+    "completeCheckIn": "Completar Registro",
+    "checkInLogged": "¡Tu registro ha sido guardado!",
+    "incomplete": "Incompleto",
+    "fillAllParameters": "Por favor completa todos los parámetros de bienestar",
+    "success": "Éxito",
+    "understanding": "Entender tus sentimientos es el primer paso hacia el bienestar",
+    "howAreYouFeeling": "¿Cómo te sientes?",
+    "checkYourWellness": "Revisa tu Bienestar",
+    "checkedInToday": "¡Ya te has registrado hoy!",
+    "howAreYouFeelingToday": "¿Cómo te sientes hoy?",
+    "todaysReminder": "Recordatorio de Hoy",
+    "energyLevel": "Nivel de Energía",
+    "stressLevel": "Nivel de Estrés",
+    "sleepQuality": "Calidad de Sueño",
+    "physicalHealth": "Salud Física",
+    "gratitudeLabel": "Gratitud (una por línea)",
+    "gratitudePlaceholder": "¿De qué estás agradecido hoy?",
+    "waterLabel": "Agua (vasos)",
+    "exerciseLabel": "Ejercicio (min)",
+    "additionalNotes": "Notas Adicionales",
+    "notesPlaceholder": "¿Algún pensamiento u observación?",
+    "footer": "Tu bienestar importa cada día",
+    "mood": {
+      "excellent": "Excelente",
+      "good": "Bien",
+      "okay": "Regular",
+      "low": "Bajo",
+      "poor": "Mal"
+    },
+    "energy": {
+      "high": "Alto",
+      "moderate": "Moderado",
+      "low": "Bajo",
+      "exhausted": "Agotado"
+    },
+    "stress": {
+      "none": "Ninguno",
+      "mild": "Leve",
+      "moderate": "Moderado",
+      "high": "Alto",
+      "overwhelming": "Abrumador"
+    },
+    "sleep": {
+      "excellent": "Excelente",
+      "good": "Buena",
+      "fair": "Regular",
+      "poor": "Mala",
+      "terrible": "Terrible"
+    },
+    "quotes": {
+      "1": "Tu viaje de bienestar comienza con la autoconciencia.",
+      "2": "La salud es un estado de completa armonía de cuerpo, mente y espíritu.",
+      "3": "Cuida tu cuerpo. Es el único lugar que tienes para vivir.",
+      "4": "El bienestar no es un destino, es una forma de vida.",
+      "5": "La mayor riqueza es la salud.",
+      "6": "Escucha a tu cuerpo. Siempre está tratando de decirte algo."
+    }
   }
 }

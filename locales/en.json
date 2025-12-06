@@ -1331,7 +1331,7 @@
     }
   },
   "howAmIFeeling": {
-    "title": "How I'm Feeling",
+    "title": "Wellness Check",
     "completeCheckIn": "Complete Check-in",
     "checkInLogged": "Your check-in has been logged!",
     "incomplete": "Incomplete",
@@ -1339,6 +1339,10 @@
     "success": "Success",
     "understanding": "Understanding your feelings is the first step to wellness",
     "howAreYouFeeling": "How are you feeling?",
+    "checkYourWellness": "Check Your Wellness",
+    "checkedInToday": "You've checked in today!",
+    "howAreYouFeelingToday": "How are you feeling today?",
+    "todaysReminder": "Today's Reminder",
     "energyLevel": "Energy Level",
     "stressLevel": "Stress Level",
     "sleepQuality": "Sleep Quality",
@@ -1349,6 +1353,7 @@
     "exerciseLabel": "Exercise (min)",
     "additionalNotes": "Additional Notes",
     "notesPlaceholder": "Any thoughts or observations?",
+    "footer": "Your wellness matters every single day",
     "mood": {
       "excellent": "Excellent",
       "good": "Good",
@@ -1375,6 +1380,14 @@
       "fair": "Fair",
       "poor": "Poor",
       "terrible": "Terrible"
+    },
+    "quotes": {
+      "1": "Your wellness journey begins with self-awareness.",
+      "2": "Health is a state of complete harmony of body, mind and spirit.",
+      "3": "Take care of your body. It's the only place you have to live.",
+      "4": "Wellness is not a destination, it is a way of life.",
+      "5": "The greatest wealth is health.",
+      "6": "Listen to your body. It's always trying to tell you something."
     }
   },
   "dreamJournal": {

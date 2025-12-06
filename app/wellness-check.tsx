@@ -36,6 +36,7 @@ import {
   StressLevel,
   SleepQuality,
 } from "@/contexts/WellnessCheckContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -98,6 +99,7 @@ const SLEEP_OPTIONS: SleepOption[] = [
 
 export default function WellnessCheckScreen() {
   const router = useRouter();
+  const { translate } = useLanguage();
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -141,17 +143,8 @@ export default function WellnessCheckScreen() {
     });
   }, []);
 
-  const [wellnessQuote] = useState(() => {
-    const quotes = [
-      "Your wellness journey begins with self-awareness.",
-      "Health is a state of complete harmony of body, mind and spirit.",
-      "Take care of your body. It's the only place you have to live.",
-      "Wellness is not a destination, it is a way of life.",
-      "The greatest wealth is health.",
-      "Listen to your body. It's always trying to tell you something.",
-    ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
-  });
+  const [quoteIndex] = useState(() => Math.floor(Math.random() * 6) + 1);
+  const wellnessQuote = translate(`howAmIFeeling.quotes.${quoteIndex}`);
 
   const starPositions = useMemo(() => {
     return Array.from({ length: 25 }, () => ({
@@ -266,7 +259,7 @@ export default function WellnessCheckScreen() {
 
   const handleSubmitCheckIn = async () => {
     if (!selectedMood || !selectedEnergy || !selectedStress || !selectedSleep) {
-      Alert.alert("Incomplete", "Please fill in all wellness parameters");
+      Alert.alert(translate("howAmIFeeling.incomplete"), translate("howAmIFeeling.fillAllParameters"));
       return;
     }
 
@@ -290,7 +283,7 @@ export default function WellnessCheckScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
 
-    Alert.alert("Success", "Your wellness check has been logged!");
+    Alert.alert(translate("howAmIFeeling.success"), translate("howAmIFeeling.checkInLogged"));
   };
 
   const formatTime = (date: Date) => {
@@ -313,7 +306,7 @@ export default function WellnessCheckScreen() {
           style={styles.gradient}
         >
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Loading...</Text>
+            <Text style={styles.loadingText}>{translate("common.loading")}</Text>
           </View>
         </LinearGradient>
       </View>
@@ -404,7 +397,7 @@ export default function WellnessCheckScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>Wellness Check</Text>
+                  <Text style={styles.headerTitle}>{translate("howAmIFeeling.title")}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -427,7 +420,7 @@ export default function WellnessCheckScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#a8c5e8" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Reminder</Text>
+                      <Text style={styles.quoteLabel}>{translate("howAmIFeeling.todaysReminder")}</Text>
                     </View>
                     <Text style={styles.quoteText}>{wellnessQuote}</Text>
                   </View>
@@ -437,7 +430,7 @@ export default function WellnessCheckScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#a8c5e8" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Today&apos;s Reminder</Text>
+                      <Text style={styles.quoteLabel}>{translate("howAmIFeeling.todaysReminder")}</Text>
                     </View>
                     <Text style={styles.quoteText}>{wellnessQuote}</Text>
                   </View>
@@ -445,9 +438,9 @@ export default function WellnessCheckScreen() {
               )}
 
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Check Your Wellness</Text>
+                <Text style={styles.sectionTitle}>{translate("howAmIFeeling.checkYourWellness")}</Text>
                 <Text style={styles.sectionSubtitle}>
-                  {hasCheckedToday ? "You've checked in today!" : "How are you feeling today?"}
+                  {hasCheckedToday ? translate("howAmIFeeling.checkedInToday") : translate("howAmIFeeling.howAreYouFeelingToday")}
                 </Text>
               </View>
             </Animated.View>
@@ -455,7 +448,7 @@ export default function WellnessCheckScreen() {
             <View style={styles.moodSection}>
               <View style={styles.moodHeader}>
                 <Heart color="#a8c5e8" size={24} strokeWidth={2.5} />
-                <Text style={styles.moodTitle}>How are you feeling?</Text>
+                <Text style={styles.moodTitle}>{translate("howAmIFeeling.howAreYouFeeling")}</Text>
               </View>
               <View style={styles.moodGrid}>
                 {MOOD_OPTIONS.map((option) => (
@@ -494,7 +487,7 @@ export default function WellnessCheckScreen() {
                         },
                       ]}
                     >
-                      {option.label}
+                      {translate(`howAmIFeeling.mood.${option.value}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -504,7 +497,7 @@ export default function WellnessCheckScreen() {
             <View style={styles.energySection}>
               <View style={styles.energyHeader}>
                 <Zap color="#a8c5e8" size={24} strokeWidth={2.5} />
-                <Text style={styles.energyTitle}>Energy Level</Text>
+                <Text style={styles.energyTitle}>{translate("howAmIFeeling.energyLevel")}</Text>
               </View>
               <View style={styles.energyRow}>
                 {ENERGY_OPTIONS.map((option) => (
@@ -542,7 +535,7 @@ export default function WellnessCheckScreen() {
                         },
                       ]}
                     >
-                      {option.label}
+                      {translate(`howAmIFeeling.energy.${option.value}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -552,7 +545,7 @@ export default function WellnessCheckScreen() {
             <View style={styles.stressSection}>
               <View style={styles.stressHeader}>
                 <Brain color="#a8c5e8" size={24} strokeWidth={2.5} />
-                <Text style={styles.stressTitle}>Stress Level</Text>
+                <Text style={styles.stressTitle}>{translate("howAmIFeeling.stressLevel")}</Text>
               </View>
               <View style={styles.stressRow}>
                 {STRESS_OPTIONS.map((option) => (
@@ -590,7 +583,7 @@ export default function WellnessCheckScreen() {
                         },
                       ]}
                     >
-                      {option.label}
+                      {translate(`howAmIFeeling.stress.${option.value}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -600,7 +593,7 @@ export default function WellnessCheckScreen() {
             <View style={styles.sleepSection}>
               <View style={styles.sleepHeader}>
                 <Moon color="#a8c5e8" size={24} strokeWidth={2.5} />
-                <Text style={styles.sleepTitle}>Sleep Quality</Text>
+                <Text style={styles.sleepTitle}>{translate("howAmIFeeling.sleepQuality")}</Text>
               </View>
               <View style={styles.sleepGrid}>
                 {SLEEP_OPTIONS.map((option) => (
@@ -639,7 +632,7 @@ export default function WellnessCheckScreen() {
                         },
                       ]}
                     >
-                      {option.label}
+                      {translate(`howAmIFeeling.sleep.${option.value}`)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -649,7 +642,7 @@ export default function WellnessCheckScreen() {
             <View style={styles.healthSection}>
               <View style={styles.healthHeader}>
                 <Activity color="#a8c5e8" size={24} strokeWidth={2.5} />
-                <Text style={styles.healthTitle}>Physical Health: {physicalHealth}/10</Text>
+                <Text style={styles.healthTitle}>{translate("howAmIFeeling.physicalHealth")}: {physicalHealth}/10</Text>
               </View>
               <View style={styles.healthSlider}>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
@@ -682,11 +675,11 @@ export default function WellnessCheckScreen() {
                   <View style={styles.inputCardInner}>
                     <View style={styles.inputHeader}>
                       <Sparkles color="#a8c5e8" size={20} strokeWidth={2.5} />
-                      <Text style={styles.inputLabel}>Gratitude (one per line)</Text>
+                      <Text style={styles.inputLabel}>{translate("howAmIFeeling.gratitudeLabel")}</Text>
                     </View>
                     <TextInput
                       style={styles.textArea}
-                      placeholder="What are you grateful for today?"
+                      placeholder={translate("howAmIFeeling.gratitudePlaceholder")}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={gratitude}
                       onChangeText={setGratitude}
@@ -697,11 +690,11 @@ export default function WellnessCheckScreen() {
                   <BlurView intensity={15} tint="dark" style={styles.inputCardInner}>
                     <View style={styles.inputHeader}>
                       <Sparkles color="#a8c5e8" size={20} strokeWidth={2.5} />
-                      <Text style={styles.inputLabel}>Gratitude (one per line)</Text>
+                      <Text style={styles.inputLabel}>{translate("howAmIFeeling.gratitudeLabel")}</Text>
                     </View>
                     <TextInput
                       style={styles.textArea}
-                      placeholder="What are you grateful for today?"
+                      placeholder={translate("howAmIFeeling.gratitudePlaceholder")}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={gratitude}
                       onChangeText={setGratitude}
@@ -716,7 +709,7 @@ export default function WellnessCheckScreen() {
                   {Platform.OS === "web" ? (
                     <View style={styles.quickInputInner}>
                       <Droplets color="#a8c5e8" size={20} strokeWidth={2.5} />
-                      <Text style={styles.quickInputLabel}>Water (glasses)</Text>
+                      <Text style={styles.quickInputLabel}>{translate("howAmIFeeling.waterLabel")}</Text>
                       <TextInput
                         style={styles.quickInput}
                         placeholder="0"
@@ -746,7 +739,7 @@ export default function WellnessCheckScreen() {
                   {Platform.OS === "web" ? (
                     <View style={styles.quickInputInner}>
                       <Clock color="#a8c5e8" size={20} strokeWidth={2.5} />
-                      <Text style={styles.quickInputLabel}>Exercise (min)</Text>
+                      <Text style={styles.quickInputLabel}>{translate("howAmIFeeling.exerciseLabel")}</Text>
                       <TextInput
                         style={styles.quickInput}
                         placeholder="0"
@@ -776,10 +769,10 @@ export default function WellnessCheckScreen() {
               <View style={styles.notesCard}>
                 {Platform.OS === "web" ? (
                   <View style={styles.notesCardInner}>
-                    <Text style={styles.notesLabel}>Additional Notes</Text>
+                    <Text style={styles.notesLabel}>{translate("howAmIFeeling.additionalNotes")}</Text>
                     <TextInput
                       style={styles.notesTextArea}
-                      placeholder="Any thoughts or observations?"
+                      placeholder={translate("howAmIFeeling.notesPlaceholder")}
                       placeholderTextColor="rgba(255, 255, 255, 0.5)"
                       value={notes}
                       onChangeText={setNotes}
@@ -814,13 +807,13 @@ export default function WellnessCheckScreen() {
                 end={{ x: 1, y: 1 }}
               >
                 <Star color="#FFFFFF" size={24} strokeWidth={2.5} fill="#FFFFFF" />
-                <Text style={styles.submitText}>Complete Check-in</Text>
+                <Text style={styles.submitText}>{translate("howAmIFeeling.completeCheckIn")}</Text>
               </LinearGradient>
             </TouchableOpacity>
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Your wellness matters every single day
+                {translate("howAmIFeeling.footer")}
               </Text>
             </Animated.View>
           </ScrollView>
