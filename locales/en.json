@@ -338,6 +338,45 @@
           "description": "Review goals or read inspiring content"
         }
       }
+    },
+    "habitsPage": {
+      "title": "Morning Habits",
+      "morningInspiration": "Morning Inspiration",
+      "todaysProgress": "Today's Progress",
+      "habitsCompleted": "{completed} of {total} habits completed",
+      "yourMorningRituals": "Your Morning Rituals",
+      "startYourDay": "Start your day with these powerful habits",
+      "addHabit": "Add Habit",
+      "newHabitPlaceholder": "New morning habit...",
+      "editHabitPlaceholder": "Edit habit...",
+      "chooseIcon": "Choose Icon:",
+      "cancel": "Cancel",
+      "add": "Add",
+      "save": "Save",
+      "deleteHabit": "Delete Habit",
+      "deleteConfirmation": "Are you sure you want to delete this habit?",
+      "delete": "Delete",
+      "startBuilding": "Start building your morning routine",
+      "tapToAdd": "Tap \"Add Habit\" to begin",
+      "incredible": "Incredible!",
+      "allCompleted": "You've completed all your morning habits",
+      "footer": "Rise and shine with purpose every morning",
+      "quotes": {
+        "1": "Start your day with intention and purpose.",
+        "2": "Great things never come from comfort zones.",
+        "3": "The way you start your morning sets the tone for the day.",
+        "4": "Every morning is a chance to reset and begin again.",
+        "5": "Small daily habits create extraordinary results.",
+        "6": "Your morning routine is your superpower."
+      },
+      "defaultHabits": {
+        "hydrate": "Drink Water",
+        "exercise": "Morning Exercise",
+        "breakfast": "Healthy Breakfast",
+        "coffee": "Morning Coffee",
+        "reading": "Read or Journal",
+        "sunshine": "Get Sunlight"
+      }
     }
   },
   "night": {

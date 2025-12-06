@@ -16,7 +16,6 @@ import { BlurView } from "expo-blur";
 import {
   Sparkles,
   Sunrise,
-  Star,
   Plus,
   Trash2,
   ArrowLeft,
@@ -28,6 +27,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 
 import { useMorningHabits, ICON_MAP, MorningHabit } from "@/contexts/MorningHabitsContext";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
 
@@ -37,6 +37,9 @@ const getIconComponent = (iconName: string) => {
 
 export default function MorningHabitsScreen() {
   const router = useRouter();
+  const { translations } = useTranslation();
+  const t = translations.morning.habitsPage;
+  const common = translations.common;
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -69,17 +72,22 @@ export default function MorningHabitsScreen() {
     });
   }, []);
 
-  const [motivationalQuote] = useState(() => {
-    const quotes = [
-      "Start your day with intention and purpose.",
-      "Great things never come from comfort zones.",
-      "The way you start your morning sets the tone for the day.",
-      "Every morning is a chance to reset and begin again.",
-      "Small daily habits create extraordinary results.",
-      "Your morning routine is your superpower.",
-    ];
-    return quotes[Math.floor(Math.random() * quotes.length)];
+  const [quoteKey] = useState(() => {
+    const keys = ["1", "2", "3", "4", "5", "6"] as const;
+    return keys[Math.floor(Math.random() * keys.length)];
   });
+  
+  const motivationalQuote = t.quotes[quoteKey as keyof typeof t.quotes];
+
+  const getHabitTitle = (habit: MorningHabit) => {
+    if (habit.isCustom) return habit.title;
+    const defaultHabitKeys = ["hydrate", "exercise", "breakfast", "coffee", "reading", "sunshine"];
+    if (defaultHabitKeys.includes(habit.id)) {
+       // @ts-ignore
+       return t.defaultHabits?.[habit.id] || habit.title;
+    }
+    return habit.title;
+  };
 
   const starPositions = useMemo(() => {
     return Array.from({ length: 25 }, () => ({
@@ -224,12 +232,12 @@ export default function MorningHabitsScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
     Alert.alert(
-      "Delete Habit",
-      "Are you sure you want to delete this habit?",
+      t.deleteHabit,
+      t.deleteConfirmation,
       [
-        { text: "Cancel", style: "cancel" },
+        { text: common.cancel, style: "cancel" },
         {
-          text: "Delete",
+          text: t.delete,
           style: "destructive",
           onPress: async () => {
             await deleteHabit(id);
@@ -351,7 +359,7 @@ export default function MorningHabitsScreen() {
                   />
                 </Animated.View>
                 <View>
-                  <Text style={styles.headerTitle}>Morning Habits</Text>
+                  <Text style={styles.headerTitle}>{t.title}</Text>
                   <Text style={styles.headerTime}>{formatTime(currentTime)}</Text>
                 </View>
               </View>
@@ -374,7 +382,7 @@ export default function MorningHabitsScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#FF8C42" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Morning Inspiration</Text>
+                      <Text style={styles.quoteLabel}>{t.morningInspiration}</Text>
                     </View>
                     <Text style={styles.quoteText}>{motivationalQuote}</Text>
                   </View>
@@ -384,7 +392,7 @@ export default function MorningHabitsScreen() {
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
                       <Sparkles color="#FF8C42" size={18} strokeWidth={2} />
-                      <Text style={styles.quoteLabel}>Morning Inspiration</Text>
+                      <Text style={styles.quoteLabel}>{t.morningInspiration}</Text>
                     </View>
                     <Text style={styles.quoteText}>{motivationalQuote}</Text>
                   </View>
@@ -392,7 +400,7 @@ export default function MorningHabitsScreen() {
               )}
 
               <View style={styles.progressCard}>
-                <Text style={styles.progressTitle}>Today&apos;s Progress</Text>
+                <Text style={styles.progressTitle}>{t.todaysProgress}</Text>
                 <View style={styles.progressBarContainer}>
                   <View style={styles.progressBarBg}>
                     <LinearGradient
@@ -412,9 +420,9 @@ export default function MorningHabitsScreen() {
               </View>
 
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Your Morning Rituals</Text>
+                <Text style={styles.sectionTitle}>{t.yourMorningRituals}</Text>
                 <Text style={styles.sectionSubtitle}>
-                  Start your day with these powerful habits
+                  {t.startYourDay}
                 </Text>
               </View>
             </Animated.View>
@@ -432,7 +440,7 @@ export default function MorningHabitsScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Plus color="#FFFFFF" size={24} strokeWidth={2.5} />
-                  <Text style={styles.addButtonText}>Add Habit</Text>
+                  <Text style={styles.addButtonText}>{t.addHabit}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             )}
@@ -443,14 +451,14 @@ export default function MorningHabitsScreen() {
                   <View style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="New morning habit..."
+                      placeholder={t.newHabitPlaceholder}
                       placeholderTextColor="rgba(120, 60, 20, 0.5)"
                       value={newHabitTitle}
                       onChangeText={setNewHabitTitle}
                       multiline
                       autoFocus
                     />
-                    <Text style={styles.iconLabel}>Choose Icon:</Text>
+                    <Text style={styles.iconLabel}>{t.chooseIcon}</Text>
                     <View style={styles.iconGrid}>
                       {availableIcons.map((iconName) => {
                         const IconComponent = ICON_MAP[iconName as keyof typeof ICON_MAP];
@@ -492,7 +500,7 @@ export default function MorningHabitsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{common.cancel}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -503,7 +511,7 @@ export default function MorningHabitsScreen() {
                           colors={["#FF8C42", "#FFB84D"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Add</Text>
+                          <Text style={styles.saveButtonText}>{t.add}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -512,14 +520,14 @@ export default function MorningHabitsScreen() {
                   <BlurView intensity={20} tint="light" style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="New morning habit..."
+                      placeholder={t.newHabitPlaceholder}
                       placeholderTextColor="rgba(120, 60, 20, 0.5)"
                       value={newHabitTitle}
                       onChangeText={setNewHabitTitle}
                       multiline
                       autoFocus
                     />
-                    <Text style={styles.iconLabel}>Choose Icon:</Text>
+                    <Text style={styles.iconLabel}>{t.chooseIcon}</Text>
                     <View style={styles.iconGrid}>
                       {availableIcons.map((iconName) => {
                         const IconComponent = ICON_MAP[iconName as keyof typeof ICON_MAP];
@@ -561,7 +569,7 @@ export default function MorningHabitsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{common.cancel}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -572,7 +580,7 @@ export default function MorningHabitsScreen() {
                           colors={["#FF8C42", "#FFB84D"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Add</Text>
+                          <Text style={styles.saveButtonText}>{t.add}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -587,14 +595,14 @@ export default function MorningHabitsScreen() {
                   <View style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="Edit habit..."
+                      placeholder={t.editHabitPlaceholder}
                       placeholderTextColor="rgba(120, 60, 20, 0.5)"
                       value={newHabitTitle}
                       onChangeText={setNewHabitTitle}
                       multiline
                       autoFocus
                     />
-                    <Text style={styles.iconLabel}>Choose Icon:</Text>
+                    <Text style={styles.iconLabel}>{t.chooseIcon}</Text>
                     <View style={styles.iconGrid}>
                       {availableIcons.map((iconName) => {
                         const IconComponent = ICON_MAP[iconName as keyof typeof ICON_MAP];
@@ -637,7 +645,7 @@ export default function MorningHabitsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{common.cancel}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -648,7 +656,7 @@ export default function MorningHabitsScreen() {
                           colors={["#FF8C42", "#FFB84D"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{t.save}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -657,14 +665,14 @@ export default function MorningHabitsScreen() {
                   <BlurView intensity={20} tint="light" style={styles.inputCardInner}>
                     <TextInput
                       style={styles.input}
-                      placeholder="Edit habit..."
+                      placeholder={t.editHabitPlaceholder}
                       placeholderTextColor="rgba(120, 60, 20, 0.5)"
                       value={newHabitTitle}
                       onChangeText={setNewHabitTitle}
                       multiline
                       autoFocus
                     />
-                    <Text style={styles.iconLabel}>Choose Icon:</Text>
+                    <Text style={styles.iconLabel}>{t.chooseIcon}</Text>
                     <View style={styles.iconGrid}>
                       {availableIcons.map((iconName) => {
                         const IconComponent = ICON_MAP[iconName as keyof typeof ICON_MAP];
@@ -707,7 +715,7 @@ export default function MorningHabitsScreen() {
                         }}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Text style={styles.cancelButtonText}>{common.cancel}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.saveButton}
@@ -718,7 +726,7 @@ export default function MorningHabitsScreen() {
                           colors={["#FF8C42", "#FFB84D"]}
                           style={styles.saveButtonGradient}
                         >
-                          <Text style={styles.saveButtonText}>Save</Text>
+                          <Text style={styles.saveButtonText}>{t.save}</Text>
                         </LinearGradient>
                       </TouchableOpacity>
                     </View>
@@ -767,7 +775,7 @@ export default function MorningHabitsScreen() {
                                 habit.completed && styles.habitTitleCompleted,
                               ]}
                             >
-                              {habit.title}
+                              {getHabitTitle(habit)}
                             </Text>
                             <View
                               style={[
@@ -832,7 +840,7 @@ export default function MorningHabitsScreen() {
                                 habit.completed && styles.habitTitleCompleted,
                               ]}
                             >
-                              {habit.title}
+                              {getHabitTitle(habit)}
                             </Text>
                             <View
                               style={[
@@ -878,10 +886,10 @@ export default function MorningHabitsScreen() {
                     fillOpacity={0.1}
                   />
                   <Text style={styles.emptyStateText}>
-                    Start building your morning routine
+                    {t.startBuilding}
                   </Text>
                   <Text style={styles.emptyStateSubtext}>
-                    Tap &ldquo;Add Habit&rdquo; to begin
+                    {t.tapToAdd}
                   </Text>
                 </View>
               )}
@@ -896,9 +904,9 @@ export default function MorningHabitsScreen() {
                   end={{ x: 1, y: 1 }}
                 >
                   <Text style={styles.celebrationEmoji}>🌟</Text>
-                  <Text style={styles.celebrationTitle}>Incredible!</Text>
+                  <Text style={styles.celebrationTitle}>{t.incredible}</Text>
                   <Text style={styles.celebrationText}>
-                    You&apos;ve completed all your morning habits
+                    {t.allCompleted}
                   </Text>
                 </LinearGradient>
               </View>
@@ -906,7 +914,7 @@ export default function MorningHabitsScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                Rise and shine with purpose every morning
+                {t.footer}
               </Text>
             </Animated.View>
           </ScrollView>
