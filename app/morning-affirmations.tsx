@@ -154,24 +154,21 @@ export default function MorningAffirmationsScreen() {
     lightRays.forEach((particle) => {
       Animated.loop(
         Animated.sequence([
+          Animated.delay(particle.delay),
           Animated.parallel([
             Animated.timing(particle.opacity, {
               toValue: Math.random() * 0.6 + 0.4,
               duration: 1000,
-              delay: particle.delay,
               useNativeDriver: true,
             }),
-            Animated.spring(particle.scale, {
+            Animated.timing(particle.scale, {
               toValue: 1,
-              tension: 20,
-              friction: 7,
-              delay: particle.delay,
+              duration: 500,
               useNativeDriver: true,
             }),
             Animated.timing(particle.translateY, {
               toValue: Math.random() * 200 - 100,
               duration: particle.duration,
-              delay: particle.delay,
               useNativeDriver: true,
             }),
           ]),
