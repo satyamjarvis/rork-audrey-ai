@@ -679,7 +679,21 @@
     "download": "Download",
     "clearAll": "Clear All",
     "askMeAnything": "Ask me anything...",
-    "lifeCompanion": "Your AI assistant and life companion"
+    "lifeCompanion": "Your AI assistant and life companion",
+    "selectFileToAnalyze": "Please select a file to analyze.",
+    "transcriptionFailed": "Transcription Failed",
+    "failedToTranscribe": "Failed to transcribe audio. Please try again.",
+    "recordingFailed": "Recording Failed",
+    "checkMicPermissions": "Failed to start recording. Please check microphone permissions.",
+    "permissionRequired": "Permission Required",
+    "micPermissionRequired": "Microphone permission is required for voice input.",
+    "failedToStartRecording": "Failed to start recording. Please try again.",
+    "phoneNumberRequired": "Phone Number Required",
+    "phoneNumberRequiredDesc": "An active phone number needs to be updated in Account Settings before you can send SMS messages through Audrey.",
+    "phoneNumberRequiredScheduleDesc": "An active phone number needs to be updated in Account Settings before you can schedule SMS messages through Audrey.",
+    "goToSettings": "Go to Settings",
+    "failedToReadFile": "Failed to read file:",
+    "failedToSendMessage": "Failed to send message."
   },
   "automations": {
     "title": "Automations Manager",

@@ -717,12 +717,12 @@ GUIDELINES FOR EXCELLENCE:
               }
               
               Alert.alert(
-                "Phone Number Required",
-                "An active phone number needs to be updated in Account Settings before you can send SMS messages through Audrey.",
+                i18n.ai.phoneNumberRequired,
+                i18n.ai.phoneNumberRequiredDesc,
                 [
-                  { text: "Cancel", style: "cancel" },
+                  { text: i18n.common.cancel, style: "cancel" },
                   { 
-                    text: "Go to Settings", 
+                    text: i18n.ai.goToSettings, 
                     onPress: () => router.push("/account-settings" as any)
                   }
                 ]
@@ -1242,12 +1242,12 @@ GUIDELINES FOR EXCELLENCE:
               }
               
               Alert.alert(
-                "Phone Number Required",
-                "An active phone number needs to be updated in Account Settings before you can schedule SMS messages through Audrey.",
+                i18n.ai.phoneNumberRequired,
+                i18n.ai.phoneNumberRequiredScheduleDesc,
                 [
-                  { text: "Cancel", style: "cancel" },
+                  { text: i18n.common.cancel, style: "cancel" },
                   { 
-                    text: "Go to Settings", 
+                    text: i18n.ai.goToSettings, 
                     onPress: () => router.push("/account-settings" as any)
                   }
                 ]
@@ -1476,7 +1476,7 @@ GUIDELINES FOR EXCELLENCE:
           console.log("[AI Assistant] Successfully processed file:", file.name);
         } catch (e) {
           console.error("[AI Assistant] Failed to read file for message:", file.name, e);
-          Alert.alert("Error", `Failed to read file: ${file.name}`);
+          Alert.alert(i18n.common.error, `${i18n.ai.failedToReadFile} ${file.name}`);
           return;
         }
       }
@@ -1497,7 +1497,7 @@ GUIDELINES FOR EXCELLENCE:
       }, 100);
     } catch (error) {
       console.error("[AI Assistant] Error sending message:", error);
-      Alert.alert("Error", "Failed to send message.");
+      Alert.alert(i18n.common.error, i18n.ai.failedToSendMessage);
     }
   };
 
@@ -1519,7 +1519,7 @@ GUIDELINES FOR EXCELLENCE:
       }
 
       if (!result.assets || result.assets.length === 0) {
-        Alert.alert(i18n.ai.noContent, "Please select a file to analyze.");
+        Alert.alert(i18n.ai.noContent, i18n.ai.selectFileToAnalyze);
         return;
       }
 
@@ -1543,11 +1543,11 @@ GUIDELINES FOR EXCELLENCE:
       Alert.alert(
         i18n.ai.fileAttached,
         `${file.name} ${i18n.ai.fileAttachedDesc}`,
-        [{ text: "OK" }]
+        [{ text: i18n.common.ok }]
       );
     } catch (error) {
       console.error("[AI Assistant] Error picking file:", error);
-      Alert.alert(i18n.common.error, i18n.ai.failedToPickFile, [{ text: "OK" }]);
+      Alert.alert(i18n.common.error, i18n.ai.failedToPickFile, [{ text: i18n.common.ok }]);
     }
   };
 
@@ -1586,7 +1586,7 @@ GUIDELINES FOR EXCELLENCE:
             console.log("[AI Assistant] Successfully processed file for analysis:", file.name);
           } catch (e) {
             console.error("[AI Assistant] Failed to read file for analysis:", file.name, e);
-            Alert.alert("Error", `Failed to read file: ${file.name}`);
+            Alert.alert(i18n.common.error, `${i18n.ai.failedToReadFile} ${file.name}`);
             setIsAnalyzing(false);
             return;
           }
@@ -1615,7 +1615,7 @@ GUIDELINES FOR EXCELLENCE:
     } catch (error) {
       console.error("[AI Assistant] Error analyzing:", error);
       setIsAnalyzing(false);
-      Alert.alert(i18n.ai.analysisFailed, i18n.ai.analysisFailedDesc, [{ text: "OK" }]);
+      Alert.alert(i18n.ai.analysisFailed, i18n.ai.analysisFailedDesc, [{ text: i18n.common.ok }]);
     }
   };
 
@@ -1729,7 +1729,7 @@ GUIDELINES FOR EXCELLENCE:
             } catch (error) {
               console.error("[AI Assistant] Transcription error:", error);
               setIsTranscribing(false);
-              Alert.alert("Transcription Failed", "Failed to transcribe audio. Please try again.");
+              Alert.alert(i18n.ai.transcriptionFailed, i18n.ai.failedToTranscribe);
             }
           }
           setRecording(null);
@@ -1764,7 +1764,7 @@ GUIDELINES FOR EXCELLENCE:
             } catch (error) {
               console.error("[AI Assistant] Transcription error:", error);
               setIsTranscribing(false);
-              Alert.alert("Transcription Failed", "Failed to transcribe audio. Please try again.");
+              Alert.alert(i18n.ai.transcriptionFailed, i18n.ai.failedToTranscribe);
             }
             stream.getTracks().forEach((track) => track.stop());
           };
@@ -1772,13 +1772,13 @@ GUIDELINES FOR EXCELLENCE:
           setIsRecording(true);
         } catch (error) {
           console.error("[AI Assistant] Error starting recording:", error);
-          Alert.alert("Recording Failed", "Failed to start recording. Please check microphone permissions.");
+          Alert.alert(i18n.ai.recordingFailed, i18n.ai.checkMicPermissions);
         }
       } else {
         try {
           const { status } = await Audio.requestPermissionsAsync();
           if (status !== "granted") {
-            Alert.alert("Permission Required", "Microphone permission is required for voice input.");
+            Alert.alert(i18n.ai.permissionRequired, i18n.ai.micPermissionRequired);
             return;
           }
           await Audio.setAudioModeAsync({
@@ -1813,7 +1813,7 @@ GUIDELINES FOR EXCELLENCE:
           setIsRecording(true);
         } catch (error) {
           console.error("[AI Assistant] Error starting recording:", error);
-          Alert.alert("Recording Failed", "Failed to start recording. Please try again.");
+          Alert.alert(i18n.ai.recordingFailed, i18n.ai.failedToStartRecording);
         }
       }
     }
