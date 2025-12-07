@@ -11,7 +11,7 @@ export type Meditation = {
   id: string;
   title: string;
   description: string;
-  duration: number;
+  duration: number | string;
   type: MeditationType;
   isFavorite: boolean;
   audioUrl?: string;
@@ -48,7 +48,7 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     id: "4",
     title: "Mindful Awareness",
     description: "Cultivate present-moment awareness for the day ahead",
-    duration: 15,
+    duration: "4:40",
     type: "mindfulness",
     isFavorite: false,
     audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/mindful_awareness_1",
@@ -178,7 +178,21 @@ export const [MeditationProvider, useMeditation] = createContextHook(() => {
 
     const today = new Date().toISOString().split('T')[0];
     const newCompleted = [...completedToday, meditationId];
-    const newTotalMinutes = totalMinutesToday + meditation.duration;
+    
+    let addedMinutes = 0;
+    if (typeof meditation.duration === 'number') {
+      addedMinutes = meditation.duration;
+    } else if (typeof meditation.duration === 'string') {
+      const parts = meditation.duration.split(':');
+      if (parts.length === 2) {
+        // Convert M:SS to minutes (e.g. 4:40 -> 4.67)
+        addedMinutes = parseInt(parts[0]) + parseInt(parts[1]) / 60;
+      } else {
+        addedMinutes = parseFloat(meditation.duration);
+      }
+    }
+    
+    const newTotalMinutes = Math.round(totalMinutesToday + addedMinutes);
 
     setCompletedToday(newCompleted);
     setTotalMinutesToday(newTotalMinutes);
