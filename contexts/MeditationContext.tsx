@@ -94,9 +94,10 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     id: "9",
     title: "Extended Mindfulness",
     description: "Deep mindfulness practice for experienced meditators",
-    duration: 20,
+    duration: "4:40",
     type: "mindfulness",
     isFavorite: false,
+    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/meditation_mindfulness_1",
   },
   {
     id: "10",
