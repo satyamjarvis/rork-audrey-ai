@@ -70,7 +70,7 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     duration: 3,
     type: "breathing",
     isFavorite: false,
-    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/breathing_exercise_2",
+    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/fast_3_mins_breathing_1",
   },
   {
     id: "7",
