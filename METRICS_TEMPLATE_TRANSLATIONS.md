@@ -1,15 +1,15 @@
-# Metrics Templates Translation Update
+# Metrics Templates & Active Templates Translation Update
 
 ## Summary
-Added i18n support for the metrics templates page across all 12 supported languages (English, Spanish, French, Arabic, Chinese, Portuguese, Japanese, Hebrew, Romanian, Russian, Hindi, Italian).
+Added i18n support for the metrics templates page AND active templates page across all 12 supported languages (English, Spanish, French, Arabic, Chinese, Portuguese, Japanese, Hebrew, Romanian, Russian, Hindi, Italian).
 
-## New Translation Keys Added to English (locales/en.json)
+## Translation Keys for Active Templates Page
 
-### Metrics Section Updates
+All these keys already exist in the English locales/en.json file under the `metrics` section:
 
-1. **Template Labels** (`metrics.templates`)
-   - `title`: "Templates"
-   - `active`: "Active"
+### Template Labels (`metrics.templates`)
+   - `title`: "Templates" - Used for the templates tab
+   - `active`: "Active" - Used for the active templates tab label
    - `salesGeneral`: "Sales General"
    - `coldCalling`: "Cold Calling"
    - `closingSales`: "Closing Sales"
@@ -23,7 +23,32 @@ Added i18n support for the metrics templates page across all 12 supported langua
    - `customTracker`: "Custom Tracker"
    - `selectTemplate`: "Select a template to start tracking"
 
-2. **General Metrics Additions**
+### Active Templates Specific Keys
+   - `metrics.noTrackersYet`: "No Trackers Yet" - Empty state title
+   - `metrics.startTracking`: "Start tracking by selecting a template" - Empty state subtitle
+   - `metrics.load`: "Load" - Button to load a saved tracker
+   - `metrics.rows`: "rows" - Tracker row count label
+   - `metrics.cols`: "cols" - Tracker column count label
+   - `metrics.certifiedFullyEncrypted`: "CERTIFIED FULLY ENCRYPTED" - Security badge
+   - `metrics.metrics`: "Metrics" - Page title
+   - `metrics.trackYourProgress`: "Track your progress" - Page subtitle
+   - `metrics.viewOnly`: "View Only" - Read-only mode badge
+
+### Formula Descriptions (`metrics.formulaDescriptions`)
+   - `sumColumn`: "Sum Column"
+   - `sumColumnDesc`: "Total of all values"
+   - `average`: "Average"
+   - `averageDesc`: "Average value"
+   - `count`: "Count"
+   - `countDesc`: "Count non-empty cells"
+   - `minValue`: "Min Value"
+   - `minValueDesc`: "Minimum value"
+   - `maxValue`: "Max Value"
+   - `maxValueDesc`: "Maximum value"
+   - `percentage`: "Percentage"
+   - `percentageDesc`: "Calculate percentage"
+
+### Additional Metrics Keys
    - `analyticsReport`: "Analytics Report"
    - `generatedOn`: "Generated on"
    - `securedByRorkApp`: "Secured by Rork App"

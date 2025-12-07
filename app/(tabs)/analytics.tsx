@@ -58,12 +58,14 @@ import { useCalendar } from "@/contexts/CalendarContext";
 import { useChat } from "@/contexts/ChatContext";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useSharing } from "@/contexts/SharingContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function AnalyticsScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { translations } = useLanguage();
   const params = useLocalSearchParams<{ sharedItemId?: string; readOnly?: string }>();
   const { createShareableFromSpreadsheet, shareItemToChat, sharedItems } = useSharing();
   const {
@@ -841,25 +843,25 @@ export default function AnalyticsScreen() {
   }, [exportAsSpreadsheet, selectedTemplate, sendFileAttachment, rows, columns, evaluateFormula, getCellDisplayValue, isDark, theme.colors.primary, savedTrackers, activeTrackerId, createShareableFromSpreadsheet, shareItemToChat]);
 
   const templates = [
-    { type: "sales-general" as const, label: "Sales General", icon: TrendingUp, color: "#FF6B6B" },
-    { type: "cold-calling" as const, label: "Cold Calling", icon: Phone, color: "#4ECDC4" },
-    { type: "closing-sales" as const, label: "Closing Sales", icon: Handshake, color: "#95E1D3" },
-    { type: "insurance-sales" as const, label: "Insurance Sales", icon: Shield, color: "#F38181" },
-    { type: "sports-performance" as const, label: "Sports Performance", icon: Trophy, color: "#FEA47F" },
-    { type: "actors-career" as const, label: "Actors Career", icon: Clapperboard, color: "#B388EB" },
-    { type: "modeling-career" as const, label: "Modeling Career", icon: Camera, color: "#FF85A1" },
-    { type: "music-career" as const, label: "Music Career", icon: Music, color: "#FFD93D" },
-    { type: "singing-career" as const, label: "Singing Career", icon: Mic, color: "#A8E6CF" },
-    { type: "custom" as const, label: "Custom", icon: Settings2, color: "#6C5CE7" },
+    { type: "sales-general" as const, label: translations.metrics.templates.salesGeneral, icon: TrendingUp, color: "#FF6B6B" },
+    { type: "cold-calling" as const, label: translations.metrics.templates.coldCalling, icon: Phone, color: "#4ECDC4" },
+    { type: "closing-sales" as const, label: translations.metrics.templates.closingSales, icon: Handshake, color: "#95E1D3" },
+    { type: "insurance-sales" as const, label: translations.metrics.templates.insuranceSales, icon: Shield, color: "#F38181" },
+    { type: "sports-performance" as const, label: translations.metrics.templates.sportsPerformance, icon: Trophy, color: "#FEA47F" },
+    { type: "actors-career" as const, label: translations.metrics.templates.actorsCareer, icon: Clapperboard, color: "#B388EB" },
+    { type: "modeling-career" as const, label: translations.metrics.templates.modelingCareer, icon: Camera, color: "#FF85A1" },
+    { type: "music-career" as const, label: translations.metrics.templates.musicCareer, icon: Music, color: "#FFD93D" },
+    { type: "singing-career" as const, label: translations.metrics.templates.singingCareer, icon: Mic, color: "#A8E6CF" },
+    { type: "custom" as const, label: translations.metrics.templates.custom, icon: Settings2, color: "#6C5CE7" },
   ];
 
   const commonFormulas = [
-    { label: "Sum Column", formula: "=SUM(ColumnName)", description: "Total of all values" },
-    { label: "Average", formula: "=AVG(ColumnName)", description: "Average value" },
-    { label: "Count", formula: "=COUNT(ColumnName)", description: "Count non-empty cells" },
-    { label: "Min Value", formula: "=MIN(ColumnName)", description: "Minimum value" },
-    { label: "Max Value", formula: "=MAX(ColumnName)", description: "Maximum value" },
-    { label: "Percentage", formula: "=(Col1/Col2)*100", description: "Calculate percentage" },
+    { label: translations.metrics.formulaDescriptions.sumColumn, formula: "=SUM(ColumnName)", description: translations.metrics.formulaDescriptions.sumColumnDesc },
+    { label: translations.metrics.formulaDescriptions.average, formula: "=AVG(ColumnName)", description: translations.metrics.formulaDescriptions.averageDesc },
+    { label: translations.metrics.formulaDescriptions.count, formula: "=COUNT(ColumnName)", description: translations.metrics.formulaDescriptions.countDesc },
+    { label: translations.metrics.formulaDescriptions.minValue, formula: "=MIN(ColumnName)", description: translations.metrics.formulaDescriptions.minValueDesc },
+    { label: translations.metrics.formulaDescriptions.maxValue, formula: "=MAX(ColumnName)", description: translations.metrics.formulaDescriptions.maxValueDesc },
+    { label: translations.metrics.formulaDescriptions.percentage, formula: "=(Col1/Col2)*100", description: translations.metrics.formulaDescriptions.percentageDesc },
   ];
 
   const cardStyle = isDark ? styles.darkCard : styles.lightCard;
@@ -939,8 +941,8 @@ export default function AnalyticsScreen() {
                     />
                   </Animated.View>
                   <View>
-                    <Text style={[styles.headerTitle, { color: isDark ? "#ffc0cb" : theme.colors.text.primary }]}>Metrics</Text>
-                    <Text style={[styles.headerSubtitle, { color: subTextColor }]}>Track your progress</Text>
+                    <Text style={[styles.headerTitle, { color: isDark ? "#ffc0cb" : theme.colors.text.primary }]}>{translations.metrics.metrics}</Text>
+                    <Text style={[styles.headerSubtitle, { color: subTextColor }]}>{translations.metrics.trackYourProgress}</Text>
                   </View>
                 </View>
                 <Animated.View style={{ transform: [{ rotate: starsRotateInterpolate }] }}>
@@ -964,7 +966,7 @@ export default function AnalyticsScreen() {
                     styles.filterText,
                     activeTab === "templates" && styles.filterTextActive,
                     { color: activeTab === "templates" ? "#FFFFFF" : (isDark ? "#ffc0cb" : theme.colors.text.primary) }
-                  ]}>Templates</Text>
+                  ]}>{translations.metrics.templates.title}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[
@@ -979,7 +981,7 @@ export default function AnalyticsScreen() {
                     styles.filterText,
                     activeTab === "active" && styles.filterTextActive,
                     { color: activeTab === "active" ? "#FFFFFF" : (isDark ? "#ffc0cb" : theme.colors.text.primary) }
-                  ]}>Active ({savedTrackers.length})</Text>
+                  ]}>{translations.metrics.templates.active} ({savedTrackers.length})</Text>
                 </TouchableOpacity>
               </ScrollView>
             </View>
@@ -1006,7 +1008,7 @@ export default function AnalyticsScreen() {
                       }}>
                         <ShieldCheck size={14} color={isDark ? '#4ECDC4' : '#2A9D8F'} strokeWidth={2.5} />
                         <Text style={{ fontSize: 10, fontWeight: '700', color: isDark ? '#4ECDC4' : '#2A9D8F', letterSpacing: 0.5 }}>
-                          CERTIFIED FULLY ENCRYPTED
+                          {translations.metrics.certifiedFullyEncrypted}
                         </Text>
                       </View>
                     </View>
@@ -1047,16 +1049,16 @@ export default function AnalyticsScreen() {
                       }}>
                         <ShieldCheck size={14} color={isDark ? '#4ECDC4' : '#2A9D8F'} strokeWidth={2.5} />
                         <Text style={{ fontSize: 10, fontWeight: '700', color: isDark ? '#4ECDC4' : '#2A9D8F', letterSpacing: 0.5 }}>
-                          CERTIFIED FULLY ENCRYPTED
+                          {translations.metrics.certifiedFullyEncrypted}
                         </Text>
                       </View>
                     </View>
                      {savedTrackers.length === 0 ? (
                       <View style={styles.emptyState}>
                         <List color={isDark ? "#d4c4f0" : theme.colors.text.light} size={64} strokeWidth={1.5} />
-                        <Text style={[styles.emptyTitle, { color: isDark ? "#ffc0cb" : theme.colors.text.primary }]}>No Trackers Yet</Text>
+                        <Text style={[styles.emptyTitle, { color: isDark ? "#ffc0cb" : theme.colors.text.primary }]}>{translations.metrics.noTrackersYet}</Text>
                         <Text style={[styles.emptySubtitle, { color: subTextColor }]}>
-                          Start tracking by selecting a template
+                          {translations.metrics.startTracking}
                         </Text>
                       </View>
                     ) : (
@@ -1076,7 +1078,7 @@ export default function AnalyticsScreen() {
                                     {tracker.customName || template?.label || "Custom"}
                                   </Text>
                                   <Text style={[styles.trackerMeta, { color: subTextColor }]}>
-                                    {tracker.rows.length} rows • {tracker.columns.length} cols
+                                    {tracker.rows.length} {translations.metrics.rows} • {tracker.columns.length} {translations.metrics.cols}
                                   </Text>
                                 </View>
                                 <View style={styles.trackerActions}>
@@ -1084,7 +1086,7 @@ export default function AnalyticsScreen() {
                                     onPress={() => handleLoadTracker(tracker)}
                                     style={[styles.actionButton, { backgroundColor: isDark ? "rgba(255, 192, 203, 0.15)" : `${theme.colors.primary}20` }]}
                                   >
-                                    <Text style={{ color: isDark ? "#ffc0cb" : theme.colors.primary, fontWeight: "700", fontSize: 12 }}>Load</Text>
+                                    <Text style={{ color: isDark ? "#ffc0cb" : theme.colors.primary, fontWeight: "700", fontSize: 12 }}>{translations.metrics.load}</Text>
                                   </TouchableOpacity>
                                   <TouchableOpacity 
                                     onPress={() => handleDeleteTracker(tracker.id)}
@@ -1128,14 +1130,14 @@ export default function AnalyticsScreen() {
                     {selectedTemplate === "custom" ? "Custom" : templates.find(t => t.type === selectedTemplate)?.label}
                   </Text>
                   <Text style={[styles.headerSubtitle, { color: subTextColor, fontSize: 12 }]}>
-                    Metrics
+                    {translations.metrics.metrics}
                   </Text>
                 </View>
               </View>
               <View style={styles.headerActions}>
                 {isReadOnly ? (
                   <View style={[styles.readOnlyBadge, { backgroundColor: isDark ? "rgba(255, 192, 203, 0.15)" : "rgba(255, 152, 0, 0.15)" }]}>
-                    <Text style={[styles.readOnlyText, { color: isDark ? "#ffc0cb" : "#FF9800" }]}>VIEW ONLY</Text>
+                    <Text style={[styles.readOnlyText, { color: isDark ? "#ffc0cb" : "#FF9800" }]}>{translations.metrics.viewOnly.toUpperCase()}</Text>
                   </View>
                 ) : (
                   <>
