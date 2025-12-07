@@ -32,6 +32,7 @@ type SleepSound = {
   title: string;
   duration: string;
   description: string;
+  audio?: string;
 };
 
 type SleepMeditationPageTranslations = {
@@ -65,8 +66,9 @@ const FALLBACK_SOUNDS: readonly SleepSound[] = [
   {
     id: "rainSounds",
     title: "Rain Sounds",
-    duration: "45 min",
+    duration: "5 min",
     description: "Soft rainfall on a quiet night",
+    audio: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/rain_45_min_1",
   },
   {
     id: "forestNight",
