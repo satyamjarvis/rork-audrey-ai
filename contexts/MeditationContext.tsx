@@ -103,9 +103,10 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     id: "10",
     title: "Self-Compassion",
     description: "Practice kindness and acceptance toward yourself",
-    duration: 10,
+    duration: 4,
     type: "loving-kindness",
     isFavorite: false,
+    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/selfcompassion_meditation_1",
   },
   {
     id: "11",
