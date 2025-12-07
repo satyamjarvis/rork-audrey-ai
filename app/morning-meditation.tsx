@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,8 +8,9 @@ import {
   Platform,
   Animated,
   Dimensions,
+  GestureResponderEvent,
 } from "react-native";
-import { Audio } from "expo-av";
+import { Audio, AVPlaybackStatus } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import {
@@ -19,6 +20,8 @@ import {
   Heart,
   ArrowLeft,
   Play,
+  Pause,
+  RotateCcw,
   Clock,
   CheckCircle,
 } from "lucide-react-native";
@@ -61,6 +64,34 @@ export default function MorningMeditationScreen() {
   const [selectedFilter, setSelectedFilter] = useState<MeditationType | "all">("all");
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [playingMeditationId, setPlayingMeditationId] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [position, setPosition] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  // Cleanup sound on unmount
+  useEffect(() => {
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, [sound]);
+
+  const onPlaybackStatusUpdate = useCallback((status: AVPlaybackStatus) => {
+    if (status.isLoaded) {
+      setPosition(status.positionMillis);
+      setDuration(status.durationMillis || 0);
+      setIsPlaying(status.isPlaying);
+      
+      if (status.didJustFinish) {
+        setIsPlaying(false);
+        setPosition(status.durationMillis || 0);
+        if (playingMeditationId) {
+            completeMeditation(playingMeditationId);
+        }
+      }
+    }
+  }, [playingMeditationId, completeMeditation]);
 
   const glitterParticles = useMemo(() => {
     return Array.from({ length: 30 }, () => {
@@ -116,25 +147,21 @@ export default function MorningMeditationScreen() {
           await sound.unloadAsync();
           setSound(null);
           setPlayingMeditationId(null);
+          setIsPlaying(false);
+          setPosition(0);
+          setDuration(0);
         }
         
         console.log("Loading audio from:", meditation.audioUrl);
         const { sound: newSound } = await Audio.Sound.createAsync(
           { uri: meditation.audioUrl },
-          { shouldPlay: true }
+          { shouldPlay: true },
+          onPlaybackStatusUpdate
         );
         
         setSound(newSound);
         setPlayingMeditationId(meditationId);
-        
-        newSound.setOnPlaybackStatusUpdate((status) => {
-          if (status.isLoaded && status.didJustFinish) {
-            completeMeditation(meditationId);
-            setPlayingMeditationId(null);
-            newSound.unloadAsync();
-            setSound(null);
-          }
-        });
+        setIsPlaying(true);
         
         console.log("Audio playback started for:", meditation.title);
       } catch (error) {
@@ -143,6 +170,35 @@ export default function MorningMeditationScreen() {
       }
     } else {
       completeMeditation(meditationId);
+    }
+  };
+
+  const handlePlayPause = async () => {
+    if (sound) {
+      if (isPlaying) {
+        await sound.pauseAsync();
+      } else {
+        if (position >= duration && duration > 0) {
+            await sound.replayAsync();
+        } else {
+            await sound.playAsync();
+        }
+      }
+    }
+  };
+
+  const handleRestart = async () => {
+    if (sound) {
+        await sound.setPositionAsync(0);
+        await sound.playAsync();
+    }
+  };
+
+  const handleSeek = async (percentage: number) => {
+    if (sound && duration > 0) {
+        const newPosition = percentage * duration;
+        await sound.setPositionAsync(newPosition);
+        setPosition(newPosition);
     }
   };
 
@@ -535,7 +591,7 @@ export default function MorningMeditationScreen() {
               {filteredMeditations.map((meditation) => {
                 const IconComponent = meditationTypeIcons[meditation.type];
                 const isCompleted = completedToday.includes(meditation.id);
-                const isPlaying = playingMeditationId === meditation.id;
+                const isPlayingThis = playingMeditationId === meditation.id;
                 
                 // Dynamic translation for meditation content
                 const titleKey = `morning.meditations.${meditation.id}.title`;
@@ -543,123 +599,115 @@ export default function MorningMeditationScreen() {
                 const title = translate(titleKey) !== titleKey ? translate(titleKey) : meditation.title;
                 const description = translate(descriptionKey) !== descriptionKey ? translate(descriptionKey) : meditation.description;
 
+                const renderCardContent = () => (
+                   <>
+                        <View style={styles.meditationHeader}>
+                          <View style={styles.meditationIconContainer}>
+                            <IconComponent
+                              color="#f59e0b"
+                              size={24}
+                              strokeWidth={2}
+                            />
+                          </View>
+                          <TouchableOpacity
+                            onPress={() => handleToggleFavorite(meditation.id)}
+                            activeOpacity={0.7}
+                            style={styles.favoriteButton}
+                          >
+                            <Heart
+                              color="#f59e0b"
+                              size={20}
+                              strokeWidth={2}
+                              fill={meditation.isFavorite ? "#f59e0b" : "transparent"}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                        <Text style={styles.meditationTitle}>{title}</Text>
+                        <Text style={styles.meditationDescription}>
+                          {description}
+                        </Text>
+                        
+                        {isPlayingThis ? (
+                           <View style={styles.playerContainer}>
+                            <View style={styles.progressBarContainer}>
+                                 <SeekBar 
+                                    position={position} 
+                                    duration={duration} 
+                                    onSeek={handleSeek} 
+                                 />
+                            </View>
+                            
+                            <View style={styles.timeRow}>
+                                <Text style={styles.timeText}>{formatDuration(position)}</Text>
+                                <Text style={styles.timeText}>{formatDuration(duration)}</Text>
+                            </View>
+
+                            <View style={styles.controlsRow}>
+                                <TouchableOpacity 
+                                    style={styles.controlButton} 
+                                    onPress={handleRestart}
+                                    activeOpacity={0.7}
+                                >
+                                    <RotateCcw color="#d97706" size={24} />
+                                </TouchableOpacity>
+                                
+                                <TouchableOpacity 
+                                    style={styles.playPauseButton} 
+                                    onPress={handlePlayPause}
+                                    activeOpacity={0.7}
+                                >
+                                    {isPlaying ? (
+                                        <Pause color="#FFFFFF" size={28} fill="#FFFFFF" />
+                                    ) : (
+                                        <Play color="#FFFFFF" size={28} fill="#FFFFFF" />
+                                    )}
+                                </TouchableOpacity>
+
+                                <View style={{ width: 44 }} /> 
+                            </View>
+                          </View>
+                        ) : (
+                            <View style={styles.meditationFooter}>
+                              <View style={styles.meditationDuration}>
+                                <Clock color="#fb923c" size={16} strokeWidth={2} />
+                                <Text style={styles.meditationDurationText}>
+                                  {meditation.duration} min
+                                </Text>
+                              </View>
+                              <TouchableOpacity
+                                style={styles.startButton}
+                                onPress={() => handleStartMeditation(meditation.id)}
+                                activeOpacity={0.7}
+                                disabled={isCompleted && !isPlayingThis}
+                              >
+                                <LinearGradient
+                                  colors={meditationTypeColors[meditation.type]}
+                                  style={styles.startButtonGradient}
+                                >
+                                  {isCompleted ? (
+                                    <CheckCircle color="#FFFFFF" size={18} strokeWidth={2.5} />
+                                  ) : (
+                                    <Play color="#FFFFFF" size={18} strokeWidth={2.5} />
+                                  )}
+                                  <Text style={styles.startButtonText}>
+                                    {isCompleted ? translate('morning.meditationPage.actions.completed') : translate('morning.meditationPage.actions.start')}
+                                  </Text>
+                                </LinearGradient>
+                              </TouchableOpacity>
+                            </View>
+                        )}
+                   </>
+                );
+
                 return (
                   <Animated.View key={meditation.id} style={styles.meditationCard}>
                     {Platform.OS === "web" ? (
                       <View style={styles.meditationCardInner}>
-                        <View style={styles.meditationHeader}>
-                          <View style={styles.meditationIconContainer}>
-                            <IconComponent
-                              color="#f59e0b"
-                              size={24}
-                              strokeWidth={2}
-                            />
-                          </View>
-                          <TouchableOpacity
-                            onPress={() => handleToggleFavorite(meditation.id)}
-                            activeOpacity={0.7}
-                            style={styles.favoriteButton}
-                          >
-                            <Heart
-                              color="#f59e0b"
-                              size={20}
-                              strokeWidth={2}
-                              fill={meditation.isFavorite ? "#f59e0b" : "transparent"}
-                            />
-                          </TouchableOpacity>
-                        </View>
-                        <Text style={styles.meditationTitle}>{title}</Text>
-                        <Text style={styles.meditationDescription}>
-                          {description}
-                        </Text>
-                        <View style={styles.meditationFooter}>
-                          <View style={styles.meditationDuration}>
-                            <Clock color="#fb923c" size={16} strokeWidth={2} />
-                            <Text style={styles.meditationDurationText}>
-                              {meditation.duration} min
-                            </Text>
-                          </View>
-                          <TouchableOpacity
-                            style={styles.startButton}
-                            onPress={() => handleStartMeditation(meditation.id)}
-                            activeOpacity={0.7}
-                            disabled={isCompleted && !isPlaying}
-                          >
-                            <LinearGradient
-                              colors={meditationTypeColors[meditation.type]}
-                              style={styles.startButtonGradient}
-                            >
-                              {isCompleted ? (
-                                <CheckCircle color="#FFFFFF" size={18} strokeWidth={2.5} />
-                              ) : isPlaying ? (
-                                <Play color="#FFFFFF" size={18} strokeWidth={2.5} />
-                              ) : (
-                                <Play color="#FFFFFF" size={18} strokeWidth={2.5} />
-                              )}
-                              <Text style={styles.startButtonText}>
-                                {isCompleted ? translate('morning.meditationPage.actions.completed') : isPlaying ? translate('morning.meditationPage.actions.playing') : translate('morning.meditationPage.actions.start')}
-                              </Text>
-                            </LinearGradient>
-                          </TouchableOpacity>
-                        </View>
+                        {renderCardContent()}
                       </View>
                     ) : (
                       <BlurView intensity={15} tint="light" style={styles.meditationCardInner}>
-                        <View style={styles.meditationHeader}>
-                          <View style={styles.meditationIconContainer}>
-                            <IconComponent
-                              color="#f59e0b"
-                              size={24}
-                              strokeWidth={2}
-                            />
-                          </View>
-                          <TouchableOpacity
-                            onPress={() => handleToggleFavorite(meditation.id)}
-                            activeOpacity={0.7}
-                            style={styles.favoriteButton}
-                          >
-                            <Heart
-                              color="#f59e0b"
-                              size={20}
-                              strokeWidth={2}
-                              fill={meditation.isFavorite ? "#f59e0b" : "transparent"}
-                            />
-                          </TouchableOpacity>
-                        </View>
-                        <Text style={styles.meditationTitle}>{title}</Text>
-                        <Text style={styles.meditationDescription}>
-                          {description}
-                        </Text>
-                        <View style={styles.meditationFooter}>
-                          <View style={styles.meditationDuration}>
-                            <Clock color="#fb923c" size={16} strokeWidth={2} />
-                            <Text style={styles.meditationDurationText}>
-                              {meditation.duration} min
-                            </Text>
-                          </View>
-                          <TouchableOpacity
-                            style={styles.startButton}
-                            onPress={() => handleStartMeditation(meditation.id)}
-                            activeOpacity={0.7}
-                            disabled={isCompleted && !isPlaying}
-                          >
-                            <LinearGradient
-                              colors={meditationTypeColors[meditation.type]}
-                              style={styles.startButtonGradient}
-                            >
-                              {isCompleted ? (
-                                <CheckCircle color="#FFFFFF" size={18} strokeWidth={2.5} />
-                              ) : isPlaying ? (
-                                <Play color="#FFFFFF" size={18} strokeWidth={2.5} />
-                              ) : (
-                                <Play color="#FFFFFF" size={18} strokeWidth={2.5} />
-                              )}
-                              <Text style={styles.startButtonText}>
-                                {isCompleted ? translate('morning.meditationPage.actions.completed') : isPlaying ? translate('morning.meditationPage.actions.playing') : translate('morning.meditationPage.actions.start')}
-                              </Text>
-                            </LinearGradient>
-                          </TouchableOpacity>
-                        </View>
+                        {renderCardContent()}
                       </BlurView>
                     )}
                   </Animated.View>
@@ -696,6 +744,49 @@ export default function MorningMeditationScreen() {
     </View>
   );
 }
+
+const formatDuration = (millis: number) => {
+  const totalSeconds = Math.floor(millis / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+};
+
+const SeekBar = ({ position, duration, onSeek }: { position: number; duration: number; onSeek: (percentage: number) => void }) => {
+  const [width, setWidth] = useState(0);
+
+  const handleTouch = (event: GestureResponderEvent) => {
+    if (width > 0) {
+      const { locationX } = event.nativeEvent;
+      const percentage = Math.max(0, Math.min(1, locationX / width));
+      onSeek(percentage);
+    }
+  };
+
+  return (
+    <View
+      style={styles.seekBarContainer}
+      onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
+      onTouchStart={handleTouch}
+      onTouchMove={handleTouch}
+      onTouchEnd={handleTouch}
+    >
+      <View style={styles.seekBarTrack} />
+      <View
+        style={[
+          styles.seekBarFill,
+          { width: `${(position / (duration || 1)) * 100}%` },
+        ]}
+      />
+      <View
+        style={[
+          styles.seekBarKnob,
+          { left: `${(position / (duration || 1)) * 100}%` },
+        ]}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -994,5 +1085,79 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 8,
     elevation: 5,
+  },
+  playerContainer: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(245, 158, 11, 0.15)",
+  },
+  progressBarContainer: {
+    height: 24,
+    justifyContent: "center",
+    marginBottom: 4,
+  },
+  seekBarContainer: {
+    height: 24,
+    justifyContent: "center",
+  },
+  seekBarTrack: {
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(245, 158, 11, 0.2)",
+    width: "100%",
+    position: "absolute",
+  },
+  seekBarFill: {
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#f59e0b",
+    position: "absolute",
+  },
+  seekBarKnob: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#f59e0b",
+    position: "absolute",
+    top: 4, 
+    marginLeft: -8, // Center the knob
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  timeRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  timeText: {
+    fontSize: 12,
+    color: "#b45309",
+    fontWeight: "500",
+  },
+  controlsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+  },
+  controlButton: {
+    padding: 10,
+  },
+  playPauseButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#f59e0b",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#f59e0b",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
 });

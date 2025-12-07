@@ -43,6 +43,7 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     duration: 7,
     type: "visualization",
     isFavorite: false,
+    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/gratitude_meditation_1",
   },
   {
     id: "4",
