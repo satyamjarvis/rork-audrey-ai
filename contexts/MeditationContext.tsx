@@ -85,9 +85,10 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     id: "8",
     title: "Energy Visualization",
     description: "Visualize positive energy flowing through your body",
-    duration: 6,
+    duration: 5,
     type: "visualization",
     isFavorite: false,
+    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/meditation_energy_flow_1",
   },
   {
     id: "9",
