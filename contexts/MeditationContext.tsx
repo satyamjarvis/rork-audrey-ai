@@ -61,6 +61,7 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     duration: 8,
     type: "loving-kindness",
     isFavorite: false,
+    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/kindness_compassion_meditation_1",
   },
   {
     id: "6",
