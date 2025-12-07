@@ -89,6 +89,17 @@ export default function LearnScreen() {
   const sandBottomAnim = useRef(new Animated.Value(0)).current;
   const isAnimationActive = useRef(false);
   
+  // Reset animation values when component unmounts to prevent native driver conflicts
+  useEffect(() => {
+    return () => {
+      rotateAnim.setValue(0);
+      sandFallAnim.setValue(0);
+      sandTopAnim.setValue(1);
+      sandBottomAnim.setValue(0);
+      isAnimationActive.current = false;
+    };
+  }, [rotateAnim, sandFallAnim, sandTopAnim, sandBottomAnim]);
+  
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
 
   useEffect(() => {

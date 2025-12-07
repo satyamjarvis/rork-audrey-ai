@@ -53,6 +53,25 @@ export const [LearnContext, useLearn] = createContextHook(() => {
     const loadData = async () => {
       try {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
+        
+        // Check for corrupted data before processing
+        if (stored) {
+          const trimmed = stored.trim();
+          
+          // Detect common corruption patterns
+          if (trimmed === 'object' || 
+              trimmed === 'undefined' || 
+              trimmed === '[object Object]' || 
+              trimmed.startsWith('o') && trimmed.length < 10) {
+            console.error('[LearnContext] Corrupted data detected, clearing:', trimmed.substring(0, 50));
+            await AsyncStorage.removeItem(STORAGE_KEY);
+            setCategories([]);
+            setHasInitialized(true);
+            setIsLoading(false);
+            return;
+          }
+        }
+        
         if (stored && isValidJSON(stored)) {
           try {
             const parsedData = JSON.parse(stored);
@@ -74,18 +93,39 @@ export const [LearnContext, useLearn] = createContextHook(() => {
             await AsyncStorage.removeItem(STORAGE_KEY);
             setCategories([]);
           }
+        } else if (stored) {
+          // Data exists but is not valid JSON - corruption detected
+          console.error('[LearnContext] Invalid JSON in storage, clearing corrupted data');
+          await AsyncStorage.removeItem(STORAGE_KEY);
+          setCategories([]);
         } else {
           console.log("No stored data found, starting fresh");
         }
 
         const mediaStored = await AsyncStorage.getItem(MAIN_MEDIA_KEY);
-        if (mediaStored && isValidJSON(mediaStored)) {
-          try {
-            const parsedMedia = JSON.parse(mediaStored);
-            setMainPageMedia(parsedMedia);
-            console.log(`Loaded main page media from storage`);
-          } catch (parseError) {
-            console.error("Failed to parse media data:", parseError);
+        
+        // Check for corrupted media data
+        if (mediaStored) {
+          const trimmedMedia = mediaStored.trim();
+          if (trimmedMedia === 'object' || 
+              trimmedMedia === 'undefined' || 
+              trimmedMedia === '[object Object]' || 
+              trimmedMedia.startsWith('o') && trimmedMedia.length < 10) {
+            console.error('[LearnContext] Corrupted media data detected, clearing');
+            await AsyncStorage.removeItem(MAIN_MEDIA_KEY);
+            setMainPageMedia({});
+          } else if (isValidJSON(mediaStored)) {
+            try {
+              const parsedMedia = JSON.parse(mediaStored);
+              setMainPageMedia(parsedMedia);
+              console.log(`Loaded main page media from storage`);
+            } catch (parseError) {
+              console.error("Failed to parse media data:", parseError);
+              await AsyncStorage.removeItem(MAIN_MEDIA_KEY);
+              setMainPageMedia({});
+            }
+          } else {
+            console.error('[LearnContext] Invalid media JSON, clearing');
             await AsyncStorage.removeItem(MAIN_MEDIA_KEY);
             setMainPageMedia({});
           }
