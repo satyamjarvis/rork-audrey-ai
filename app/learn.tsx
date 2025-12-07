@@ -59,7 +59,7 @@ export default function LearnScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { mode: universeMode } = useUniverseMode();
-  const { categories, initializeDefaultCategories, updateVideo, addVideo, isLoading, updateCategory, setCategories } = useLearn();
+  const { categories, initializeDefaultCategories, updateVideo, addVideo, isLoading, setCategories, mainPageMedia, updateMainPageMedia } = useLearn();
   const [hasSubscription] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<CourseCategory | null>(null);
@@ -77,6 +77,11 @@ export default function LearnScreen() {
   const [urlDescription, setUrlDescription] = useState("");
   const [urlCategoryId, setUrlCategoryId] = useState<string | null>(null);
   const [urlVideoId, setUrlVideoId] = useState<string | null>(null);
+  const [showMainMediaModal, setShowMainMediaModal] = useState(false);
+  const [mainMediaType, setMainMediaType] = useState<'intro' | 'featured' | 'hero' | null>(null);
+  const [mainMediaUrl, setMainMediaUrl] = useState("");
+  const [mainMediaTitle, setMainMediaTitle] = useState("");
+  const [mainMediaDescription, setMainMediaDescription] = useState("");
   
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const sandFallAnim = useRef(new Animated.Value(0)).current;
@@ -1013,6 +1018,69 @@ export default function LearnScreen() {
     router.back();
   };
 
+  const handleOpenMainMediaModal = (type: 'intro' | 'featured' | 'hero') => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    setMainMediaType(type);
+    
+    if (mainPageMedia && mainPageMedia[type]) {
+      setMainMediaUrl(mainPageMedia[type]?.url || "");
+      setMainMediaTitle(mainPageMedia[type]?.title || "");
+      setMainMediaDescription(mainPageMedia[type]?.description || "");
+    } else {
+      setMainMediaUrl("");
+      setMainMediaTitle("");
+      setMainMediaDescription("");
+    }
+    
+    setShowMainMediaModal(true);
+  };
+
+  const handleSaveMainMedia = async () => {
+    if (!mainMediaType) {
+      Alert.alert("Error", "Invalid media type");
+      return;
+    }
+
+    if (mainMediaType !== 'hero' && !mainMediaUrl.trim()) {
+      Alert.alert("Error", "Please enter a valid URL");
+      return;
+    }
+
+    if (!mainMediaTitle.trim()) {
+      Alert.alert("Error", "Please enter a title");
+      return;
+    }
+
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+
+    setIsSaving(true);
+
+    try {
+      await updateMainPageMedia(mainMediaType, {
+        url: mainMediaUrl.trim(),
+        title: mainMediaTitle.trim(),
+        description: mainMediaDescription.trim(),
+      });
+
+      setShowMainMediaModal(false);
+      setMainMediaType(null);
+      setMainMediaUrl("");
+      setMainMediaTitle("");
+      setMainMediaDescription("");
+      
+      Alert.alert("Success", "Media updated successfully!");
+    } catch (error) {
+      console.error("Error saving main media:", error);
+      Alert.alert("Error", "Failed to save media. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const tabBarHeight = universeMode === "classic" ? 85 : 0;
 
   const spin = rotateAnim.interpolate({
@@ -1081,8 +1149,23 @@ export default function LearnScreen() {
               style={styles.heroGradient}
             >
               <Brain color={isNightMode ? "#FFD700" : "#C71585"} size={48} strokeWidth={2.5} />
-              <Text style={[styles.heroTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>Learn & Grow</Text>
-              <Text style={[styles.heroSubtitle, { color: isNightMode ? "#FF1493" : theme.colors.text.secondary }]}>Expand your mind with expert-led courses</Text>
+              <Text style={[styles.heroTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                {mainPageMedia?.hero?.title || "Learn & Grow"}
+              </Text>
+              <Text style={[styles.heroSubtitle, { color: isNightMode ? "#FF1493" : theme.colors.text.secondary }]}>
+                {mainPageMedia?.hero?.description || "Expand your mind with expert-led courses"}
+              </Text>
+              <TouchableOpacity
+                style={[styles.editMainMediaButton, {
+                  backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.15)" : "rgba(199, 21, 133, 0.1)",
+                  borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                }]}
+                onPress={() => handleOpenMainMediaModal('hero')}
+                activeOpacity={0.7}
+              >
+                <Edit3 color={isNightMode ? "#FFD700" : "#C71585"} size={14} strokeWidth={2.5} />
+                <Text style={[styles.editMainMediaText, { color: isNightMode ? "#FFD700" : "#C71585" }]}>Edit Hero</Text>
+              </TouchableOpacity>
               <View style={styles.statsRow}>
                 <View style={styles.statItem}>
                   <BookOpen color={isNightMode ? "#00FF87" : "#C71585"} size={20} strokeWidth={2.5} />
@@ -1104,14 +1187,32 @@ export default function LearnScreen() {
           </View>
 
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>Introduction</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>Introduction</Text>
+              <TouchableOpacity
+                style={[styles.editSectionButton, {
+                  backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.15)" : "rgba(199, 21, 133, 0.1)",
+                  borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                }]}
+                onPress={() => handleOpenMainMediaModal('intro')}
+                activeOpacity={0.7}
+              >
+                <Plus color={isNightMode ? "#FFD700" : "#C71585"} size={16} strokeWidth={2.5} />
+                <Text style={[styles.editSectionButtonText, { color: isNightMode ? "#FFD700" : "#C71585" }]}>Add Media</Text>
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity
               style={[styles.videoCard, { 
                 backgroundColor: isNightMode ? "rgba(26, 10, 31, 0.8)" : theme.colors.cardBackground,
                 borderWidth: isNightMode ? 1 : 0,
                 borderColor: isNightMode ? "rgba(255, 215, 0, 0.2)" : "transparent"
               }]}
-              onPress={() => handleVideoPress(introVideo)}
+              onPress={() => handleVideoPress({
+                ...introVideo,
+                title: mainPageMedia?.intro?.title || introVideo.title,
+                description: mainPageMedia?.intro?.description || introVideo.description,
+                videoUrl: mainPageMedia?.intro?.url || introVideo.videoUrl,
+              })}
               activeOpacity={0.9}
             >
               <View style={styles.videoThumbnail}>
@@ -1134,16 +1235,31 @@ export default function LearnScreen() {
                 </LinearGradient>
               </View>
               <View style={styles.videoInfo}>
-                <Text style={[styles.videoTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>{introVideo.title}</Text>
+                <Text style={[styles.videoTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                  {mainPageMedia?.intro?.title || introVideo.title}
+                </Text>
                 <Text style={[styles.videoDescription, { color: isNightMode ? "#888888" : theme.colors.text.secondary }]}>
-                  {introVideo.description}
+                  {mainPageMedia?.intro?.description || introVideo.description}
                 </Text>
               </View>
             </TouchableOpacity>
           </View>
 
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>Featured Videos</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>Featured Videos</Text>
+              <TouchableOpacity
+                style={[styles.editSectionButton, {
+                  backgroundColor: isNightMode ? "rgba(255, 215, 0, 0.15)" : "rgba(199, 21, 133, 0.1)",
+                  borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                }]}
+                onPress={() => handleOpenMainMediaModal('featured')}
+                activeOpacity={0.7}
+              >
+                <Plus color={isNightMode ? "#FFD700" : "#C71585"} size={16} strokeWidth={2.5} />
+                <Text style={[styles.editSectionButtonText, { color: isNightMode ? "#FFD700" : "#C71585" }]}>Add Media</Text>
+              </TouchableOpacity>
+            </View>
             <View style={styles.videoGrid}>
               {featuredVideos.map((video) => (
                 <TouchableOpacity
@@ -1976,6 +2092,146 @@ export default function LearnScreen() {
                       )}
                       <Text style={[styles.editModalButtonText, { color: isNightMode ? "#000000" : "#FFFFFF" }]}>
                         {urlVideoId ? "Save Changes" : "Add Video"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </LinearGradient>
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {showMainMediaModal && (
+        <Modal
+          visible={true}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowMainMediaModal(false)}
+        >
+          <View style={styles.editModalOverlay}>
+            <View style={[styles.editModalContent, {
+              backgroundColor: isNightMode ? "#1a0a1f" : "#FFFFFF",
+            }]}>
+              <LinearGradient
+                colors={isNightMode 
+                  ? ["rgba(80, 40, 100, 0.95)", "rgba(60, 20, 80, 0.95)"]
+                  : [theme.colors.primary + "15", theme.colors.secondary + "15"]
+                }
+                style={styles.editModalGradient}
+              >
+                <View style={styles.editModalHeader}>
+                  <View style={styles.urlModalTitleRow}>
+                    <ImageIcon color={isNightMode ? "#FFD700" : "#C71585"} size={24} strokeWidth={2.5} />
+                    <Text style={[styles.editModalTitle, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                      {mainMediaType === 'hero' ? 'Edit Hero Section' : mainMediaType === 'intro' ? 'Edit Introduction' : 'Edit Featured Section'}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowMainMediaModal(false);
+                      setMainMediaType(null);
+                    }}
+                    style={styles.editModalCloseButton}
+                    activeOpacity={0.7}
+                  >
+                    <X color={isNightMode ? "#FFD700" : "#C71585"} size={24} strokeWidth={2.5} />
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.editModalForm}>
+                  {mainMediaType !== 'hero' && (
+                    <View style={styles.editInputGroup}>
+                      <Text style={[styles.editInputLabel, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                        Media URL *
+                      </Text>
+                      <TextInput
+                        value={mainMediaUrl}
+                        onChangeText={setMainMediaUrl}
+                        style={[styles.editInput, {
+                          backgroundColor: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+                          borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                          color: isNightMode ? "#FFFFFF" : theme.colors.text.primary,
+                        }]}
+                        placeholder="https://example.com/video.mp4"
+                        placeholderTextColor={isNightMode ? "#888888" : "#999999"}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        keyboardType="url"
+                      />
+                      <Text style={[styles.urlHint, { color: isNightMode ? "#888888" : "#999999" }]}>
+                        Supports video URLs from Google Drive, YouTube, etc.
+                      </Text>
+                    </View>
+                  )}
+
+                  <View style={styles.editInputGroup}>
+                    <Text style={[styles.editInputLabel, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                      Title *
+                    </Text>
+                    <TextInput
+                      value={mainMediaTitle}
+                      onChangeText={setMainMediaTitle}
+                      style={[styles.editInput, {
+                        backgroundColor: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+                        borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                        color: isNightMode ? "#FFFFFF" : theme.colors.text.primary,
+                      }]}
+                      placeholder="Enter title"
+                      placeholderTextColor={isNightMode ? "#888888" : "#999999"}
+                      maxLength={100}
+                    />
+                  </View>
+
+                  <View style={styles.editInputGroup}>
+                    <Text style={[styles.editInputLabel, { color: isNightMode ? "#FFD700" : theme.colors.text.primary }]}>
+                      Description
+                    </Text>
+                    <TextInput
+                      value={mainMediaDescription}
+                      onChangeText={setMainMediaDescription}
+                      style={[styles.editTextArea, {
+                        backgroundColor: isNightMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+                        borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                        color: isNightMode ? "#FFFFFF" : theme.colors.text.primary,
+                      }]}
+                      placeholder="Enter description"
+                      placeholderTextColor={isNightMode ? "#888888" : "#999999"}
+                      multiline
+                      numberOfLines={3}
+                      maxLength={200}
+                      textAlignVertical="top"
+                    />
+                  </View>
+
+                  <View style={styles.editModalButtons}>
+                    <TouchableOpacity
+                      style={[styles.editModalButton, styles.editModalCancelButton, {
+                        borderColor: isNightMode ? "rgba(255, 215, 0, 0.3)" : "rgba(199, 21, 133, 0.3)",
+                      }]}
+                      onPress={() => {
+                        setShowMainMediaModal(false);
+                        setMainMediaType(null);
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.editModalButtonText, { color: isNightMode ? "#FFD700" : "#C71585" }]}>
+                        Cancel
+                      </Text>
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity
+                      style={[styles.editModalButton, {
+                        backgroundColor: isNightMode ? "#FFD700" : "#C71585",
+                        opacity: (mainMediaType === 'hero' ? mainMediaTitle.trim() : (mainMediaUrl.trim() && mainMediaTitle.trim())) ? 1 : 0.5,
+                      }]}
+                      onPress={handleSaveMainMedia}
+                      activeOpacity={0.7}
+                      disabled={mainMediaType === 'hero' ? !mainMediaTitle.trim() : !(mainMediaUrl.trim() && mainMediaTitle.trim())}
+                    >
+                      <Check color={isNightMode ? "#000000" : "#FFFFFF"} size={20} strokeWidth={2.5} />
+                      <Text style={[styles.editModalButtonText, { color: isNightMode ? "#000000" : "#FFFFFF" }]}>
+                        Save Changes
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -2909,5 +3165,40 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+  sectionHeader: {
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
+    marginBottom: 16,
+  },
+  editSectionButton: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1.5,
+  },
+  editSectionButtonText: {
+    fontSize: 13,
+    fontWeight: "700" as const,
+    letterSpacing: 0.3,
+  },
+  editMainMediaButton: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    marginTop: 12,
+  },
+  editMainMediaText: {
+    fontSize: 13,
+    fontWeight: "700" as const,
+    letterSpacing: 0.3,
   },
 });

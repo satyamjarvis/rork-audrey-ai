@@ -26,10 +26,24 @@ type CourseCategory = {
   isSubscriptionRequired: boolean;
 };
 
+type MainPageMediaSection = {
+  url?: string;
+  title?: string;
+  description?: string;
+};
+
+type MainPageMedia = {
+  hero?: MainPageMediaSection;
+  intro?: MainPageMediaSection;
+  featured?: MainPageMediaSection;
+};
+
 const STORAGE_KEY = "@learn_data";
+const MAIN_MEDIA_KEY = "@learn_main_media";
 
 export const [LearnContext, useLearn] = createContextHook(() => {
   const [categories, setCategories] = useState<CourseCategory[]>([]);
+  const [mainPageMedia, setMainPageMedia] = useState<MainPageMedia>({});
   const [isLoading, setIsLoading] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState<number>(Date.now());
@@ -63,6 +77,20 @@ export const [LearnContext, useLearn] = createContextHook(() => {
         } else {
           console.log("No stored data found, starting fresh");
         }
+
+        const mediaStored = await AsyncStorage.getItem(MAIN_MEDIA_KEY);
+        if (mediaStored && isValidJSON(mediaStored)) {
+          try {
+            const parsedMedia = JSON.parse(mediaStored);
+            setMainPageMedia(parsedMedia);
+            console.log(`Loaded main page media from storage`);
+          } catch (parseError) {
+            console.error("Failed to parse media data:", parseError);
+            await AsyncStorage.removeItem(MAIN_MEDIA_KEY);
+            setMainPageMedia({});
+          }
+        }
+
         setHasInitialized(true);
       } catch (error) {
         console.error("Failed to load learn data:", error);
@@ -166,10 +194,22 @@ export const [LearnContext, useLearn] = createContextHook(() => {
   }, [categories.length]);
 
   // Clear all data (for debugging)
+  const updateMainPageMedia = useCallback(async (section: 'hero' | 'intro' | 'featured', data: MainPageMediaSection) => {
+    setMainPageMedia((prev) => {
+      const updated = { ...prev, [section]: data };
+      AsyncStorage.setItem(MAIN_MEDIA_KEY, JSON.stringify(updated)).catch((error) => {
+        console.error("Failed to save main page media:", error);
+      });
+      return updated;
+    });
+  }, []);
+
   const clearAllData = useCallback(async () => {
     try {
       await AsyncStorage.removeItem(STORAGE_KEY);
+      await AsyncStorage.removeItem(MAIN_MEDIA_KEY);
       setCategories([]);
+      setMainPageMedia({});
       console.log("Cleared all learn data");
     } catch (error) {
       console.error("Failed to clear data:", error);
@@ -179,6 +219,7 @@ export const [LearnContext, useLearn] = createContextHook(() => {
   return useMemo(
     () => ({
       categories,
+      mainPageMedia,
       isLoading,
       updateCategory,
       updateVideo,
@@ -186,17 +227,20 @@ export const [LearnContext, useLearn] = createContextHook(() => {
       removeVideo,
       initializeDefaultCategories,
       setCategories,
+      updateMainPageMedia,
       lastSaveTime,
       clearAllData,
     }),
     [
       categories,
+      mainPageMedia,
       isLoading,
       updateCategory,
       updateVideo,
       addVideo,
       removeVideo,
       initializeDefaultCategories,
+      updateMainPageMedia,
       lastSaveTime,
       clearAllData,
     ]
