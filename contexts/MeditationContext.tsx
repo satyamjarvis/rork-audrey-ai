@@ -40,7 +40,7 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     id: "3",
     title: "Gratitude Visualization",
     description: "Visualize the day ahead with gratitude and positivity",
-    duration: 7,
+    duration: 5,
     type: "visualization",
     isFavorite: false,
     audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/gratitude_meditation_1",
