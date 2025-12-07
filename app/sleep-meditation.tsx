@@ -73,8 +73,9 @@ const FALLBACK_SOUNDS: readonly SleepSound[] = [
   {
     id: "forestNight",
     title: "Forest Night",
-    duration: "60 min",
+    duration: "3:10 min",
     description: "Peaceful forest ambience",
+    audio: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/forest_night_1",
   },
   {
     id: "guidedSleep",
