@@ -59,7 +59,7 @@ const FALLBACK_SOUNDS: readonly SleepSound[] = [
   {
     id: "oceanWaves",
     title: "Ocean Waves",
-    duration: "30 min",
+    duration: "5 min",
     description: "Gentle waves lapping on shore",
   },
   {
