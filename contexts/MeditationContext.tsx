@@ -76,7 +76,7 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     id: "7",
     title: "Deep Body Relaxation",
     description: "Release tension from head to toe",
-    duration: 12,
+    duration: 5,
     type: "body-scan",
     isFavorite: false,
     audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/relaxation_meditation_1",
