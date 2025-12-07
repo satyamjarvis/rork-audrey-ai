@@ -45,6 +45,7 @@ import {
 import { useTheme } from "@/contexts/ThemeContext";
 import { encrypt, decrypt } from "@/utils/encryption";
 import KeyboardDismissButton from "@/components/KeyboardDismissButton";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const STORAGE_KEY = "@rork_passwords";
 const PIN_KEY = "@rork_password_manager_pin";
@@ -66,6 +67,7 @@ const FIRST_LAUNCH_KEY = 'has_launched_before';
 export default function PasswordManagerScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   
   const isDark = useMemo(() => 
     theme.name.toLowerCase().includes('night') || 
@@ -110,8 +112,8 @@ export default function PasswordManagerScreen() {
     try {
       setIsBiometricLoading(true);
       const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Authenticate to access Password Manager",
-        fallbackLabel: "Use PIN",
+        promptMessage: t('passwords.authenticateToAccess'),
+        fallbackLabel: t('passwords.usePin'),
       });
       if (result.success) {
         setIsAuthenticated(true);
@@ -197,12 +199,12 @@ export default function PasswordManagerScreen() {
         setIsAuthenticated(false);
         setIsSettingUpPin(true);
         setSetupPin("");
-        Alert.alert("Success", "PIN cleared. Please create a new PIN.");
+        Alert.alert(t('common.success'), t('passwords.pinCleared'));
       } else {
         shake();
         setPinInput("");
         if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        Alert.alert("Error", "Incorrect PIN");
+        Alert.alert(t('common.error'), t('passwords.incorrectPin'));
       }
       return;
     }
@@ -211,7 +213,7 @@ export default function PasswordManagerScreen() {
       if (!setupPin) {
         setSetupPin(pinInput);
         setPinInput("");
-        Alert.alert("Confirm PIN", "Please enter your PIN again to confirm.");
+        Alert.alert(t('passwords.confirmPin'), t('passwords.reEnterPin'));
       } else {
         if (pinInput === setupPin) {
           const hashed = await Crypto.digestStringAsync(
@@ -227,12 +229,12 @@ export default function PasswordManagerScreen() {
           if (biometricsAvailable) {
             setTimeout(() => {
               Alert.alert(
-                "Enable Biometrics?",
-                "Use Face ID or Touch ID for faster access next time?",
+                t('passwords.enableBiometrics'),
+                t('passwords.useBiometricsFasterAccess'),
                 [
-                  { text: "Not Now", style: "cancel" },
+                  { text: t('passwords.notNow'), style: "cancel" },
                   { 
-                    text: "Enable", 
+                    text: t('passwords.enable'), 
                     onPress: async () => {
                       await AsyncStorage.setItem(BIOMETRIC_KEY, "true");
                       setIsBiometricEnabled(true);
@@ -243,7 +245,7 @@ export default function PasswordManagerScreen() {
             }, 500);
           }
         } else {
-          Alert.alert("Error", "PINs do not match. Please try again.");
+          Alert.alert(t('common.error'), t('passwords.pinsDoNotMatch'));
           setSetupPin("");
           setPinInput("");
           shake();
@@ -288,7 +290,7 @@ export default function PasswordManagerScreen() {
 
   const savePassword = async () => {
     if (!formData.title.trim() || !formData.password.trim()) {
-      Alert.alert("Error", "Title and Password are required");
+      Alert.alert(t('common.error'), t('passwords.titleRequired'));
       return;
     }
 
@@ -320,15 +322,15 @@ export default function PasswordManagerScreen() {
       if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
       console.error("Error saving password:", error);
-      Alert.alert("Error", "Failed to save password");
+      Alert.alert(t('common.error'), "Failed to save password");
     }
   };
 
   const deletePassword = async (id: string) => {
-    Alert.alert("Delete Password", "Are you sure you want to delete this password?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t('passwords.deletePassword'), "Are you sure you want to delete this password?", [
+      { text: t('common.cancel'), style: "cancel" },
       {
-        text: "Delete",
+        text: t('common.delete'),
         style: "destructive",
         onPress: async () => {
           const updated = passwords.filter(p => p.id !== id);
@@ -354,7 +356,7 @@ export default function PasswordManagerScreen() {
         });
       } catch (e) {
         console.error("Error decrypting for edit", e);
-        Alert.alert("Error", "Could not decrypt password");
+        Alert.alert(t('common.error'), "Could not decrypt password");
         return;
       }
     } else {
@@ -397,12 +399,12 @@ export default function PasswordManagerScreen() {
 
   const handleForgotPin = () => {
     Alert.alert(
-      "Reset Password Manager?",
-      "To recover access, you will be logged out of the app. You must complete the setup process again to verify your identity. Your passwords will be preserved, but you will need to set a new PIN.",
+      t('passwords.resetPasswordManager'),
+      t('passwords.resetPasswordManagerMessage'),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t('common.cancel'), style: "cancel" },
         {
-          text: "Reset & Logout",
+          text: t('passwords.resetAndLogout'),
           style: "destructive",
           onPress: async () => {
             try {
@@ -416,7 +418,7 @@ export default function PasswordManagerScreen() {
               router.replace("/intro-splash");
             } catch (error) {
               console.error("Error resetting:", error);
-              Alert.alert("Error", "Failed to reset application");
+              Alert.alert(t('common.error'), t('passwords.failedToReset'));
             }
           }
         }
@@ -426,7 +428,7 @@ export default function PasswordManagerScreen() {
 
   const toggleBiometrics = async () => {
     if (!biometricsAvailable) {
-      Alert.alert("Not Available", "Biometrics are not available on this device.");
+      Alert.alert(t('passwords.notAvailable'), t('passwords.biometricsNotAvailable'));
       return;
     }
 
@@ -437,7 +439,7 @@ export default function PasswordManagerScreen() {
       if (Platform.OS !== "web") Haptics.selectionAsync();
     } else {
       const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Authenticate to enable biometrics",
+        promptMessage: t('passwords.authenticateToEnable'),
       });
       if (result.success) {
         await AsyncStorage.setItem(BIOMETRIC_KEY, "true");
@@ -470,13 +472,13 @@ export default function PasswordManagerScreen() {
                
                <Text style={[styles.lockTitle, { color: isDark ? "#FFF" : theme.colors.text.primary }]}>
                  {isSettingUpPin 
-                   ? (setupPin ? "Confirm PIN" : "Create 6-Digit PIN") 
-                   : (changePinStep === "current" ? "Enter Current PIN" : "Enter PIN")}
+                   ? (setupPin ? t('passwords.confirmPin') : t('passwords.create6DigitPin')) 
+                   : (changePinStep === "current" ? t('passwords.enterCurrentPin') : t('passwords.enterPin'))}
                </Text>
                <Text style={[styles.lockSubtitle, { color: isDark ? "#AAA" : theme.colors.text.secondary }]}>
                  {isSettingUpPin 
-                   ? (setupPin ? "Re-enter your 6-digit PIN" : "Create a secure 6-digit PIN") 
-                   : (changePinStep === "current" ? "Verify to change PIN" : "Enter your PIN to unlock")}
+                   ? (setupPin ? t('passwords.reEnterPin') : t('passwords.createSecure6DigitPin')) 
+                   : (changePinStep === "current" ? t('passwords.verifyToChangePin') : t('passwords.enterPinToUnlock'))}
                </Text>
 
                <View style={styles.pinIndicatorContainer}>
@@ -551,7 +553,7 @@ export default function PasswordManagerScreen() {
                   style={styles.forgotButton}
                   onPress={handleForgotPin}
                 >
-                  <Text style={[styles.forgotButtonText, { color: isDark ? "#AAA" : theme.colors.text.secondary }]}>Forgot Passcode?</Text>
+                  <Text style={[styles.forgotButtonText, { color: isDark ? "#AAA" : theme.colors.text.secondary }]}>{t('passwords.forgotPasscode')}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -577,7 +579,7 @@ export default function PasswordManagerScreen() {
                >
                  <ArrowLeft color={isDark ? "#FFF" : theme.colors.primary} size={24} />
                </TouchableOpacity>
-               <Text style={[styles.headerTitle, { color: isDark ? "#FFF" : theme.colors.text.primary }]}>Password Manager</Text>
+               <Text style={[styles.headerTitle, { color: isDark ? "#FFF" : theme.colors.text.primary }]}>{t('passwords.passwordManager')}</Text>
                <View style={{flexDirection: 'row', gap: 8}}>
                  <TouchableOpacity onPress={() => setSettingsModalVisible(true)} style={styles.addButtonHeader}>
                     <Settings color={isDark ? "#FFF" : theme.colors.text.primary} size={24} />
@@ -592,7 +594,7 @@ export default function PasswordManagerScreen() {
                 <Search color={isDark ? "rgba(255,255,255,0.5)" : "#999"} size={20} />
                 <TextInput
                   style={[styles.searchInput, { color: isDark ? "#FFF" : "#000" }]}
-                  placeholder="Search passwords..."
+                  placeholder={t('passwords.searchPasswords')}
                   placeholderTextColor={isDark ? "rgba(255,255,255,0.5)" : "#999"}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
@@ -614,7 +616,7 @@ export default function PasswordManagerScreen() {
                  ]}
                  onPress={() => setSelectedCategory(null)}
                >
-                 <Text style={[styles.categoryText, !selectedCategory && { color: "#FFF", fontWeight: "bold" as const }]}>All</Text>
+                 <Text style={[styles.categoryText, !selectedCategory && { color: "#FFF", fontWeight: "bold" as const }]}>{t('passwords.all')}</Text>
                </TouchableOpacity>
                {categories.map(cat => (
                  <TouchableOpacity
@@ -635,9 +637,9 @@ export default function PasswordManagerScreen() {
              {filteredPasswords.length === 0 ? (
                <View style={styles.emptyState}>
                  <ShieldCheck color={isDark ? "#333" : "#DDD"} size={80} />
-                 <Text style={[styles.emptyText, { color: isDark ? "#666" : "#999" }]}>No passwords found</Text>
+                 <Text style={[styles.emptyText, { color: isDark ? "#666" : "#999" }]}>{t('passwords.noPasswordsFound')}</Text>
                  <TouchableOpacity style={styles.createButton} onPress={() => openEditModal()}>
-                    <Text style={styles.createButtonText}>Add New Password</Text>
+                    <Text style={styles.createButtonText}>{t('passwords.addNewPassword')}</Text>
                  </TouchableOpacity>
                </View>
              ) : (
@@ -684,12 +686,12 @@ export default function PasswordManagerScreen() {
               <View style={[styles.modalContent, { backgroundColor: isDark ? "#1E1E1E" : "#FFF" }]} onStartShouldSetResponder={() => true}>
                  <View style={styles.modalHeader}>
                     <Text style={[styles.modalTitle, { color: isDark ? "#FFF" : "#000" }]}>
-                      Security Settings
+                      {t('passwords.securitySettings')}
                     </Text>
                     <View style={styles.modalHeaderActions}>
                        <KeyboardDismissButton isDark={isDark} />
                        <TouchableOpacity onPress={() => setSettingsModalVisible(false)}>
-                          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>Done</Text>
+                          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>{t('common.done')}</Text>
                        </TouchableOpacity>
                     </View>
                  </View>
@@ -699,7 +701,7 @@ export default function PasswordManagerScreen() {
                       <View style={[styles.settingItem, { borderBottomColor: isDark ? "#333" : "#EEE" }]}>
                          <View style={styles.settingInfo}>
                             <Fingerprint color={isDark ? "#FFF" : "#000"} size={24} />
-                            <Text style={[styles.settingText, { color: isDark ? "#FFF" : "#000" }]}>Biometric Unlock</Text>
+                            <Text style={[styles.settingText, { color: isDark ? "#FFF" : "#000" }]}>{t('passwords.biometricUnlock')}</Text>
                          </View>
                          <Switch
                             value={isBiometricEnabled}
@@ -724,7 +726,7 @@ export default function PasswordManagerScreen() {
                     >
                        <View style={styles.settingInfo}>
                           <RefreshCcw color={isDark ? "#FFF" : "#000"} size={24} />
-                          <Text style={[styles.settingText, { color: isDark ? "#FFF" : "#000" }]}>Change Passcode</Text>
+                          <Text style={[styles.settingText, { color: isDark ? "#FFF" : "#000" }]}>{t('passwords.changePasscode')}</Text>
                        </View>
                        <ChevronRight color={isDark ? "#666" : "#999"} size={20} />
                     </TouchableOpacity>
@@ -747,24 +749,24 @@ export default function PasswordManagerScreen() {
               <View style={[styles.modalContent, { backgroundColor: isDark ? "#1E1E1E" : "#FFF" }]} onStartShouldSetResponder={() => true}>
                  <View style={styles.modalHeader}>
                     <Text style={[styles.modalTitle, { color: isDark ? "#FFF" : "#000" }]}>
-                      {editingPassword ? "Edit Password" : "New Password"}
+                      {editingPassword ? t('passwords.editPassword') : t('passwords.newPassword')}
                     </Text>
                     <View style={styles.modalHeaderActions}>
                        <KeyboardDismissButton isDark={isDark} />
                        <TouchableOpacity onPress={() => setEditModalVisible(false)}>
-                          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>Cancel</Text>
+                          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>{t('common.cancel')}</Text>
                        </TouchableOpacity>
                     </View>
                  </View>
 
                  <ScrollView>
                     <View style={styles.inputGroup}>
-                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>Title <Text style={{ color: '#FF4444' }}>*</Text></Text>
+                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>{t('forms.title')} <Text style={{ color: '#FF4444' }}>*</Text></Text>
                        <View style={[styles.inputContainer, { borderColor: isDark ? "#333" : "#DDD", backgroundColor: isDark ? "#111" : "#F9F9F9" }]}>
                           <Globe color={isDark ? "#666" : "#999"} size={18} />
                           <TextInput
                              style={[styles.input, { color: isDark ? "#FFF" : "#000" }]}
-                             placeholder="e.g. Netflix, Gmail (Required)"
+                             placeholder={t('passwords.titleFieldPlaceholder')}
                              placeholderTextColor={isDark ? "#555" : "#AAA"}
                              value={formData.title}
                              onChangeText={(text) => setFormData({...formData, title: text})}
@@ -773,12 +775,12 @@ export default function PasswordManagerScreen() {
                     </View>
 
                     <View style={styles.inputGroup}>
-                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>Password <Text style={{ color: '#FF4444' }}>*</Text></Text>
+                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>{t('account.password')} <Text style={{ color: '#FF4444' }}>*</Text></Text>
                        <View style={[styles.inputContainer, { borderColor: isDark ? "#333" : "#DDD", backgroundColor: isDark ? "#111" : "#F9F9F9" }]}>
                           <Key color={isDark ? "#666" : "#999"} size={18} />
                           <TextInput
                              style={[styles.input, { color: isDark ? "#FFF" : "#000" }]}
-                             placeholder="Enter password (Required)"
+                             placeholder={t('passwords.passwordFieldPlaceholder')}
                              placeholderTextColor={isDark ? "#555" : "#AAA"}
                              value={formData.password}
                              onChangeText={(text) => setFormData({...formData, password: text})}
@@ -796,12 +798,12 @@ export default function PasswordManagerScreen() {
                     </View>
 
                     <View style={styles.inputGroup}>
-                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>Email (Optional)</Text>
+                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>{t('passwords.emailOptional')}</Text>
                        <View style={[styles.inputContainer, { borderColor: isDark ? "#333" : "#DDD", backgroundColor: isDark ? "#111" : "#F9F9F9" }]}>
                           <User color={isDark ? "#666" : "#999"} size={18} />
                           <TextInput
                              style={[styles.input, { color: isDark ? "#FFF" : "#000" }]}
-                             placeholder="username@example.com (Optional)"
+                             placeholder={t('passwords.emailOptionalPlaceholder')}
                              placeholderTextColor={isDark ? "#555" : "#AAA"}
                              value={formData.username}
                              autoCapitalize="none"
@@ -817,12 +819,12 @@ export default function PasswordManagerScreen() {
                     </View>
 
                     <View style={styles.inputGroup}>
-                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>Website (Optional)</Text>
+                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>{t('passwords.websiteOptional')}</Text>
                        <View style={[styles.inputContainer, { borderColor: isDark ? "#333" : "#DDD", backgroundColor: isDark ? "#111" : "#F9F9F9" }]}>
                           <Globe color={isDark ? "#666" : "#999"} size={18} />
                           <TextInput
                              style={[styles.input, { color: isDark ? "#FFF" : "#000" }]}
-                             placeholder="https://example.com (Optional)"
+                             placeholder={t('passwords.websiteOptionalPlaceholder')}
                              placeholderTextColor={isDark ? "#555" : "#AAA"}
                              value={formData.url}
                              autoCapitalize="none"
@@ -833,12 +835,12 @@ export default function PasswordManagerScreen() {
                     </View>
 
                     <View style={styles.inputGroup}>
-                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>Category (Optional)</Text>
+                       <Text style={[styles.label, { color: isDark ? "#BBB" : "#666" }]}>{t('passwords.categoryOptional')}</Text>
                        <View style={[styles.inputContainer, { borderColor: isDark ? "#333" : "#DDD", backgroundColor: isDark ? "#111" : "#F9F9F9" }]}>
                           <MoreVertical color={isDark ? "#666" : "#999"} size={18} />
                           <TextInput
                              style={[styles.input, { color: isDark ? "#FFF" : "#000" }]}
-                             placeholder="e.g. Social, Work (Optional)"
+                             placeholder={t('passwords.categoryOptionalPlaceholder')}
                              placeholderTextColor={isDark ? "#555" : "#AAA"}
                              value={formData.category}
                              onChangeText={(text) => setFormData({...formData, category: text})}
@@ -856,7 +858,7 @@ export default function PasswordManagerScreen() {
                             }}
                           >
                              <Trash2 color="#FF4444" size={20} />
-                             <Text style={{ color: "#FF4444", fontWeight: "600" as const }}>Delete</Text>
+                             <Text style={{ color: "#FF4444", fontWeight: "600" as const }}>{t('common.delete')}</Text>
                           </TouchableOpacity>
                        )}
                        <TouchableOpacity 
@@ -864,7 +866,7 @@ export default function PasswordManagerScreen() {
                          onPress={savePassword}
                        >
                           <Save color="#FFF" size={20} />
-                          <Text style={{ color: "#FFF", fontWeight: "600" as const }}>Save</Text>
+                          <Text style={{ color: "#FFF", fontWeight: "600" as const }}>{t('common.save')}</Text>
                        </TouchableOpacity>
                     </View>
                  </ScrollView>
