@@ -413,12 +413,7 @@ export function createLegacyTranslations(translations: TranslationFile) {
     noteTitle: translations.notes.noteTitle,
     noteContent: translations.notes.noteContent,
     
-    createMap: translations.mindMap.createMap,
-    editMap: translations.mindMap.editMap,
-    deleteMap: translations.mindMap.deleteMap,
-    addNode: translations.mindMap.addNode,
-    deleteNode: translations.mindMap.deleteNode,
-    mapTitle: translations.mindMap.mapTitle,
+
     
     messages: translations.chat.messages,
     sendMessage: translations.chat.sendMessage,

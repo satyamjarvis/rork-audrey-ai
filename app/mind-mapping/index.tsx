@@ -30,6 +30,7 @@ import * as Haptics from 'expo-haptics';
 
 import { useMindMap, MindMap } from '@/contexts/MindMapContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import KeyboardDismissButton from '@/components/KeyboardDismissButton';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -124,6 +125,7 @@ const MindMapCard = React.memo(({ map, onPress, onDelete, index }: {
   index: number;
 }) => {
   const { theme } = useTheme();
+  const { translate } = useLanguage();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
@@ -187,11 +189,11 @@ const MindMapCard = React.memo(({ map, onPress, onDelete, index }: {
               onPress={(e) => {
                 e.stopPropagation();
                 Alert.alert(
-                  "Delete Mind Map",
-                  "Are you sure you want to delete this mind map?",
+                  translate('mindMap.deleteMindMap'),
+                  translate('mindMap.deleteMapConfirmation'),
                   [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Delete", style: "destructive", onPress: onDelete }
+                    { text: translate('common.cancel'), style: "cancel" },
+                    { text: translate('common.delete'), style: "destructive", onPress: onDelete }
                   ]
                 );
               }}
@@ -215,7 +217,7 @@ const MindMapCard = React.memo(({ map, onPress, onDelete, index }: {
               <View style={styles.footerItem}>
                 <View style={[styles.nodeCountBadge, { backgroundColor: theme.colors.primary + "15" }]}>
                   <Text style={[styles.nodeCountText, { color: theme.colors.primary }]}>
-                    {map.nodes.length} nodes
+                    {map.nodes.length} {translate('mindMap.nodes')}
                   </Text>
                 </View>
               </View>
@@ -231,6 +233,7 @@ MindMapCard.displayName = 'MindMapCard';
 
 export default function MindMappingList() {
   const { theme } = useTheme();
+  const { translate } = useLanguage();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
   const insets = useSafeAreaInsets();
   const { mindMaps, createMindMap, deleteMindMap } = useMindMap();
@@ -257,7 +260,7 @@ export default function MindMappingList() {
       setIsModalVisible(false);
       router.push(`/mind-mapping/${id}` as any);
     } catch {
-      Alert.alert("Error", "Failed to create mind map");
+      Alert.alert(translate('mindMap.error'), translate('mindMap.failedToCreateMindMap'));
     } finally {
       setIsCreating(false);
     }
@@ -280,7 +283,7 @@ export default function MindMappingList() {
             <ArrowLeft color={theme.colors.text.primary} size={24} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: theme.colors.text.primary }]}>
-            Mind Mapping
+            {translate('mindMap.title')}
           </Text>
           <View style={{ width: 40 }} /> 
         </View>
@@ -298,7 +301,7 @@ export default function MindMappingList() {
             <Search size={20} color={theme.colors.text.secondary} />
             <TextInput
               style={[styles.searchInput, { color: theme.colors.text.primary }]}
-              placeholder="Search your thoughts..."
+              placeholder={translate('mindMap.searchYourThoughts')}
               placeholderTextColor={theme.colors.text.light}
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -319,10 +322,10 @@ export default function MindMappingList() {
                 <Sparkles size={48} color={theme.colors.text.secondary} />
               </View>
               <Text style={[styles.emptyTitle, { color: theme.colors.text.primary }]}>
-                No Mind Maps Yet
+                {translate('mindMap.noMindMapsYet')}
               </Text>
               <Text style={[styles.emptySubtitle, { color: theme.colors.text.secondary }]}>
-                Start visualizing your ideas by creating a new mind map.
+                {translate('mindMap.startVisualizingIdeas')}
               </Text>
             </View>
           ) : (
@@ -369,7 +372,7 @@ export default function MindMappingList() {
             ]}>
               <View style={styles.modalHeader}>
                 <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>
-                  New Mind Map
+                  {translate('mindMap.newMindMap')}
                 </Text>
                 <TouchableOpacity onPress={() => setIsModalVisible(false)}>
                   <X size={24} color={theme.colors.text.primary} />
@@ -377,7 +380,7 @@ export default function MindMappingList() {
               </View>
               
               <Text style={[styles.modalLabel, { color: theme.colors.text.secondary }]}>
-                What&apos;s on your mind?
+                {translate('mindMap.whatsOnYourMind')}
               </Text>
               
               <TextInput
@@ -389,7 +392,7 @@ export default function MindMappingList() {
                     borderColor: theme.colors.border
                   }
                 ]}
-                placeholder="e.g. Project Ideas, Life Goals..."
+                placeholder={translate('mindMap.mapNamePlaceholder')}
                 placeholderTextColor={theme.colors.text.light}
                 value={newMapTitle}
                 onChangeText={setNewMapTitle}
@@ -408,7 +411,7 @@ export default function MindMappingList() {
                     style={styles.createButtonGradient}
                   >
                     <Text style={styles.createButtonText}>
-                      {isCreating ? "Creating..." : "Create Mind Map"}
+                      {isCreating ? translate('mindMap.creating') : translate('mindMap.createMindMap')}
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>
