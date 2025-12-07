@@ -51,6 +51,7 @@ const DEFAULT_MEDITATIONS: Meditation[] = [
     duration: 15,
     type: "mindfulness",
     isFavorite: false,
+    audioUrl: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/mindful_awareness_1",
   },
   {
     id: "5",
