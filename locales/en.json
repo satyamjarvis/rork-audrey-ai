@@ -1075,6 +1075,10 @@
     "certifiedFullyEncrypted": "CERTIFIED FULLY ENCRYPTED",
     "noTrackersYet": "No Trackers Yet",
     "startTracking": "Start tracking by selecting a template",
+    "analyticsReport": "Analytics Report",
+    "generatedOn": "Generated on",
+    "securedByRorkApp": "Secured by Rork App",
+    "protectedDocument": "Protected Document",
     "noColumnsYet": "No columns yet",
     "addColumnToStart": "Add a column to start",
     "addColumn": "Add Column",
@@ -1128,6 +1132,8 @@
     "formula": "Formula",
     "date": "Date",
     "templates": {
+      "title": "Templates",
+      "active": "Active",
       "salesGeneral": "Sales General",
       "coldCalling": "Cold Calling",
       "closingSales": "Closing Sales",
@@ -1137,7 +1143,9 @@
       "modelingCareer": "Modeling Career",
       "musicCareer": "Music Career",
       "singingCareer": "Singing Career",
-      "custom": "Custom"
+      "custom": "Custom",
+      "customTracker": "Custom Tracker",
+      "selectTemplate": "Select a template to start tracking"
     },
     "formulaDescriptions": {
       "sumColumn": "Sum Column",
