@@ -51,6 +51,46 @@
       }
     }
   },
+  "night": {
+    "goodEvening": "こんばんは",
+    "goodNight": "おやすみなさい",
+    "restWell": "よく休んで",
+    "tonightsReflection": "今夜の振り返り",
+    "eveningRituals": "夕方の儀式",
+    "momentsOfGratitude": "感謝の瞬間",
+    "captureYourThoughts": "あなたの思考を捉える",
+    "howImFeeling": "今の気分",
+    "checkInWithEmotions": "感情を確認する",
+    "dreamJournal": "夢日記",
+    "captureYourDreams": "夢を記録する",
+    "sleepMeditation": "睡眠瑰想",
+    "peacefulRestSounds": "安らかな休息音",
+    "tomorrowsIntentions": "明日の意図",
+    "setGoalsForTomorrow": "明日の目標を設定",
+    "dailyHealthAssessment": "毎日の健康評価",
+    "takeYourTime": "あなたの時間をかけて。急がないでください。",
+    "gratitudePage": {
+      "title": "感謝の瞬間",
+      "todaysReminder": "今日のリマインダー",
+      "countBlessings": "祝福を数える",
+      "whatGratefulFor": "今日は何に感謝していますか？",
+      "addGratitude": "感謝を追加",
+      "inputPlaceholder": "私は...に感謝しています",
+      "cancel": "キャンセル",
+      "save": "保存",
+      "startJourney": "感謝の旅を始めましょう",
+      "tapToBegin": "「感謝を追加」をタップして開始",
+      "footer": "感謝は普通の日々を祝福に変えます",
+      "quotes": {
+        "1": "感謝は私たちが持っているものを十分にします。",
+        "2": "すべての瞬間に、感謝すべき何かがあります。",
+        "3": "感謝すればするほど、豊かさを引き寄せます。",
+        "4": "感謝は探求者の人生で最も美しいものです。",
+        "5": "感謝をひざまずく枠にしましょう。",
+        "6": "感謝は人生の充実を開きます。"
+      }
+    }
+  },
   "common": {
     "save": "保存",
     "cancel": "キャンセル",
