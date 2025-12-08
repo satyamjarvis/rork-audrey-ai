@@ -34,6 +34,7 @@ import * as XLSX from "xlsx";
 import type { Attachment } from "@/contexts/CalendarContext";
 import { useStatistics, Tracker, SpreadsheetColumn, SpreadsheetRow } from "@/contexts/StatisticsContext";
 import { getMimeTypeFromFileName, shareAttachment } from "@/utils/attachmentHelpers";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -69,6 +70,8 @@ export default function AttachmentPreviewModal({
 }: AttachmentPreviewModalProps) {
   const insets = useSafeAreaInsets();
   const { saveTracker } = useStatistics();
+  const { translations } = useLanguage();
+  const t = translations.attachmentPreview;
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
@@ -102,14 +105,14 @@ export default function AttachmentPreviewModal({
   const handleShare = async () => {
     if (!canDownload) {
       Alert.alert(
-        "Share Restricted",
-        `The owner of this calendar (${calendarOwner}) has disabled sharing for shared users.`
+        t.shareRestricted,
+        t.downloadRestrictedByOwner.replace('{owner}', calendarOwner)
       );
       return;
     }
 
     if (!attachment || !fileData) {
-      Alert.alert("Error", "No file data available");
+      Alert.alert(t.error, t.noFileDataAvailable);
       return;
     }
 
@@ -127,7 +130,7 @@ export default function AttachmentPreviewModal({
       });
     } catch (error) {
       console.error("[AttachmentPreview] Error sharing attachment:", error);
-      Alert.alert("Error", "Failed to share file. Please try again.");
+      Alert.alert(t.error, t.failedToShareFile);
     }
   };
 
@@ -166,7 +169,7 @@ export default function AttachmentPreviewModal({
       });
     } catch (error) {
       console.error("Error playing audio:", error);
-      Alert.alert("Error", "Failed to play audio file");
+      Alert.alert(t.error, t.failedToPlayAudio);
     }
   };
 
@@ -183,7 +186,7 @@ export default function AttachmentPreviewModal({
           if (attachment.sourceId) {
             onClose();
             router.push("/(tabs)/analytics" as any);
-            Alert.alert("Info", "Opening Analytics. The original tracker should be visible in your saved trackers.");
+            Alert.alert(t.info, t.openingAnalytics);
           } else {
             await handleOpenInAnalytics();
           }
@@ -192,13 +195,13 @@ export default function AttachmentPreviewModal({
         case 'planner':
           onClose();
           router.push("/(tabs)/planner" as any);
-          Alert.alert("Info", "Opening Planner. Look for the task in your task list.");
+          Alert.alert(t.info, t.openingPlanner);
           break;
 
         case 'notes':
           onClose();
           router.push("/notes" as any);
-          Alert.alert("Info", "Opening Notes.");
+          Alert.alert(t.info, t.openingNotes);
           break;
 
         case 'mindmap':
@@ -216,7 +219,7 @@ export default function AttachmentPreviewModal({
       }
     } catch (error) {
       console.error("Error opening in source feature:", error);
-      Alert.alert("Error", "Failed to open in source feature");
+      Alert.alert(t.error, t.failedToOpenInSourceFeature);
     }
   };
 
@@ -288,12 +291,12 @@ export default function AttachmentPreviewModal({
           });
         }
       } else {
-        Alert.alert("Error", "Unsupported file format for Analytics");
+        Alert.alert(t.error, t.unsupportedFileForAnalytics);
         return;
       }
 
       if (columns.length === 0) {
-        Alert.alert("Error", "Could not parse spreadsheet data");
+        Alert.alert(t.error, t.couldNotParseSpreadsheet);
         return;
       }
 
@@ -310,22 +313,22 @@ export default function AttachmentPreviewModal({
       if (allowEditing) {
         const success = await saveTracker(tracker);
         if (success) {
-          Alert.alert("Success", "Spreadsheet saved to Analytics!", [
-            { text: "Open Analytics", onPress: () => {
+          Alert.alert(t.success, t.spreadsheetSavedToAnalytics, [
+            { text: t.openAnalytics, onPress: () => {
               onClose();
               router.push("/(tabs)/analytics" as any);
             }}
           ]);
         } else {
-          Alert.alert("Error", "Failed to save to Analytics");
+          Alert.alert(t.error, t.failedToSaveToAnalytics);
         }
       } else {
-        Alert.alert("Restricted", "Sender has restricted saving/editing this file.");
+        Alert.alert(t.restricted, t.senderRestrictedEditing);
       }
 
     } catch (error) {
       console.error("Error opening in analytics:", error);
-      Alert.alert("Error", "Failed to process spreadsheet");
+      Alert.alert(t.error, t.failedToProcessSpreadsheet);
     }
   };
 
@@ -357,15 +360,15 @@ export default function AttachmentPreviewModal({
     
     switch (attachment.sourceFeature) {
       case 'analytics':
-        return 'Analytics';
+        return t.analytics;
       case 'planner':
-        return 'Planner';
+        return t.planner;
       case 'notes':
-        return 'Notes';
+        return t.notes;
       case 'mindmap':
-        return 'Mind Map';
+        return t.mindMap;
       default:
-        return 'Source';
+        return t.source;
     }
   };
 
@@ -375,7 +378,7 @@ export default function AttachmentPreviewModal({
         <View style={styles.errorContainer}>
           <AlertCircle color={themeColors.textSecondary} size={64} strokeWidth={1.5} />
           <Text style={[styles.errorText, { color: themeColors.textPrimary }]}>
-            No preview available
+            {t.noPreviewAvailable}
           </Text>
         </View>
       );
@@ -407,7 +410,7 @@ export default function AttachmentPreviewModal({
         <View style={styles.previewPlaceholder}>
           <Video color={themeColors.primary} size={64} strokeWidth={1.5} />
           <Text style={[styles.previewPlaceholderText, { color: themeColors.textPrimary }]}>
-            Video Preview
+            {t.videoPreview}
           </Text>
           <Text style={[styles.previewSubtext, { color: themeColors.textSecondary }]}>
             {attachment.name}
@@ -427,11 +430,11 @@ export default function AttachmentPreviewModal({
             onPress={playAudio}
           >
             <Text style={styles.audioPlayButtonText}>
-              {isPlaying ? "⏸ Pause" : "▶ Play"}
+              {isPlaying ? `⏸ ${t.pause}` : `▶ ${t.play}`}
             </Text>
           </TouchableOpacity>
           <Text style={[styles.previewPlaceholderText, { color: themeColors.textPrimary }]}>
-            Audio File
+            {t.audioFile}
           </Text>
           <Text style={[styles.previewSubtext, { color: themeColors.textSecondary }]}>
             {attachment.name}
@@ -448,7 +451,7 @@ export default function AttachmentPreviewModal({
         <View style={styles.previewPlaceholder}>
           <BarChart3 color={themeColors.primary} size={64} strokeWidth={1.5} />
           <Text style={[styles.previewPlaceholderText, { color: themeColors.textPrimary }]}>
-            Spreadsheet
+            {t.spreadsheet}
           </Text>
           <Text style={[styles.previewSubtext, { color: themeColors.textSecondary }]}>
             {attachment.name}
@@ -465,7 +468,7 @@ export default function AttachmentPreviewModal({
                 >
                   {getSourceFeatureIcon()}
                   <Text style={[styles.actionButtonText, { color: themeColors.primary }]}>
-                    Open in Metrics
+                    {t.openInMetrics}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -475,7 +478,7 @@ export default function AttachmentPreviewModal({
               >
                 <ExternalLink color={themeColors.primary} size={20} strokeWidth={2.5} />
                 <Text style={[styles.actionButtonText, { color: themeColors.primary }]}>
-                  Save as Active Spreadsheet
+                  {t.saveAsActiveSpreadsheet}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -483,7 +486,7 @@ export default function AttachmentPreviewModal({
             <View style={[styles.restrictionBadge, { backgroundColor: `${themeColors.primary}15` }]}>
               <Lock color={themeColors.primary} size={16} strokeWidth={2} />
               <Text style={[styles.restrictionText, { color: themeColors.primary }]}>
-                Editing restricted
+                {t.editingRestricted}
               </Text>
             </View>
           )}
@@ -495,7 +498,7 @@ export default function AttachmentPreviewModal({
       <View style={styles.previewPlaceholder}>
         <FileText color={themeColors.primary} size={64} strokeWidth={1.5} />
         <Text style={[styles.previewPlaceholderText, { color: themeColors.textPrimary }]}>
-          Document Preview
+          {t.documentPreview}
         </Text>
         <Text style={[styles.previewSubtext, { color: themeColors.textSecondary }]}>
           {attachment.name}
@@ -507,7 +510,7 @@ export default function AttachmentPreviewModal({
           <View style={[styles.restrictionBadge, { backgroundColor: `${themeColors.primary}15` }]}>
             <Lock color={themeColors.primary} size={16} strokeWidth={2} />
             <Text style={[styles.restrictionText, { color: themeColors.primary }]}>
-              Download restricted by owner
+              {t.downloadRestrictedInfo}
             </Text>
           </View>
         )}
@@ -549,7 +552,7 @@ export default function AttachmentPreviewModal({
                 <Eye color={themeColors.primary} size={20} strokeWidth={2.5} />
               </View>
               <View style={styles.headerTitleContainer}>
-                <Text style={[styles.headerTitle, { color: "#FFFFFF" }]}>Preview</Text>
+                <Text style={[styles.headerTitle, { color: "#FFFFFF" }]}>{t.preview}</Text>
                 <Text style={[styles.headerSubtitle, { color: "rgba(255, 255, 255, 0.7)" }]}>
                   {attachment.name.length > 30
                     ? attachment.name.substring(0, 27) + "..."
@@ -584,14 +587,14 @@ export default function AttachmentPreviewModal({
             <View style={styles.attachmentDetails}>
               <View style={[styles.detailCard, { backgroundColor: "rgba(255, 255, 255, 0.1)" }]}>
                 <Text style={[styles.detailLabel, { color: "rgba(255, 255, 255, 0.6)" }]}>
-                  File Name
+                  {t.fileName}
                 </Text>
                 <Text style={[styles.detailValue, { color: "#FFFFFF" }]}>{attachment.name}</Text>
               </View>
 
               <View style={[styles.detailCard, { backgroundColor: "rgba(255, 255, 255, 0.1)" }]}>
                 <Text style={[styles.detailLabel, { color: "rgba(255, 255, 255, 0.6)" }]}>
-                  File Size
+                  {t.fileSize}
                 </Text>
                 <Text style={[styles.detailValue, { color: "#FFFFFF" }]}>
                   {(attachment.size / 1024).toFixed(2)} KB
@@ -600,14 +603,14 @@ export default function AttachmentPreviewModal({
 
               <View style={[styles.detailCard, { backgroundColor: "rgba(255, 255, 255, 0.1)" }]}>
                 <Text style={[styles.detailLabel, { color: "rgba(255, 255, 255, 0.6)" }]}>
-                  File Type
+                  {t.fileType}
                 </Text>
                 <Text style={[styles.detailValue, { color: "#FFFFFF" }]}>{attachment.type}</Text>
               </View>
 
               <View style={[styles.detailCard, { backgroundColor: "rgba(255, 255, 255, 0.1)" }]}>
                 <Text style={[styles.detailLabel, { color: "rgba(255, 255, 255, 0.6)" }]}>
-                  Uploaded
+                  {t.uploaded}
                 </Text>
                 <Text style={[styles.detailValue, { color: "#FFFFFF" }]}>
                   {new Date(attachment.uploadedAt).toLocaleDateString()}
@@ -617,7 +620,7 @@ export default function AttachmentPreviewModal({
               {attachment.sourceFeature && attachment.sourceFeature !== 'external' && (
                 <View style={[styles.detailCard, { backgroundColor: "rgba(255, 255, 255, 0.1)" }]}>
                   <Text style={[styles.detailLabel, { color: "rgba(255, 255, 255, 0.6)" }]}>
-                    Created In
+                    {t.createdIn}
                   </Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     {getSourceFeatureIcon()}
@@ -633,7 +636,7 @@ export default function AttachmentPreviewModal({
               <View style={[styles.warningCard, { backgroundColor: "rgba(255, 165, 0, 0.1)" }]}>
                 <Lock color="#FFA500" size={20} strokeWidth={2.5} />
                 <Text style={[styles.warningText, { color: "#FFA500" }]}>
-                  Download is restricted by the calendar owner: {calendarOwner}
+                  {t.downloadRestrictedWarning.replace('{owner}', calendarOwner)}
                 </Text>
               </View>
             )}
@@ -669,7 +672,7 @@ export default function AttachmentPreviewModal({
                 >
                   <Share2 color="#FFFFFF" size={20} strokeWidth={2.5} />
                   <Text style={styles.primaryActionButtonText}>
-                    Share to Device
+                    {t.shareToDevice}
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -692,7 +695,7 @@ export default function AttachmentPreviewModal({
                 >
                   <BarChart3 color="#FFFFFF" size={20} strokeWidth={2.5} />
                   <Text style={styles.primaryActionButtonText}>
-                    Download to Metrics
+                    {t.downloadToMetrics}
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -702,7 +705,7 @@ export default function AttachmentPreviewModal({
               <View style={[styles.restrictedNote, { backgroundColor: "rgba(255, 165, 0, 0.1)" }]}>
                 <Lock color="#FFA500" size={16} strokeWidth={2.5} />
                 <Text style={[styles.restrictedNoteText, { color: "#FFA500" }]}>
-                  Actions restricted by owner
+                  {t.actionsRestrictedByOwner}
                 </Text>
               </View>
             )}
