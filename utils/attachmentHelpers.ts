@@ -459,38 +459,42 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
     try {
       DocumentPicker = await import('expo-document-picker');
       console.log('[Pick File] Document picker module loaded');
+      console.log('[Pick File] Module exports:', Object.keys(DocumentPicker));
     } catch (importError) {
       console.error('[Pick File] Failed to import expo-document-picker:', importError);
-      Alert.alert('Module Error', 'Document picker module could not be loaded.');
+      Alert.alert('Module Error', 'Document picker module could not be loaded. Please ensure expo-document-picker is installed.');
       return null;
     }
-    const getDocumentAsync = DocumentPicker.getDocumentAsync;
+
+    const getDocumentAsync = DocumentPicker.getDocumentAsync || (DocumentPicker as any).default?.getDocumentAsync;
 
     if (!getDocumentAsync) {
       console.error('[Pick File] getDocumentAsync not found in module');
       console.log('[Pick File] Available exports:', Object.keys(DocumentPicker));
-      Alert.alert('File Picker Error', 'File picker is not available on this device.');
+      Alert.alert('File Picker Error', 'File picker is not available. Try updating the app.');
       return null;
     }
 
     let mimeType: string | string[] = '*/*';
     
     if (type === 'image') {
-      mimeType = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/heic', 'image/*'];
+      mimeType = Platform.OS === 'web' ? 'image/*' : ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/heic', 'image/*'];
     } else if (type === 'video') {
-      mimeType = ['video/mp4', 'video/quicktime', 'video/x-m4v', 'video/*'];
+      mimeType = Platform.OS === 'web' ? 'video/*' : ['video/mp4', 'video/quicktime', 'video/x-m4v', 'video/*'];
     } else if (type === 'audio') {
-      mimeType = ['audio/mpeg', 'audio/mp4', 'audio/m4a', 'audio/wav', 'audio/*'];
+      mimeType = Platform.OS === 'web' ? 'audio/*' : ['audio/mpeg', 'audio/mp4', 'audio/m4a', 'audio/wav', 'audio/*'];
     } else if (type === 'document') {
-      mimeType = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'text/plain',
-        'text/csv',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      ];
+      mimeType = Platform.OS === 'web' 
+        ? 'application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        : [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'text/plain',
+          'text/csv',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
     }
     
     console.log('[Pick File] Opening picker with mimeType:', mimeType);
@@ -499,27 +503,46 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
     try {
       result = await getDocumentAsync({
         type: mimeType,
-        copyToCacheDirectory: true,
+        copyToCacheDirectory: Platform.OS !== 'web',
         multiple: allowMultiple,
       });
       console.log('[Pick File] Picker returned successfully');
+      console.log('[Pick File] Picker result canceled status:', result.canceled);
     } catch (pickerError) {
       console.error('[Pick File] Document picker error:', pickerError);
-      Alert.alert('Picker Error', 'Failed to open file picker. Please try again.');
+      const errorMsg = pickerError instanceof Error ? pickerError.message : 'Unknown error';
+      console.error('[Pick File] Error message:', errorMsg);
+      Alert.alert('Picker Error', `Failed to open file picker: ${errorMsg}`);
       return null;
     }
 
     console.log('[Pick File] Picker result:', result.canceled ? 'CANCELED' : 'FILE SELECTED');
+    console.log('[Pick File] Full result object keys:', Object.keys(result));
 
-    if (result.canceled) {
+    if (result.canceled || (result as any).type === 'cancel') {
       console.log('[Pick File] User cancelled file picker');
       return null;
     }
     
     if (!result.assets || result.assets.length === 0) {
       console.log('[Pick File] No assets in result');
-      Alert.alert('No File Selected', 'No file was selected. Please try again.');
-      return null;
+      console.log('[Pick File] Checking if result has direct file properties...');
+      
+      if ((result as any).uri && (result as any).name) {
+        console.log('[Pick File] Found legacy format, converting to assets format');
+        result = {
+          ...result,
+          assets: [{
+            uri: (result as any).uri,
+            name: (result as any).name,
+            mimeType: (result as any).mimeType,
+            size: (result as any).size,
+          }]
+        };
+      } else {
+        Alert.alert('No File Selected', 'No file was selected. Please try again.');
+        return null;
+      }
     }
 
     const file = result.assets[0];
@@ -548,17 +571,27 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
       
       try {
         console.log('[Pick File] Fetching file from URI:', file.uri);
-        const response = await fetch(file.uri);
-        console.log('[Pick File] Fetch response status:', response.status);
         
-        if (!response.ok) {
-          throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
+        if (file.uri.startsWith('blob:') || file.uri.startsWith('data:')) {
+          const response = await fetch(file.uri);
+          console.log('[Pick File] Fetch response status:', response.status);
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
+          }
+          blob = await response.blob();
+          console.log('[Pick File] Blob created - size:', blob.size, 'type:', blob.type);
+        } else if ((file as any).file instanceof Blob) {
+          console.log('[Pick File] Using file.file Blob directly');
+          blob = (file as any).file;
+          console.log('[Pick File] Blob size:', blob.size, 'type:', blob.type);
+        } else {
+          throw new Error('Unsupported file URI format for web');
         }
-        blob = await response.blob();
-        console.log('[Pick File] Blob created - size:', blob.size, 'type:', blob.type);
       } catch (fetchError) {
         console.error('[Pick File] Fetch error:', fetchError);
-        Alert.alert('Read Error', 'Failed to read the selected file. Please try again.');
+        const errMsg = fetchError instanceof Error ? fetchError.message : 'Unknown error';
+        Alert.alert('Read Error', `Failed to read the selected file: ${errMsg}`);
         return null;
       }
       
