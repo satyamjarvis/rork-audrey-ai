@@ -96,7 +96,9 @@
     "october": "October",
     "november": "November",
     "december": "December",
-    "timePlaceholder": "e.g., 2:00 PM"
+    "timePlaceholder": "e.g., 2:00 PM",
+    "newEvent": "New Event",
+    "enterEventTitle": "Enter event title"
   },
   "language": {
     "selectLanguage": "Select Language",
