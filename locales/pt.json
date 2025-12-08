@@ -1027,5 +1027,45 @@
       "5": "Cada sonho é uma porta para outra dimensão.",
       "6": "Deixe seus sonhos guiarem você para suas verdades mais profundas."
     }
+  },
+  "audioStyles": {
+    "hzFrequencies": {
+      "name": "Frequências Hz",
+      "description": "Batidas binaurais e cura por frequência"
+    },
+    "christmas": {
+      "name": "Música de Natal",
+      "description": "Música festiva de fim de ano"
+    },
+    "halloween": {
+      "name": "Música de Halloween",
+      "description": "Sons atmosféricos assustadores"
+    },
+    "morning": {
+      "name": "Música Matinal",
+      "description": "Melodias matinais inspiradoras"
+    },
+    "pianoElectronic": {
+      "name": "Piano Eletrônico",
+      "description": "Música de piano eletrônico moderno"
+    },
+    "nightTime": {
+      "name": "Música Noturna",
+      "description": "Melodias noturnas calmantes"
+    },
+    "rainRelaxing": {
+      "name": "Música de Chuva Relaxante",
+      "description": "Sons suaves de chuva e ambiente"
+    },
+    "country": {
+      "name": "Música Country",
+      "description": "Vibrações country clássicas"
+    },
+    "relaxing": {
+      "name": "Música Relaxante",
+      "description": "Música pacífica e calmante"
+    },
+    "noTracksAvailable": "Nenhuma faixa disponível para este estilo ainda",
+    "trackOf": "Faixa {current} de {total}"
   }
 }

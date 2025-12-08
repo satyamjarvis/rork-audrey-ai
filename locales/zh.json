@@ -1027,5 +1027,45 @@
       "5": "每个梦都是通往另一个维度的门。",
       "6": "让你的梦引领你走向内心最深的真相。"
     }
+  },
+  "audioStyles": {
+    "hzFrequencies": {
+      "name": "Hz 频率",
+      "description": "双耳节拍和频率疗愈"
+    },
+    "christmas": {
+      "name": "圣诞音乐",
+      "description": "节日庆典音乐"
+    },
+    "halloween": {
+      "name": "万圣节音乐",
+      "description": "诡异的氛围声音"
+    },
+    "morning": {
+      "name": "早晨音乐",
+      "description": "振奋人心的早晨旋律"
+    },
+    "pianoElectronic": {
+      "name": "电子钢琴",
+      "description": "现代电子钢琴音乐"
+    },
+    "nightTime": {
+      "name": "夜间音乐",
+      "description": "平静的夜晚旋律"
+    },
+    "rainRelaxing": {
+      "name": "雨声放松音乐",
+      "description": "舒缓的雨声和环境音"
+    },
+    "country": {
+      "name": "乡村音乐",
+      "description": "经典乡村氛围"
+    },
+    "relaxing": {
+      "name": "放松音乐",
+      "description": "平和而宁静的音乐"
+    },
+    "noTracksAvailable": "此风格暂无可用曲目",
+    "trackOf": "曲目 {current} / {total}"
   }
 }
