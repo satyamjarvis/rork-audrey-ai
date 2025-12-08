@@ -302,7 +302,7 @@ export default function WellnessCheckScreen() {
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={["#0a0e27", "#1a1a3e", "#2d1b4e"]}
+          colors={["#FFF8DC", "#FFE4B5", "#FFD700"]}
           style={styles.gradient}
         >
           <View style={styles.loadingContainer}>
@@ -322,7 +322,7 @@ export default function WellnessCheckScreen() {
       />
 
       <LinearGradient
-        colors={["#0a0e27", "#1a1a3e", "#2d1b4e"]}
+        colors={["#FFF8DC", "#FFE4B5", "#FFD700"]}
         style={styles.gradient}
       >
         {starPositions.map((star, index) => (
@@ -371,7 +371,7 @@ export default function WellnessCheckScreen() {
           }}
           activeOpacity={0.7}
         >
-          <ArrowLeft color="#a8c5e8" size={28} strokeWidth={2.5} />
+          <ArrowLeft color="#FF8C00" size={28} strokeWidth={2.5} />
         </TouchableOpacity>
 
         <View style={styles.safeArea}>
@@ -389,10 +389,10 @@ export default function WellnessCheckScreen() {
               <View style={styles.headerLeft}>
                 <Animated.View style={{ transform: [{ scale: heartPulse }] }}>
                   <Sun
-                    color="#a8c5e8"
+                    color="#FF8C00"
                     size={48}
                     strokeWidth={2}
-                    fill="#a8c5e8"
+                    fill="#FFD700"
                     fillOpacity={0.3}
                   />
                 </Animated.View>
@@ -402,7 +402,7 @@ export default function WellnessCheckScreen() {
                 </View>
               </View>
               <Animated.View style={{ transform: [{ rotate: starsRotateInterpolate }] }}>
-                <Sparkles color="#d4c4f0" size={32} strokeWidth={1.5} />
+                <Sparkles color="#FF8C00" size={32} strokeWidth={1.5} />
               </Animated.View>
             </View>
           </Animated.View>
@@ -419,17 +419,17 @@ export default function WellnessCheckScreen() {
                 <View style={styles.quoteCard}>
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
-                      <Sparkles color="#a8c5e8" size={18} strokeWidth={2} />
+                      <Sparkles color="#FF8C00" size={18} strokeWidth={2} />
                       <Text style={styles.quoteLabel}>{translate("howAmIFeeling.todaysReminder")}</Text>
                     </View>
                     <Text style={styles.quoteText}>{wellnessQuote}</Text>
                   </View>
                 </View>
               ) : (
-                <BlurView intensity={20} tint="dark" style={styles.quoteCard}>
+                <BlurView intensity={20} tint="light" style={styles.quoteCard}>
                   <View style={styles.quoteOverlay}>
                     <View style={styles.quoteHeader}>
-                      <Sparkles color="#a8c5e8" size={18} strokeWidth={2} />
+                      <Sparkles color="#FF8C00" size={18} strokeWidth={2} />
                       <Text style={styles.quoteLabel}>{translate("howAmIFeeling.todaysReminder")}</Text>
                     </View>
                     <Text style={styles.quoteText}>{wellnessQuote}</Text>
@@ -447,7 +447,7 @@ export default function WellnessCheckScreen() {
 
             <View style={styles.moodSection}>
               <View style={styles.moodHeader}>
-                <Heart color="#a8c5e8" size={24} strokeWidth={2.5} />
+                <Heart color="#FF8C00" size={24} strokeWidth={2.5} />
                 <Text style={styles.moodTitle}>{translate("howAmIFeeling.howAreYouFeeling")}</Text>
               </View>
               <View style={styles.moodGrid}>
@@ -496,7 +496,7 @@ export default function WellnessCheckScreen() {
 
             <View style={styles.energySection}>
               <View style={styles.energyHeader}>
-                <Zap color="#a8c5e8" size={24} strokeWidth={2.5} />
+                <Zap color="#FF8C00" size={24} strokeWidth={2.5} />
                 <Text style={styles.energyTitle}>{translate("howAmIFeeling.energyLevel")}</Text>
               </View>
               <View style={styles.energyRow}>
@@ -544,7 +544,7 @@ export default function WellnessCheckScreen() {
 
             <View style={styles.stressSection}>
               <View style={styles.stressHeader}>
-                <Brain color="#a8c5e8" size={24} strokeWidth={2.5} />
+                <Brain color="#FF8C00" size={24} strokeWidth={2.5} />
                 <Text style={styles.stressTitle}>{translate("howAmIFeeling.stressLevel")}</Text>
               </View>
               <View style={styles.stressRow}>
@@ -592,7 +592,7 @@ export default function WellnessCheckScreen() {
 
             <View style={styles.sleepSection}>
               <View style={styles.sleepHeader}>
-                <Moon color="#a8c5e8" size={24} strokeWidth={2.5} />
+                <Moon color="#FF8C00" size={24} strokeWidth={2.5} />
                 <Text style={styles.sleepTitle}>{translate("howAmIFeeling.sleepQuality")}</Text>
               </View>
               <View style={styles.sleepGrid}>
@@ -641,7 +641,7 @@ export default function WellnessCheckScreen() {
 
             <View style={styles.healthSection}>
               <View style={styles.healthHeader}>
-                <Activity color="#a8c5e8" size={24} strokeWidth={2.5} />
+                <Activity color="#FF8C00" size={24} strokeWidth={2.5} />
                 <Text style={styles.healthTitle}>{translate("howAmIFeeling.physicalHealth")}: {physicalHealth}/10</Text>
               </View>
               <View style={styles.healthSlider}>
@@ -653,7 +653,7 @@ export default function WellnessCheckScreen() {
                       {
                         backgroundColor:
                           value <= physicalHealth
-                            ? "#7b68ee"
+                            ? "#FF8C00"
                             : "rgba(255, 255, 255, 0.4)",
                       },
                     ]}
@@ -674,28 +674,28 @@ export default function WellnessCheckScreen() {
                 {Platform.OS === "web" ? (
                   <View style={styles.inputCardInner}>
                     <View style={styles.inputHeader}>
-                      <Sparkles color="#a8c5e8" size={20} strokeWidth={2.5} />
+                      <Sparkles color="#FF8C00" size={20} strokeWidth={2.5} />
                       <Text style={styles.inputLabel}>{translate("howAmIFeeling.gratitudeLabel")}</Text>
                     </View>
                     <TextInput
                       style={styles.textArea}
                       placeholder={translate("howAmIFeeling.gratitudePlaceholder")}
-                      placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                      placeholderTextColor="rgba(139, 69, 19, 0.5)"
                       value={gratitude}
                       onChangeText={setGratitude}
                       multiline
                     />
                   </View>
                 ) : (
-                  <BlurView intensity={15} tint="dark" style={styles.inputCardInner}>
+                  <BlurView intensity={15} tint="light" style={styles.inputCardInner}>
                     <View style={styles.inputHeader}>
-                      <Sparkles color="#a8c5e8" size={20} strokeWidth={2.5} />
+                      <Sparkles color="#FF8C00" size={20} strokeWidth={2.5} />
                       <Text style={styles.inputLabel}>{translate("howAmIFeeling.gratitudeLabel")}</Text>
                     </View>
                     <TextInput
                       style={styles.textArea}
                       placeholder={translate("howAmIFeeling.gratitudePlaceholder")}
-                      placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                      placeholderTextColor="rgba(139, 69, 19, 0.5)"
                       value={gratitude}
                       onChangeText={setGratitude}
                       multiline
@@ -708,25 +708,25 @@ export default function WellnessCheckScreen() {
                 <View style={styles.quickInputCard}>
                   {Platform.OS === "web" ? (
                     <View style={styles.quickInputInner}>
-                      <Droplets color="#a8c5e8" size={20} strokeWidth={2.5} />
+                      <Droplets color="#FF8C00" size={20} strokeWidth={2.5} />
                       <Text style={styles.quickInputLabel}>{translate("howAmIFeeling.waterLabel")}</Text>
                       <TextInput
                         style={styles.quickInput}
                         placeholder="0"
-                        placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                        placeholderTextColor="rgba(139, 69, 19, 0.5)"
                         value={waterIntake}
                         onChangeText={setWaterIntake}
                         keyboardType="number-pad"
                       />
                     </View>
                   ) : (
-                    <BlurView intensity={15} tint="dark" style={styles.quickInputInner}>
-                      <Droplets color="#a8c5e8" size={20} strokeWidth={2.5} />
+                    <BlurView intensity={15} tint="light" style={styles.quickInputInner}>
+                      <Droplets color="#FF8C00" size={20} strokeWidth={2.5} />
                       <Text style={styles.quickInputLabel}>{translate("howAmIFeeling.waterLabel")}</Text>
                       <TextInput
                         style={styles.quickInput}
                         placeholder="0"
-                        placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                        placeholderTextColor="rgba(139, 69, 19, 0.5)"
                         value={waterIntake}
                         onChangeText={setWaterIntake}
                         keyboardType="number-pad"
@@ -738,25 +738,25 @@ export default function WellnessCheckScreen() {
                 <View style={styles.quickInputCard}>
                   {Platform.OS === "web" ? (
                     <View style={styles.quickInputInner}>
-                      <Clock color="#a8c5e8" size={20} strokeWidth={2.5} />
+                      <Clock color="#FF8C00" size={20} strokeWidth={2.5} />
                       <Text style={styles.quickInputLabel}>{translate("howAmIFeeling.exerciseLabel")}</Text>
                       <TextInput
                         style={styles.quickInput}
                         placeholder="0"
-                        placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                        placeholderTextColor="rgba(139, 69, 19, 0.5)"
                         value={exerciseDuration}
                         onChangeText={setExerciseDuration}
                         keyboardType="number-pad"
                       />
                     </View>
                   ) : (
-                    <BlurView intensity={15} tint="dark" style={styles.quickInputInner}>
-                      <Clock color="#a8c5e8" size={20} strokeWidth={2.5} />
+                    <BlurView intensity={15} tint="light" style={styles.quickInputInner}>
+                      <Clock color="#FF8C00" size={20} strokeWidth={2.5} />
                       <Text style={styles.quickInputLabel}>{translate("howAmIFeeling.exerciseLabel")}</Text>
                       <TextInput
                         style={styles.quickInput}
                         placeholder="0"
-                        placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                        placeholderTextColor="rgba(139, 69, 19, 0.5)"
                         value={exerciseDuration}
                         onChangeText={setExerciseDuration}
                         keyboardType="number-pad"
@@ -773,19 +773,19 @@ export default function WellnessCheckScreen() {
                     <TextInput
                       style={styles.notesTextArea}
                       placeholder={translate("howAmIFeeling.notesPlaceholder")}
-                      placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                      placeholderTextColor="rgba(139, 69, 19, 0.5)"
                       value={notes}
                       onChangeText={setNotes}
                       multiline
                     />
                   </View>
                 ) : (
-                  <BlurView intensity={15} tint="dark" style={styles.notesCardInner}>
+                  <BlurView intensity={15} tint="light" style={styles.notesCardInner}>
                     <Text style={styles.notesLabel}>{translate("howAmIFeeling.additionalNotes")}</Text>
                     <TextInput
                       style={styles.notesTextArea}
                       placeholder={translate("howAmIFeeling.notesPlaceholder")}
-                      placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                      placeholderTextColor="rgba(139, 69, 19, 0.5)"
                       value={notes}
                       onChangeText={setNotes}
                       multiline
@@ -801,7 +801,7 @@ export default function WellnessCheckScreen() {
               activeOpacity={0.8}
             >
               <LinearGradient
-                colors={["#4a5fc1", "#7b68ee"]}
+                colors={["#FF8C00", "#FF6347"]}
                 style={styles.submitGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -832,7 +832,7 @@ const styles = StyleSheet.create({
   },
   star: {
     position: "absolute",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#FFD700",
     borderRadius: 50,
   },
   safeArea: {
@@ -855,13 +855,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: "700" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
     letterSpacing: 0.5,
   },
   headerTime: {
     fontSize: 15,
     fontWeight: "500" as const,
-    color: "#d4c4f0",
+    color: "#A0522D",
     marginTop: 4,
   },
   scrollView: {
@@ -876,9 +876,9 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: "hidden",
     marginBottom: 28,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     borderWidth: 1,
-    borderColor: "rgba(168, 197, 232, 0.2)",
+    borderColor: "rgba(255, 215, 0, 0.3)",
   },
   quoteOverlay: {
     padding: 24,
@@ -894,13 +894,13 @@ const styles = StyleSheet.create({
     fontWeight: "600" as const,
     textTransform: "uppercase" as const,
     letterSpacing: 1.5,
-    color: "#c8d8f0",
+    color: "#D2691E",
   },
   quoteText: {
     fontSize: 18,
     fontWeight: "500" as const,
     lineHeight: 28,
-    color: "#f4f0f8",
+    color: "#654321",
     letterSpacing: 0.3,
   },
   sectionHeader: {
@@ -910,13 +910,13 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "600" as const,
     marginBottom: 8,
-    color: "#a8c5e8",
+    color: "#8B4513",
     letterSpacing: 0.5,
   },
   sectionSubtitle: {
     fontSize: 15,
     fontWeight: "500" as const,
-    color: "#d4c4f0",
+    color: "#A0522D",
     letterSpacing: 0.3,
   },
   moodSection: {
@@ -931,7 +931,7 @@ const styles = StyleSheet.create({
   moodTitle: {
     fontSize: 18,
     fontWeight: "700" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
     letterSpacing: 0.3,
   },
   moodGrid: {
@@ -970,7 +970,7 @@ const styles = StyleSheet.create({
   energyTitle: {
     fontSize: 18,
     fontWeight: "700" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
     letterSpacing: 0.3,
   },
   energyRow: {
@@ -1001,7 +1001,7 @@ const styles = StyleSheet.create({
   stressTitle: {
     fontSize: 18,
     fontWeight: "700" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
     letterSpacing: 0.3,
   },
   stressRow: {
@@ -1032,7 +1032,7 @@ const styles = StyleSheet.create({
   sleepTitle: {
     fontSize: 18,
     fontWeight: "700" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
     letterSpacing: 0.3,
   },
   sleepGrid: {
@@ -1071,7 +1071,7 @@ const styles = StyleSheet.create({
   healthTitle: {
     fontSize: 18,
     fontWeight: "700" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
     letterSpacing: 0.3,
   },
   healthSlider: {
@@ -1092,9 +1092,9 @@ const styles = StyleSheet.create({
   inputCard: {
     borderRadius: 20,
     overflow: "hidden",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     borderWidth: 1,
-    borderColor: "rgba(168, 197, 232, 0.2)",
+    borderColor: "rgba(255, 215, 0, 0.3)",
   },
   inputCardInner: {
     padding: 20,
@@ -1108,12 +1108,12 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: "600" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
     letterSpacing: 0.2,
   },
   textArea: {
     fontSize: 16,
-    color: "#f4f0f8",
+    color: "#654321",
     minHeight: 80,
     textAlignVertical: "top",
   },
@@ -1125,9 +1125,9 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 20,
     overflow: "hidden",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     borderWidth: 1,
-    borderColor: "rgba(168, 197, 232, 0.2)",
+    borderColor: "rgba(255, 215, 0, 0.3)",
   },
   quickInputInner: {
     padding: 16,
@@ -1137,26 +1137,26 @@ const styles = StyleSheet.create({
   quickInputLabel: {
     fontSize: 13,
     fontWeight: "600" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
     textAlign: "center",
     letterSpacing: 0.2,
   },
   quickInput: {
     fontSize: 16,
-    color: "#f4f0f8",
+    color: "#654321",
     width: "100%",
     textAlign: "center",
     fontWeight: "600" as const,
     padding: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     borderRadius: 12,
   },
   notesCard: {
     borderRadius: 20,
     overflow: "hidden",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     borderWidth: 1,
-    borderColor: "rgba(168, 197, 232, 0.2)",
+    borderColor: "rgba(255, 215, 0, 0.3)",
   },
   notesCardInner: {
     padding: 20,
@@ -1164,13 +1164,13 @@ const styles = StyleSheet.create({
   notesLabel: {
     fontSize: 16,
     fontWeight: "600" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
     letterSpacing: 0.2,
     marginBottom: 12,
   },
   notesTextArea: {
     fontSize: 16,
-    color: "#f4f0f8",
+    color: "#654321",
     minHeight: 100,
     textAlignVertical: "top",
   },
@@ -1179,7 +1179,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 4,
-    shadowColor: "#4a5fc1",
+    shadowColor: "#FF8C00",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -1200,7 +1200,7 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 14,
     fontWeight: "500" as const,
-    color: "#d4c4f0",
+    color: "#A0522D",
     textAlign: "center",
     letterSpacing: 0.5,
     opacity: 0.7,
@@ -1215,13 +1215,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 22,
-    backgroundColor: "rgba(168, 197, 232, 0.15)",
+    backgroundColor: "rgba(255, 140, 0, 0.15)",
   },
   glitterDot: {
     position: "absolute" as const,
-    backgroundColor: "#C0C0C0",
+    backgroundColor: "#FFD700",
     borderRadius: 50,
-    shadowColor: "#C0C0C0",
+    shadowColor: "#FFD700",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -1235,6 +1235,6 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 18,
     fontWeight: "600" as const,
-    color: "#a8c5e8",
+    color: "#8B4513",
   },
 });
