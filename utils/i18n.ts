@@ -7,6 +7,12 @@ import fr from '@/locales/fr.json';
 import ar from '@/locales/ar.json';
 import zh from '@/locales/zh.json';
 import pt from '@/locales/pt.json';
+import ja from '@/locales/ja.json';
+import he from '@/locales/he.json';
+import ro from '@/locales/ro.json';
+import ru from '@/locales/ru.json';
+import hi from '@/locales/hi.json';
+import it from '@/locales/it.json';
 
 export type Language = 'en' | 'es' | 'fr' | 'ar' | 'zh' | 'pt' | 'ja' | 'he' | 'ro' | 'ru' | 'hi' | 'it';
 
@@ -19,6 +25,12 @@ const frTranslations = fr as unknown as TranslationFile;
 const arTranslations = ar as unknown as TranslationFile;
 const zhTranslations = zh as unknown as TranslationFile;
 const ptTranslations = pt as unknown as TranslationFile;
+const jaTranslations = ja as unknown as TranslationFile;
+const heTranslations = he as unknown as TranslationFile;
+const roTranslations = ro as unknown as TranslationFile;
+const ruTranslations = ru as unknown as TranslationFile;
+const hiTranslations = hi as unknown as TranslationFile;
+const itTranslations = it as unknown as TranslationFile;
 
 export const supportedLanguages: Language[] = ['en', 'es', 'fr', 'ar', 'zh', 'pt', 'ja', 'he', 'ro', 'ru', 'hi', 'it'];
 
@@ -1935,6 +1947,18 @@ const getBaseTranslations = (lang: Language): TranslationFile => {
       return zhTranslations;
     case 'pt':
       return ptTranslations;
+    case 'ja':
+      return jaTranslations;
+    case 'he':
+      return heTranslations;
+    case 'ro':
+      return roTranslations;
+    case 'ru':
+      return ruTranslations;
+    case 'hi':
+      return hiTranslations;
+    case 'it':
+      return itTranslations;
     default:
       return en;
   }
@@ -2032,6 +2056,17 @@ export function getTranslations(language: Language): TranslationFile {
       track: {
         ...en.track,
         ...(result.track || {}),
+      },
+    };
+  }
+  
+  // Ensure night section exists with fallbacks
+  if (!result.night || !result.night.goodEvening) {
+    return {
+      ...result,
+      night: {
+        ...en.night,
+        ...(result.night || {}),
       },
     };
   }
