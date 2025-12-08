@@ -4,10 +4,12 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, Cloud, HelpCircle, Sparkles, Sun, Smile } from 'lucide-react-native';
 import { Audio } from 'expo-av';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function IntroStory() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams<{ fromSettings?: string }>();
   const isFromSettings = params.fromSettings === 'true';
   const soundRef = useRef<Audio.Sound | null>(null);
@@ -172,7 +174,7 @@ export default function IntroStory() {
         <Animated.View style={[styles.absolute, { top: height * 0.45, right: width * 0.35, opacity: questionOpacity }]}>
             <HelpCircle size={40} color="#a6b1e1" />
         </Animated.View>
-        <Text style={styles.textDistress}>Lost & Overwhelmed...</Text>
+        <Text style={styles.textDistress}>{t('appTour.lostOverwhelmed')}</Text>
       </Animated.View>
 
       {/* SCENE 2: FINDING AUDREY */}
@@ -184,7 +186,7 @@ export default function IntroStory() {
         <Animated.View style={{ transform: [{ scale: audreyScale }] }}>
              <Sparkles size={120} color="#ffd700" />
         </Animated.View>
-        <Text style={styles.textDiscovery}>Then you found Audrey</Text>
+        <Text style={styles.textDiscovery}>{t('appTour.thenFoundAudrey')}</Text>
       </Animated.View>
 
       {/* SCENE 3: THE WAY */}
@@ -205,7 +207,7 @@ export default function IntroStory() {
         }}>
             <User size={80} color="#fff" />
         </Animated.View>
-        <Text style={styles.textGuidance}>Showing you the way</Text>
+        <Text style={styles.textGuidance}>{t('appTour.showingTheWay')}</Text>
       </Animated.View>
 
       {/* SCENE 4: EXCITEMENT */}
@@ -220,7 +222,7 @@ export default function IntroStory() {
         <Animated.View style={{ transform: [{ translateY: userJump }] }}>
             <Smile size={100} color="#fff" fill="#ff6b6b" />
         </Animated.View>
-        <Text style={styles.textExcitement}>Ready for your journey!</Text>
+        <Text style={styles.textExcitement}>{t('appTour.readyForJourney')}</Text>
       </Animated.View>
 
       {/* FINAL WHITE OVERLAY */}
