@@ -322,12 +322,12 @@ export default function PasswordManagerScreen() {
       if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
       console.error("Error saving password:", error);
-      Alert.alert(t('common.error'), "Failed to save password");
+      Alert.alert(t('common.error'), t('passwords.failedToSavePassword'));
     }
   };
 
   const deletePassword = async (id: string) => {
-    Alert.alert(t('passwords.deletePassword'), "Are you sure you want to delete this password?", [
+    Alert.alert(t('passwords.deletePassword'), t('passwords.deletePasswordConfirm'), [
       { text: t('common.cancel'), style: "cancel" },
       {
         text: t('common.delete'),
@@ -356,7 +356,7 @@ export default function PasswordManagerScreen() {
         });
       } catch (e) {
         console.error("Error decrypting for edit", e);
-        Alert.alert(t('common.error'), "Could not decrypt password");
+        Alert.alert(t('common.error'), t('passwords.couldNotDecrypt'));
         return;
       }
     } else {

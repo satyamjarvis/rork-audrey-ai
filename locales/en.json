@@ -1078,7 +1078,10 @@
     "notAvailable": "Not Available",
     "biometricsNotAvailable": "Biometrics are not available on this device.",
     "authenticateToEnable": "Authenticate to enable biometrics",
-    "failedToReset": "Failed to reset application"
+    "failedToReset": "Failed to reset application",
+    "failedToSavePassword": "Failed to save password",
+    "deletePasswordConfirm": "Are you sure you want to delete this password?",
+    "couldNotDecrypt": "Could not decrypt password"
   },
   "metrics": {
     "metrics": "Metrics",
