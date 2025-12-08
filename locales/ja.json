@@ -14,6 +14,19 @@
     "analytics": "分析",
     "tools": "ツール"
   },
+  "modeSelection": {
+    "pickYourMode": "モードを選択",
+    "universeModeTitle": "ユニバースモード",
+    "classicModeTitle": "クラシックモード",
+    "selected": "選択済み",
+    "switchModesAnytime": "設定でいつでもモードを切り替えることができます"
+  },
+  "themeSelection": {
+    "chooseYourStyle": "スタイルを選択",
+    "brightMode": "ブライトモード",
+    "nightModeTitle": "ナイトモード",
+    "changeThemeAnytime": "設定でいつでも変更できます"
+  },
   "mindMap": {
     "title": "マインドマップ",
     "searchYourThoughts": "思考を検索...",

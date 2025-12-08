@@ -14,6 +14,19 @@
     "analytics": "التحليلات",
     "tools": "الأدوات"
   },
+  "modeSelection": {
+    "pickYourMode": "اختر وضعك",
+    "universeModeTitle": "وضع الكون",
+    "classicModeTitle": "الوضع الكلاسيكي",
+    "selected": "محدد",
+    "switchModesAnytime": "يمكنك تبديل الأوضاع في أي وقت في الإعدادات"
+  },
+  "themeSelection": {
+    "chooseYourStyle": "اختر أسلوبك",
+    "brightMode": "الوضع المضيء",
+    "nightModeTitle": "الوضع الليلي",
+    "changeThemeAnytime": "يمكنك تغيير هذا في أي وقت في الإعدادات"
+  },
   "mindMap": {
     "title": "الخرائط الذهنية",
     "searchYourThoughts": "ابحث عن أفكارك...",

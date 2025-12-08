@@ -14,6 +14,19 @@
     "analytics": "Análisis",
     "tools": "Herramientas"
   },
+  "modeSelection": {
+    "pickYourMode": "Elige Tu Modo",
+    "universeModeTitle": "Modo Universo",
+    "classicModeTitle": "Modo Clásico",
+    "selected": "Seleccionado",
+    "switchModesAnytime": "Puedes cambiar de modo en cualquier momento en Ajustes"
+  },
+  "themeSelection": {
+    "chooseYourStyle": "Elige Tu Estilo",
+    "brightMode": "Modo Brillante",
+    "nightModeTitle": "Modo Nocturno",
+    "changeThemeAnytime": "Puedes cambiar esto en cualquier momento en Ajustes"
+  },
   "mindMap": {
     "title": "Mapas Mentales",
     "searchYourThoughts": "Busca tus pensamientos...",

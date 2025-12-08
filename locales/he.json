@@ -14,6 +14,19 @@
     "analytics": "ניתוח",
     "tools": "כלים"
   },
+  "modeSelection": {
+    "pickYourMode": "בחר את המצב שלך",
+    "universeModeTitle": "מצב יקום",
+    "classicModeTitle": "מצב קלאסי",
+    "selected": "נבחר",
+    "switchModesAnytime": "אתה יכול להחליף מצבים בכל עת בהגדרות"
+  },
+  "themeSelection": {
+    "chooseYourStyle": "בחר את הסגנון שלך",
+    "brightMode": "מצב בהיר",
+    "nightModeTitle": "מצב לילה",
+    "changeThemeAnytime": "אתה יכול לשנות זאת בכל עת בהגדרות"
+  },
   "mindMap": {
     "title": "מפות חשיבה",
     "searchYourThoughts": "חפש את המחשבות שלך...",

@@ -14,6 +14,19 @@
     "analytics": "विश्लेषण",
     "tools": "उपकरण"
   },
+  "modeSelection": {
+    "pickYourMode": "अपना मोड चुनें",
+    "universeModeTitle": "ब्रह्मांड मोड",
+    "classicModeTitle": "क्लासिक मोड",
+    "selected": "चयनित",
+    "switchModesAnytime": "आप कभी भी सेटिंग्स में मोड बदल सकते हैं"
+  },
+  "themeSelection": {
+    "chooseYourStyle": "अपनी शैली चुनें",
+    "brightMode": "चमकदार मोड",
+    "nightModeTitle": "रात मोड",
+    "changeThemeAnytime": "आप कभी भी सेटिंग्स में इसे बदल सकते हैं"
+  },
   "mindMap": {
     "title": "माइंड मैप",
     "searchYourThoughts": "अपने विचारों को खोजें...",

@@ -14,6 +14,19 @@
     "analytics": "分析",
     "tools": "工具"
   },
+  "modeSelection": {
+    "pickYourMode": "选择您的模式",
+    "universeModeTitle": "宇宙模式",
+    "classicModeTitle": "经典模式",
+    "selected": "已选择",
+    "switchModesAnytime": "您可以随时在设置中切换模式"
+  },
+  "themeSelection": {
+    "chooseYourStyle": "选择您的风格",
+    "brightMode": "明亮模式",
+    "nightModeTitle": "夜间模式",
+    "changeThemeAnytime": "您可以随时在设置中更改此设置"
+  },
   "mindMap": {
     "title": "思维导图",
     "searchYourThoughts": "搜索您的想法...",
