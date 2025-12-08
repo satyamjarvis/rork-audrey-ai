@@ -1585,6 +1585,12 @@
     "courseCategories": "Course Categories",
     "videosCount": "videos",
     "saving": "Saving...",
+    "addMedia": "Add Media",
+    "editHero": "Edit Hero",
+    "uploadFile": "Upload File",
+    "fromDevice": "From device",
+    "addURL": "Add URL",
+    "googleDriveLink": "Google Drive link",
     "comingSoon": {
       "title": "Coming Soon!",
       "description": "Revolutionary videos that will transform your mindset, unlock your potential, and guide you to extraordinary success.",
@@ -1627,6 +1633,31 @@
       "custom": "Custom Thumbnail",
       "customDesc": "Upload your own preview image"
     },
+    "urlModal": {
+      "titleAdd": "Add Video from URL",
+      "titleChange": "Change Video URL",
+      "urlLabel": "Video URL",
+      "urlPlaceholder": "https://drive.google.com/file/d/...",
+      "urlHint": "Supports Google Drive share links",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Enter video title",
+      "descLabel": "Description",
+      "descPlaceholder": "Enter video description",
+      "addButton": "Add Video",
+      "saveButton": "Save Changes"
+    },
+    "mediaModal": {
+      "heroTitle": "Edit Hero Section",
+      "introTitle": "Edit Introduction",
+      "featuredTitle": "Edit Featured Section",
+      "urlLabel": "Media URL",
+      "urlPlaceholder": "https://example.com/video.mp4",
+      "urlHint": "Supports video URLs from Google Drive, YouTube, etc.",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Enter title",
+      "descLabel": "Description",
+      "descPlaceholder": "Enter description"
+    },
     "messages": {
       "success": "Success",
       "error": "Error",
@@ -1638,7 +1669,22 @@
       "videoSaved": "Video updated and saved!",
       "videoAdded": "Video added and saved!",
       "videoUploadError": "Failed to upload video. Please try again.",
-      "saveVideoError": "Failed to save video. Please try again."
+      "saveVideoError": "Failed to save video. Please try again.",
+      "urlUpdated": "Video URL updated!",
+      "urlAdded": "Video added from URL!",
+      "mediaUpdated": "Media updated successfully!",
+      "enterValidUrl": "Please enter a valid URL",
+      "enterTitle": "Please enter a title"
+    },
+    "categories": {
+      "publicCommunication": "Public Communication",
+      "timeManagement": "Manage Your Time For Success",
+      "becomingExtraordinary": "Becoming Extraordinary",
+      "conversationalSpeaking": "Conversational Speaking",
+      "metaCreateReality": "Meta Create Your Reality",
+      "patternInterrupt": "Pattern Interrupt And Manifesting",
+      "higherIntelligence": "Connect To A Higher Intelligence And Become Your Desires",
+      "wealthyMindset": "Wealthy Mindset"
     },
     "defaults": {
       "newVideoTitle": "New Video",
