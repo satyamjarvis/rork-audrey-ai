@@ -5,6 +5,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 
 
@@ -212,6 +213,7 @@ const AudreyLoadingIcon = ({ isAnimating }: { isAnimating: boolean }) => {
 
 export default function ConfiguringApp() {
   const { theme } = useTheme();
+  const { translate } = useLanguage();
   const params = useLocalSearchParams<{ fromIntro?: string }>();
   const isFromIntro = params.fromIntro === 'true';
   const videoRef = useRef<Video>(null);
@@ -347,7 +349,7 @@ export default function ConfiguringApp() {
                 },
               ]}
             >
-              Loading Your Personalized Experience
+              {translate('configuringApp.loadingExperience')}
             </Animated.Text>
 
 

@@ -1249,6 +1249,21 @@ const accountSettingsTranslations: Record<Language, TranslationFile['accountSett
   },
 };
 
+const configuringAppTranslations: Record<Language, { loadingExperience: string }> = {
+  en: { loadingExperience: 'Loading Your Personalized Experience' },
+  es: { loadingExperience: 'Cargando Tu Experiencia Personalizada' },
+  fr: { loadingExperience: 'Chargement de Votre Expérience Personnalisée' },
+  ar: { loadingExperience: 'تحميل تجربتك الشخصية' },
+  zh: { loadingExperience: '加载您的个性化体验' },
+  pt: { loadingExperience: 'Carregando Sua Experiência Personalizada' },
+  ja: { loadingExperience: 'パーソナライズされたエクスペリエンスを読み込み中' },
+  he: { loadingExperience: 'טוען את החוויה המותאמת אישית שלך' },
+  ro: { loadingExperience: 'Se Încarcă Experiența Ta Personalizată' },
+  ru: { loadingExperience: 'Загрузка Вашего Персонализированного Опыта' },
+  hi: { loadingExperience: 'आपका व्यक्तिगत अनुभव लोड हो रहा है' },
+  it: { loadingExperience: 'Caricamento della Tua Esperienza Personalizzata' },
+};
+
 const appTourTranslations: Record<Language, TranslationFile['appTour']> = {
   en: {
     title: 'App Tour',
@@ -1437,6 +1452,16 @@ const getBaseTranslations = (lang: Language): TranslationFile => {
   }
 };
 
+const ensureConfiguringAppKey = (translations: TranslationFile): TranslationFile => {
+  if (!translations.configuringApp) {
+    return {
+      ...translations,
+      configuringApp: { loadingExperience: 'Loading Your Personalized Experience' },
+    };
+  }
+  return translations;
+};
+
 const translations: Record<Language, TranslationFile> = supportedLanguages.reduce(
   (acc, lang) => {
     const base = getBaseTranslations(lang);
@@ -1445,17 +1470,20 @@ const translations: Record<Language, TranslationFile> = supportedLanguages.reduc
     const passwords = passwordManagerTranslations[lang] ?? passwordManagerTranslations.en;
     const aiModal = aiAssistantModalTranslations[lang] ?? aiAssistantModalTranslations.en;
     const appTour = appTourTranslations[lang] ?? appTourTranslations.en;
-    acc[lang] = {
+    const configuringApp = configuringAppTranslations[lang] ?? configuringAppTranslations.en;
+    const result = ensureConfiguringAppKey({
       ...base,
       fontSize,
       accountSettings,
       passwords,
       appTour,
+      configuringApp,
       ai: {
         ...base.ai,
         aboutAudreyModal: aiModal,
       },
-    };
+    });
+    acc[lang] = result;
     return acc;
   },
   {} as Record<Language, TranslationFile>,

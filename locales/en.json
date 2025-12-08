@@ -1686,6 +1686,9 @@
       "6": "Listen to your body. It's always trying to tell you something."
     }
   },
+  "configuringApp": {
+    "loadingExperience": "Loading Your Personalized Experience"
+  },
   "dreamJournal": {
     "title": "Dream Journal",
     "dreamWisdom": "Dream Wisdom",
