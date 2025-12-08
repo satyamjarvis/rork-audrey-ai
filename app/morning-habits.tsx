@@ -77,7 +77,7 @@ export default function MorningHabitsScreen() {
     return keys[Math.floor(Math.random() * keys.length)];
   });
   
-  const motivationalQuote = t.quotes[quoteKey as keyof typeof t.quotes];
+  const motivationalQuote = t.quotes?.[quoteKey as keyof typeof t.quotes] || "Start your day with intention and purpose.";
 
   const getHabitTitle = (habit: MorningHabit) => {
     if (habit.isCustom) return habit.title;
