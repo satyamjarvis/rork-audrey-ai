@@ -40,6 +40,7 @@ type MainPageMedia = {
 
 const STORAGE_KEY = "@learn_data";
 const MAIN_MEDIA_KEY = "@learn_main_media";
+const STORAGE_VERSION = "1.1";
 
 export const [LearnContext, useLearn] = createContextHook(() => {
   const [categories, setCategories] = useState<CourseCategory[]>([]);
@@ -117,8 +118,40 @@ export const [LearnContext, useLearn] = createContextHook(() => {
           } else if (isValidJSON(mediaStored)) {
             try {
               const parsedMedia = JSON.parse(mediaStored);
-              setMainPageMedia(parsedMedia);
-              console.log(`Loaded main page media from storage`);
+              // Validate media structure
+              if (parsedMedia && typeof parsedMedia === 'object') {
+                const validMedia: MainPageMedia = {};
+                
+                if (parsedMedia.hero && typeof parsedMedia.hero === 'object') {
+                  validMedia.hero = {
+                    url: parsedMedia.hero.url || undefined,
+                    title: parsedMedia.hero.title || undefined,
+                    description: parsedMedia.hero.description || undefined,
+                  };
+                }
+                
+                if (parsedMedia.intro && typeof parsedMedia.intro === 'object') {
+                  validMedia.intro = {
+                    url: parsedMedia.intro.url || undefined,
+                    title: parsedMedia.intro.title || undefined,
+                    description: parsedMedia.intro.description || undefined,
+                  };
+                }
+                
+                if (parsedMedia.featured && typeof parsedMedia.featured === 'object') {
+                  validMedia.featured = {
+                    url: parsedMedia.featured.url || undefined,
+                    title: parsedMedia.featured.title || undefined,
+                    description: parsedMedia.featured.description || undefined,
+                  };
+                }
+                
+                setMainPageMedia(validMedia);
+                console.log(`[LearnContext] Loaded main page media from storage:`, Object.keys(validMedia));
+              } else {
+                console.warn('[LearnContext] Invalid media structure, using empty state');
+                setMainPageMedia({});
+              }
             } catch (parseError) {
               console.error("Failed to parse media data:", parseError);
               await AsyncStorage.removeItem(MAIN_MEDIA_KEY);
@@ -129,6 +162,8 @@ export const [LearnContext, useLearn] = createContextHook(() => {
             await AsyncStorage.removeItem(MAIN_MEDIA_KEY);
             setMainPageMedia({});
           }
+        } else {
+          console.log('[LearnContext] No main page media found in storage');
         }
 
         setHasInitialized(true);
@@ -194,6 +229,7 @@ export const [LearnContext, useLearn] = createContextHook(() => {
   }, []);
 
   const updateVideo = useCallback(async (categoryId: string, videoId: string, updatedVideo: Partial<VideoItem>) => {
+    console.log(`[LearnContext] Updating video ${videoId} in category ${categoryId}:`, updatedVideo);
     setCategories((prev) =>
       prev.map((cat) =>
         cat.id === categoryId
@@ -209,11 +245,14 @@ export const [LearnContext, useLearn] = createContextHook(() => {
   }, []);
 
   const addVideo = useCallback(async (categoryId: string, video: VideoItem) => {
-    setCategories((prev) =>
-      prev.map((cat) =>
+    console.log(`[LearnContext] Adding video to category ${categoryId}:`, video.title);
+    setCategories((prev) => {
+      const updated = prev.map((cat) =>
         cat.id === categoryId ? { ...cat, videos: [...cat.videos, video] } : cat
-      )
-    );
+      );
+      console.log(`[LearnContext] Category ${categoryId} now has ${updated.find(c => c.id === categoryId)?.videos.length || 0} videos`);
+      return updated;
+    });
   }, []);
 
   const removeVideo = useCallback(async (categoryId: string, videoId: string) => {
@@ -233,15 +272,43 @@ export const [LearnContext, useLearn] = createContextHook(() => {
     }
   }, [categories.length]);
 
-  // Clear all data (for debugging)
+  // Save main page media with immediate persistence
   const updateMainPageMedia = useCallback(async (section: 'hero' | 'intro' | 'featured', data: MainPageMediaSection) => {
-    setMainPageMedia((prev) => {
-      const updated = { ...prev, [section]: data };
-      AsyncStorage.setItem(MAIN_MEDIA_KEY, JSON.stringify(updated)).catch((error) => {
-        console.error("Failed to save main page media:", error);
+    try {
+      setMainPageMedia((prev) => {
+        const updated = { 
+          ...prev, 
+          [section]: data,
+          _lastUpdated: Date.now(),
+          _version: STORAGE_VERSION
+        };
+        
+        // Immediate async save with retry logic
+        const saveMedia = async () => {
+          try {
+            const jsonData = JSON.stringify(updated);
+            await AsyncStorage.setItem(MAIN_MEDIA_KEY, jsonData);
+            console.log(`[LearnContext] Successfully saved main page media for section: ${section}`);
+          } catch (saveError) {
+            console.error("[LearnContext] Failed to save main page media:", saveError);
+            // Retry once after a short delay
+            setTimeout(async () => {
+              try {
+                await AsyncStorage.setItem(MAIN_MEDIA_KEY, JSON.stringify(updated));
+                console.log(`[LearnContext] Retry successful for main page media`);
+              } catch (retryError) {
+                console.error("[LearnContext] Retry failed for main page media:", retryError);
+              }
+            }, 1000);
+          }
+        };
+        
+        saveMedia();
+        return updated;
       });
-      return updated;
-    });
+    } catch (error) {
+      console.error("[LearnContext] Error in updateMainPageMedia:", error);
+    }
   }, []);
 
   const clearAllData = useCallback(async () => {
