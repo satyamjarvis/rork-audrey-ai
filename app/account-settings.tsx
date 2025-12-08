@@ -33,8 +33,8 @@ export default function AccountSettingsScreen() {
   const { profile, updateUserProfile } = useUserProfile();
   const { t } = useTranslation();
   
-  const [name, setName] = useState<string>(profile.name || "Sarah Wilson");
-  const [email, setEmail] = useState<string>(profile.email || "sarah.wilson@example.com");
+  const [name, setName] = useState<string>(profile.name || t('accountSettings.defaultName'));
+  const [email, setEmail] = useState<string>(profile.email || t('accountSettings.defaultEmail'));
   const [phoneNumber, setPhoneNumber] = useState<string>(profile.phoneNumber || "");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -51,8 +51,8 @@ export default function AccountSettingsScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    setName(profile.name || "Sarah Wilson");
-    setEmail(profile.email || "sarah.wilson@example.com");
+    setName(profile.name || t('accountSettings.defaultName'));
+    setEmail(profile.email || t('accountSettings.defaultEmail'));
     setPhoneNumber(profile.phoneNumber || "");
     setIsEditing(false);
   };
@@ -94,11 +94,17 @@ export default function AccountSettingsScreen() {
               <UserCircle2 color={theme.colors.primary} size={64} strokeWidth={1.5} />
             </View>
             <View style={styles.profileInfo}>
-              <Text style={[styles.profileName, { color: theme.colors.text.primary }]}>
-                {name || "User"}
+              <Text
+                style={[styles.profileName, { color: theme.colors.text.primary }]}
+                testID="account-profile-name"
+              >
+                {name || t('accountSettings.defaultName')}
               </Text>
-              <Text style={[styles.profileEmail, { color: theme.colors.text.secondary }]}>
-                {email || "user@example.com"}
+              <Text
+                style={[styles.profileEmail, { color: theme.colors.text.secondary }]}
+                testID="account-profile-email"
+              >
+                {email || t('accountSettings.defaultEmail')}
               </Text>
               {phoneNumber ? (
                 <Text style={[styles.profileEmail, { color: theme.colors.text.secondary, marginTop: 4 }]}>
@@ -221,7 +227,7 @@ export default function AccountSettingsScreen() {
                   {t('accountSettings.memberSince')}
                 </Text>
                 <Text style={[styles.infoValue, { color: theme.colors.text.primary }]}>
-                  January 2025
+                  {t('accountSettings.memberSinceValue')}
                 </Text>
               </View>
             </View>

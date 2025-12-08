@@ -1176,8 +1176,11 @@
     "accountStatus": "Account Status",
     "active": "Active",
     "memberSince": "Member Since",
+    "memberSinceValue": "January 2025",
     "saveChanges": "Save Changes",
-    "updateSuccess": "Account information updated successfully"
+    "updateSuccess": "Account information updated successfully",
+    "defaultName": "Member",
+    "defaultEmail": "user@example.com"
   },
   "notificationSettings": {
     "title": "Notifications",
