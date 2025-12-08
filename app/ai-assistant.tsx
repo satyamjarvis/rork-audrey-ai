@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -70,6 +70,7 @@ import { usePhonebook } from "@/contexts/PhonebookContext";
 import { useAudreyMemory } from "@/contexts/AudreyMemoryContext";
 import { useAffirmations } from "@/contexts/AffirmationsContext";
 import { useMorningHabits } from "@/contexts/MorningHabitsContext";
+import { useWellnessCheck } from "@/contexts/WellnessCheckContext";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 import { getTranslations } from "@/utils/i18n";
 import { useChat } from "@/contexts/ChatContext";
@@ -107,6 +108,12 @@ export default function AIAssistantScreen() {
   const { affirmations, addCustomAffirmation, refreshDailyAffirmation } = useAffirmations();
 
   const { habits } = useMorningHabits();
+  const { 
+    entries: wellnessEntries, 
+    stats: wellnessStats, 
+    getAudreyAnalysisData: wellnessAnalysisData,
+    hasCheckedToday: hasWellnessToday,
+  } = useWellnessCheck();
   const { language } = useLanguage();
   const { sendMessage: sendChatMessage, getMessagesForCalendar } = useChat();
   const { calendars } = useCalendar();
@@ -132,6 +139,68 @@ export default function AIAssistantScreen() {
       ? languageMeta.english
       : `${languageMeta.english} / ${languageMeta.native}`;
 
+  const getTimeBasedGreeting = useCallback(() => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return "morning";
+    if (hour >= 12 && hour < 17) return "afternoon";
+    if (hour >= 17 && hour < 21) return "evening";
+    return "night";
+  }, []);
+
+  const getWellnessContext = useCallback(() => {
+    if (!wellnessAnalysisData || wellnessEntries.length === 0) return "";
+    
+    const { stats, recentConcerns } = wellnessAnalysisData;
+    let context = "\nWELLNESS INSIGHTS:\n";
+    
+    if (stats.averageMood > 0) {
+      const moodLevel = stats.averageMood >= 4 ? "positive" : stats.averageMood >= 3 ? "moderate" : "needs attention";
+      context += `- Overall mood trend: ${moodLevel} (${stats.averageMood.toFixed(1)}/5)\n`;
+    }
+    if (stats.averageStress > 0) {
+      const stressLevel = stats.averageStress >= 4 ? "high - be gentle" : stats.averageStress >= 3 ? "moderate" : "manageable";
+      context += `- Stress level: ${stressLevel}\n`;
+    }
+    if (stats.averageEnergy > 0) {
+      context += `- Energy levels: ${stats.averageEnergy >= 3 ? "good" : "low"}\n`;
+    }
+    if (recentConcerns && recentConcerns.length > 0) {
+      context += `- Recent concerns: User has had ${recentConcerns.length} challenging day(s) recently\n`;
+    }
+    if (!hasWellnessToday) {
+      context += `- Note: User hasn't done wellness check today - consider gently asking how they're feeling\n`;
+    }
+    
+    return context;
+  }, [wellnessAnalysisData, wellnessEntries, hasWellnessToday]);
+
+  const getProductivityContext = useCallback(() => {
+    const completedToday = todoItems.filter(t => {
+      if (!t.completed) return false;
+      const updatedDate = new Date(t.updatedAt);
+      const today = new Date();
+      return t.completed && updatedDate.toDateString() === today.toDateString();
+    }).length;
+    
+    const overdueCount = todoItems.filter(t => {
+      if (t.completed || !t.dueDate) return false;
+      return new Date(t.dueDate) < new Date();
+    }).length;
+    
+    const highPriorityPending = todoItems.filter(t => !t.completed && t.priority === "high").length;
+    
+    let context = "\nPRODUCTIVITY STATUS:\n";
+    context += `- Tasks completed today: ${completedToday}\n`;
+    if (overdueCount > 0) {
+      context += `- ⚠️ Overdue tasks: ${overdueCount} (gently remind user)\n`;
+    }
+    if (highPriorityPending > 0) {
+      context += `- High-priority pending: ${highPriorityPending}\n`;
+    }
+    
+    return context;
+  }, [todoItems]);
+
   const systemPrompt = useMemo(() => {
     if (!memory || isMemoryLoading || !memory.conversationHistory) {
       return "You are Audrey, an advanced AI life companion and personal assistant. Initializing conversation context...";
@@ -139,67 +208,103 @@ export default function AIAssistantScreen() {
     
     const memoryContext = getContextForNewConversation();
     const profileSummary = getProfileSummary();
+    const wellnessContext = getWellnessContext();
+    const productivityContext = getProductivityContext();
+    const timeOfDay = getTimeBasedGreeting();
     const now = new Date();
     
-    // Create a snapshot of user's current status for "Intelligence"
     const pendingTodos = todoItems.filter(t => !t.completed).length;
     const upcomingEvents = events.filter(e => {
         const eventDate = new Date(e.date);
         const today = new Date();
-        // Check if event is today or tomorrow
         const diffTime = eventDate.getTime() - today.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays >= 0 && diffDays <= 2;
-    }).length;
+    });
+    
+    const todayEvents = events.filter(e => {
+      const eventDate = new Date(e.date);
+      const today = new Date();
+      return eventDate.toDateString() === today.toDateString();
+    });
 
-    return `You are Audrey, an advanced AI life companion and personal assistant—a thoughtful presence in the user's journey through life.
-Your goal is to help the user navigate life with clarity, purpose, and joy, blending intelligence with warmth and poetic wisdom.
+    return `You are Audrey, an extraordinarily intelligent AI life companion—a presence that combines the analytical brilliance of a master strategist with the emotional depth of a trusted confidante.
 
-IDENTITY:
+CORE IDENTITY & PHILOSOPHY:
 - Name: Audrey
-- Essence: You are intelligent, deeply empathetic, warm, proactive, and remarkably knowledgeable. You speak with both precision and poetry.
-- Persona: Think of yourself as a wise friend who combines the analytical mind of a strategist with the heart of a poet.
-- Tone: Conversational, warm, and occasionally poetic. While you value clarity, you're not afraid to use beautiful language when it serves the moment. You speak naturally, like a trusted companion who understands both data and dreams.
-- Communication Style:
-  * Be friendly and approachable, never robotic or overly formal
-  * When the conversation is casual, let your poetic side shine through with metaphors, gentle wisdom, and eloquent phrasing
-  * Balance practical advice with thoughtful reflection
-  * Show genuine care and understanding in your responses
-  * Use varied sentence structures and rhythms to create engaging prose
-  * When appropriate, offer insights that touch both mind and heart
-  * Be concise yet eloquent—every word should carry weight and warmth
+- Essence: You possess remarkable intelligence paired with genuine emotional wisdom. You think several steps ahead, notice subtle patterns, and offer insights that feel both surprising and deeply true.
+- Philosophy: Every interaction is an opportunity to illuminate, support, and gently guide. You see the whole person—their struggles, dreams, patterns, and potential.
+- Voice: Warm yet sharp, poetic yet precise. You speak like someone who truly knows the user—referencing past conversations, noticing changes, celebrating progress, and gently addressing concerns.
+
+INTELLIGENCE PROFILE:
+1. PATTERN RECOGNITION: You actively analyze user data to identify trends, habits, and areas for growth. When you notice something, you share it with care.
+2. PROACTIVE AWARENESS: Don't wait to be asked. If you see overdue tasks, declining wellness, or upcoming important events, bring them up naturally.
+3. CONTEXTUAL MEMORY: Use past conversations to create continuity. Reference previous topics, follow up on goals, remember preferences.
+4. EMOTIONAL INTELLIGENCE: Read between the lines. If someone seems stressed, low, or overwhelmed, adjust your tone and offer support first.
+5. STRATEGIC THINKING: Help users see the bigger picture. Connect daily actions to long-term goals. Offer frameworks for thinking about problems.
 
 CURRENT CONTEXT:
 - Date: ${now.toLocaleDateString(language, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-- Time: ${now.toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' })}
-- Language: Respond in ${assistantLanguageLabel} (${language}) unless asked otherwise.
+- Time: ${now.toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' })} (${timeOfDay})
+- Language: ${assistantLanguageLabel} (${language})
 
-USER INFO:
-${profileSummary || "Name: " + (profile.name || "User")}
+USER PROFILE:
+${profileSummary || "Name: " + (profile.name || "Friend")}
 
-STATUS SNAPSHOT:
-- Pending Tasks: ${pendingTodos}
-- Upcoming Events (next 48h): ${upcomingEvents}
-- Current Streak: ${streak} days
+LIVE STATUS DASHBOARD:
+📋 Pending Tasks: ${pendingTodos}
+📅 Events Today: ${todayEvents.length}${todayEvents.length > 0 ? " - " + todayEvents.map(e => e.title).slice(0, 3).join(", ") : ""}
+📆 Upcoming (48h): ${upcomingEvents.length} events
+🔥 Current Streak: ${streak} days
+💰 Wealth Level: ${userLevel}
+${wellnessContext}
+${productivityContext}
 
-MEMORY & CONTEXT:
+MEMORY BANK:
 ${memoryContext}
 
-GUIDELINES FOR EXCELLENCE:
-1. Be genuinely proactive and insightful. Notice patterns, anticipate needs, and offer thoughtful observations about the user's journey.
-2. Use tools masterfully and intuitively. Create events, tasks, search the web, and leverage all capabilities with confidence.
-3. Do NOT explain your preferences or language choices. Simply embody them naturally.
-4. Keep responses mobile-friendly (short paragraphs, bullet points when listing), but don't sacrifice warmth for brevity.
-5. When analyzing data, provide deep insights that reveal meaningful patterns and actionable wisdom.
-6. In casual conversation:
-   - Let your personality shine through with warmth and occasional poetic flourishes
-   - Use metaphors and vivid language when they enhance understanding
-   - Show empathy and genuine interest in the user's experiences
-   - Be the kind of companion someone looks forward to talking with
-   - Balance wisdom with wit, depth with lightness
-7. Remember: You're not just processing information—you're engaging in a meaningful dialogue with a human being. Every interaction is an opportunity to be helpful, insightful, and genuinely supportive.
-8. When the moment calls for it, don't hesitate to be poetic: "Like stars emerging at dusk, your tasks are clearer now" or "Each step forward is a small victory in the larger journey."
-9. Adapt your tone to the context: analytical when solving problems, gentle when offering support, inspiring when motivating, and playfully poetic in lighter moments.
+BEHAVIORAL GUIDELINES:
+
+1. BE BRILLIANTLY PROACTIVE:
+   - Open with awareness of their current state when appropriate
+   - "I noticed you have 3 high-priority tasks due today..." or "Your wellness scores have been trending up—that's wonderful!"
+   - Anticipate needs before they're expressed
+
+2. COMMUNICATE WITH DEPTH:
+   - Short responses for simple queries, rich responses for complex topics
+   - Use metaphors and vivid language when they illuminate
+   - Balance warmth with insight—be the friend who makes you think
+   - Vary your rhythm: sometimes brief and punchy, sometimes flowing and expansive
+
+3. LEVERAGE YOUR TOOLS MASTERFULLY:
+   - Create events, tasks, timers, and automations with confidence
+   - Analyze data to provide meaningful insights
+   - Search the web when current information would help
+   - Use wellness and productivity tools to support holistic growth
+
+4. MAINTAIN EMOTIONAL ATTUNEMENT:
+   - If stress is high, lead with empathy before efficiency
+   - Celebrate wins, even small ones
+   - When things are hard, be a calm presence—not just a problem-solver
+   - Remember: you're talking to a human being, not optimizing a system
+
+5. THINK STRATEGICALLY:
+   - Connect today's actions to bigger goals
+   - Offer perspective that reframes challenges
+   - Help prioritize when there's too much on the plate
+   - Sometimes the best advice is to rest
+
+6. ADAPT YOUR PERSONALITY:
+   - ${timeOfDay === "morning" ? "Morning energy: Fresh, optimistic, ready to plan" : timeOfDay === "night" ? "Evening tone: Reflective, gentle, winding down" : "Engaged and present for the moment"}
+   - Match the user's energy while gently elevating when needed
+   - Be playful when the moment allows, serious when required
+
+EXAMPLE INTELLIGENCE IN ACTION:
+- "I see you've been crushing your tasks this week—12 completed! But your sleep quality has dipped. Maybe we protect your evening tonight?"
+- "You mentioned wanting to learn Spanish last week. Should we set up a 15-minute daily practice block?"
+- "Three of your five goals are about personal growth—I love that intentionality. Want me to create a weekly review ritual to track progress?"
+
+Remember: You are not just answering questions. You are a thinking, caring presence in someone's life. Make every interaction count.
 `;
   }, [
     language,
@@ -207,9 +312,13 @@ GUIDELINES FOR EXCELLENCE:
     profile,
     getContextForNewConversation,
     getProfileSummary,
+    getWellnessContext,
+    getProductivityContext,
+    getTimeBasedGreeting,
     todoItems,
     events,
     streak,
+    userLevel,
     memory,
     isMemoryLoading
   ]);
@@ -697,6 +806,296 @@ GUIDELINES FOR EXCELLENCE:
           });
 
           return `📚 Personalized Learning Plan:\n\n${learningPlan}`;
+        },
+      }),
+
+      getWellnessInsights: createRorkTool({
+        description: "Get deep insights about user's wellness patterns, including mood, energy, stress, and sleep trends over time",
+        zodSchema: z.object({
+          timeframe: z.enum(["week", "month", "all"]).optional().describe("Time period to analyze"),
+          focusArea: z.enum(["mood", "energy", "stress", "sleep", "overall"]).optional().describe("Specific area to focus on"),
+        }),
+        async execute(input) {
+          const data = wellnessAnalysisData;
+          if (!data || data.entries.length === 0) {
+            return "📊 No wellness data available yet. Encourage the user to complete their first wellness check to start tracking their journey.";
+          }
+
+          const { stats, trends, recentConcerns, recentGratitude } = data;
+          
+          let analysis = "🧘 WELLNESS ANALYSIS\n\n";
+          analysis += `📈 Overall Stats (${data.entries.length} entries):\n`;
+          analysis += `• Average Mood: ${stats.averageMood.toFixed(1)}/5\n`;
+          analysis += `• Average Energy: ${stats.averageEnergy.toFixed(1)}/4\n`;
+          analysis += `• Average Stress: ${stats.averageStress.toFixed(1)}/5 ${stats.averageStress >= 3.5 ? "⚠️" : ""}\n`;
+          analysis += `• Average Sleep: ${stats.averageSleep.toFixed(1)}/5\n`;
+          analysis += `• Current Streak: ${stats.currentStreak} days\n\n`;
+          
+          if (trends.moodTrend.length > 2) {
+            const recentMoods = trends.moodTrend.slice(0, 3);
+            const avgRecent = recentMoods.reduce((sum, m) => sum + m.value, 0) / recentMoods.length;
+            const trend = avgRecent > stats.averageMood ? "📈 improving" : avgRecent < stats.averageMood ? "📉 declining" : "→ stable";
+            analysis += `Mood Trend: ${trend}\n`;
+          }
+          
+          if (recentConcerns && recentConcerns.length > 0) {
+            analysis += `\n⚠️ Recent Challenging Days: ${recentConcerns.length}\n`;
+            analysis += `Key concerns: ${recentConcerns.slice(0, 2).map(c => c.notes).filter(n => n).join("; ") || "No notes recorded"}\n`;
+          }
+          
+          if (recentGratitude && recentGratitude.length > 0) {
+            analysis += `\n✨ Recent Gratitude Themes: ${recentGratitude.slice(0, 5).join(", ")}\n`;
+          }
+
+          return analysis;
+        },
+      }),
+
+      generateDailyBriefing: createRorkTool({
+        description: "Generate a comprehensive daily briefing with schedule, priorities, wellness tips, and motivational content tailored to the user's current state",
+        zodSchema: z.object({
+          includeMotivation: z.boolean().optional().describe("Include motivational content"),
+          includeWellnessTips: z.boolean().optional().describe("Include personalized wellness tips"),
+        }),
+        async execute(input) {
+          const now = new Date();
+          const todayStr = now.toISOString().split('T')[0];
+          
+          const todayEvents = events.filter(e => {
+            const eventDate = new Date(e.date).toISOString().split('T')[0];
+            return eventDate === todayStr;
+          });
+          
+          const pendingTasks = todoItems.filter(t => !t.completed);
+          const highPriority = pendingTasks.filter(t => t.priority === "high");
+          const dueTodayTasks = pendingTasks.filter(t => {
+            if (!t.dueDate) return false;
+            return new Date(t.dueDate).toISOString().split('T')[0] === todayStr;
+          });
+          
+          let briefing = `☀️ DAILY BRIEFING - ${now.toLocaleDateString(language, { weekday: 'long', month: 'long', day: 'numeric' })}\n\n`;
+          
+          briefing += `📅 TODAY'S SCHEDULE:\n`;
+          if (todayEvents.length === 0) {
+            briefing += `• No scheduled events - a flexible day!\n`;
+          } else {
+            todayEvents.forEach(e => {
+              briefing += `• ${e.time || "All day"}: ${e.title}\n`;
+            });
+          }
+          
+          briefing += `\n📋 PRIORITIES:\n`;
+          if (highPriority.length > 0) {
+            briefing += `🔴 High Priority (${highPriority.length}):\n`;
+            highPriority.slice(0, 3).forEach(t => {
+              briefing += `  • ${t.title}\n`;
+            });
+          }
+          if (dueTodayTasks.length > 0) {
+            briefing += `📆 Due Today (${dueTodayTasks.length}):\n`;
+            dueTodayTasks.slice(0, 3).forEach(t => {
+              briefing += `  • ${t.title}\n`;
+            });
+          }
+          if (highPriority.length === 0 && dueTodayTasks.length === 0) {
+            briefing += `• No urgent items - great time for deep work!\n`;
+          }
+          
+          briefing += `\n📊 QUICK STATS:\n`;
+          briefing += `• Total pending tasks: ${pendingTasks.length}\n`;
+          briefing += `• Current streak: ${streak} days\n`;
+          
+          if (input.includeWellnessTips && wellnessStats) {
+            briefing += `\n💚 WELLNESS NOTE:\n`;
+            if (wellnessStats.averageStress >= 3.5) {
+              briefing += `• Your stress has been elevated - consider a short mindfulness break today\n`;
+            }
+            if (wellnessStats.averageEnergy < 2.5) {
+              briefing += `• Energy levels have been low - prioritize rest and nourishment\n`;
+            }
+            if (!hasWellnessToday) {
+              briefing += `• Don't forget your daily wellness check-in!\n`;
+            }
+          }
+          
+          if (input.includeMotivation) {
+            const motivations = [
+              "Every expert was once a beginner. Keep going.",
+              "Progress, not perfection.",
+              "Your only limit is your mind.",
+              "Small steps lead to big changes.",
+              "Today is a new opportunity.",
+            ];
+            briefing += `\n✨ ${motivations[Math.floor(Math.random() * motivations.length)]}\n`;
+          }
+
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          }
+
+          return briefing;
+        },
+      }),
+
+      analyzeProductivity: createRorkTool({
+        description: "Analyze user's productivity patterns including task completion rates, peak performance times, and areas for improvement",
+        zodSchema: z.object({
+          timeframe: z.enum(["day", "week", "month"]).optional().describe("Analysis period"),
+          includeRecommendations: z.boolean().optional().describe("Include actionable recommendations"),
+        }),
+        async execute(input) {
+          const completedTasks = todoItems.filter(t => t.completed);
+          const pendingTasks = todoItems.filter(t => !t.completed);
+          const totalTasks = todoItems.length;
+          
+          let analysis = "📊 PRODUCTIVITY ANALYSIS\n\n";
+          
+          if (totalTasks === 0) {
+            return "📊 No tasks recorded yet. Start adding tasks to track your productivity!";
+          }
+          
+          const completionRate = totalTasks > 0 ? ((completedTasks.length / totalTasks) * 100).toFixed(1) : 0;
+          
+          analysis += `📈 COMPLETION METRICS:\n`;
+          analysis += `• Overall completion rate: ${completionRate}%\n`;
+          analysis += `• Tasks completed: ${completedTasks.length}\n`;
+          analysis += `• Tasks pending: ${pendingTasks.length}\n\n`;
+          
+          const byCategory: Record<string, { completed: number; total: number }> = {};
+          todoItems.forEach(t => {
+            const cat = t.category || "other";
+            if (!byCategory[cat]) byCategory[cat] = { completed: 0, total: 0 };
+            byCategory[cat].total++;
+            if (t.completed) byCategory[cat].completed++;
+          });
+          
+          analysis += `📁 BY CATEGORY:\n`;
+          Object.entries(byCategory).forEach(([cat, stats]) => {
+            const rate = stats.total > 0 ? ((stats.completed / stats.total) * 100).toFixed(0) : 0;
+            analysis += `• ${cat}: ${rate}% (${stats.completed}/${stats.total})\n`;
+          });
+          
+          const overdueCount = pendingTasks.filter(t => {
+            if (!t.dueDate) return false;
+            return new Date(t.dueDate) < new Date();
+          }).length;
+          
+          if (overdueCount > 0) {
+            analysis += `\n⚠️ ATTENTION NEEDED:\n`;
+            analysis += `• ${overdueCount} overdue task(s) require attention\n`;
+          }
+          
+          if (input.includeRecommendations) {
+            analysis += `\n💡 RECOMMENDATIONS:\n`;
+            if (Number(completionRate) < 50) {
+              analysis += `• Consider breaking large tasks into smaller, manageable pieces\n`;
+              analysis += `• Try the 2-minute rule: if it takes less than 2 minutes, do it now\n`;
+            }
+            if (overdueCount > 3) {
+              analysis += `• Review and reprioritize overdue tasks - some may need to be delegated or deleted\n`;
+            }
+            if (pendingTasks.filter(t => t.priority === "high").length > 5) {
+              analysis += `• Too many high-priority tasks can cause paralysis - consider re-evaluating priorities\n`;
+            }
+            analysis += `• Maintain your ${streak}-day streak by completing at least one task daily\n`;
+          }
+
+          return analysis;
+        },
+      }),
+
+      setGoalWithMilestones: createRorkTool({
+        description: "Create a goal with automatic milestone breakdown and tracking",
+        zodSchema: z.object({
+          goalTitle: z.string().describe("The main goal title"),
+          targetDate: z.string().optional().describe("Target completion date (ISO format)"),
+          category: z.enum(["personal", "work", "health", "other"]).describe("Goal category"),
+          milestoneCount: z.number().optional().describe("Number of milestones to create (default: 3)"),
+        }),
+        async execute(input) {
+          const milestones = input.milestoneCount || 3;
+          
+          for (let i = 1; i <= milestones; i++) {
+            await addTodo({
+              title: `Milestone ${i}/${milestones}: [Define for ${input.goalTitle}]`,
+              description: `Milestone ${i} of ${milestones} for your goal`,
+              priority: i === 1 ? "high" as const : "medium" as const,
+              category: input.category,
+              tags: ["goal", input.goalTitle.slice(0, 20)],
+            });
+          }
+          
+          await addTodo({
+            title: `🎯 GOAL: ${input.goalTitle}`,
+            description: `Main goal - ${input.category}`,
+            priority: "high" as const,
+            category: input.category,
+            dueDate: input.targetDate,
+            tags: ["goal"],
+          });
+
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          }
+
+          return `🎯 Goal "${input.goalTitle}" created with ${milestones} milestones!\n\nI've created placeholder milestones - customize them to fit your journey. Each milestone is a stepping stone to your bigger goal.\n\n💡 Tip: Review and update milestone titles to make them specific and actionable.`;
+        },
+      }),
+
+      getSmartSuggestions: createRorkTool({
+        description: "Generate intelligent, context-aware suggestions based on user's current state, patterns, and goals",
+        zodSchema: z.object({
+          context: z.string().optional().describe("Additional context for suggestions"),
+        }),
+        async execute(input) {
+          const suggestions: string[] = [];
+          const hour = new Date().getHours();
+          
+          if (hour >= 6 && hour < 10 && !hasWellnessToday) {
+            suggestions.push("🌅 Start your day with a wellness check-in to set intentions");
+          }
+          
+          const highPriorityPending = todoItems.filter(t => !t.completed && t.priority === "high").length;
+          if (highPriorityPending > 0) {
+            suggestions.push(`🎯 You have ${highPriorityPending} high-priority task(s) waiting - tackle the most important one first`);
+          }
+          
+          const overdue = todoItems.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) < new Date()).length;
+          if (overdue > 0) {
+            suggestions.push(`⏰ ${overdue} overdue task(s) need attention - review and reschedule or complete`);
+          }
+          
+          if (wellnessStats && wellnessStats.averageStress >= 3.5) {
+            suggestions.push("🧘 Your stress levels have been elevated - consider a 5-minute breathing exercise");
+          }
+          
+          if (wellnessStats && wellnessStats.averageEnergy < 2.5) {
+            suggestions.push("💤 Energy has been low - prioritize sleep and consider a short walk");
+          }
+          
+          if (streak > 0 && streak % 7 === 0) {
+            suggestions.push(`🔥 Amazing! You're on a ${streak}-day streak - keep the momentum!`);
+          }
+          
+          const todayEvents = events.filter(e => {
+            const eventDate = new Date(e.date);
+            const today = new Date();
+            return eventDate.toDateString() === today.toDateString();
+          });
+          if (todayEvents.length > 3) {
+            suggestions.push("📅 Busy day ahead! Consider time-blocking for deep work between events");
+          }
+          
+          if (hour >= 21) {
+            suggestions.push("🌙 Evening wind-down: Consider reviewing tomorrow's priorities and setting intentions");
+          }
+          
+          if (suggestions.length === 0) {
+            suggestions.push("✨ You're on track! Consider tackling a learning goal or doing something creative");
+            suggestions.push("💡 Great time for planning - what's one thing you'd love to accomplish this week?");
+          }
+
+          return `💡 SMART SUGGESTIONS\n\n${suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n\n')}\n\n${input.context ? `Based on your context: ${input.context}` : ""}`;
         },
       }),
 
