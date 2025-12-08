@@ -57,5 +57,11 @@
     "deleteNodeMessage": "क्या आप सुनिश्चित हैं? यह नोड और इसके कनेक्शन को हटा देगा।",
     "loading": "लोड हो रहा है...",
     "createdWithRork": "Rork के साथ बनाया गया"
+  },
+  "chatTheme": {
+    "title": "चैट थीम",
+    "solid": "ठोस",
+    "gradient": "ग्रेडिएंट",
+    "animated": "एनिमेटेड"
   }
 }

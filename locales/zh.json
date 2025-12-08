@@ -57,5 +57,11 @@
     "deleteNodeMessage": "您确定吗？这将删除节点及其连接。",
     "loading": "加载中...",
     "createdWithRork": "使用 Rork 创建"
+  },
+  "chatTheme": {
+    "title": "聊天主题",
+    "solid": "纯色",
+    "gradient": "渐变",
+    "animated": "动画"
   }
 }

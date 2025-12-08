@@ -57,5 +57,11 @@
     "deleteNodeMessage": "Êtes-vous sûr ? Cela supprimera le nœud et ses connexions.",
     "loading": "Chargement...",
     "createdWithRork": "Créé avec Rork"
+  },
+  "chatTheme": {
+    "title": "Thème du Chat",
+    "solid": "Uni",
+    "gradient": "Dégradé",
+    "animated": "Animé"
   }
 }

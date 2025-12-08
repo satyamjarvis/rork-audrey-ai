@@ -1035,6 +1035,12 @@
     "emailAddress": "Email Address",
     "sendInvitation": "Send Invitation"
   },
+  "chatTheme": {
+    "title": "Chat Theme",
+    "solid": "Solid",
+    "gradient": "Gradient",
+    "animated": "Animated"
+  },
   "contacts": {
     "contacts": "Contacts",
     "addContact": "Add Contact",
@@ -1786,6 +1792,12 @@
   },
   "configuringApp": {
     "loadingExperience": "Loading Your Personalized Experience"
+  },
+  "chatTheme": {
+    "title": "Chat Theme",
+    "solid": "Solid",
+    "gradient": "Gradient",
+    "animated": "Animated"
   },
   "dreamJournal": {
     "title": "Dream Journal",

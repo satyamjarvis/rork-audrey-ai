@@ -57,5 +57,11 @@
     "deleteNodeMessage": "本当によろしいですか？これによりノードとその接続が削除されます。",
     "loading": "読み込み中...",
     "createdWithRork": "Rorkで作成"
+  },
+  "chatTheme": {
+    "title": "チャットテーマ",
+    "solid": "単色",
+    "gradient": "グラデーション",
+    "animated": "アニメーション"
   }
 }

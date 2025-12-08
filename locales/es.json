@@ -57,5 +57,11 @@
     "deleteNodeMessage": "¿Estás seguro? Esto eliminará el nodo y sus conexiones.",
     "loading": "Cargando...",
     "createdWithRork": "Creado con Rork"
+  },
+  "chatTheme": {
+    "title": "Tema del Chat",
+    "solid": "Sólido",
+    "gradient": "Degradado",
+    "animated": "Animado"
   }
 }

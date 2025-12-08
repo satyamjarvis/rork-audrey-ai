@@ -57,5 +57,11 @@
     "deleteNodeMessage": "האם אתה בטוח? זה ימחק את הצומת והקשרים שלו.",
     "loading": "טוען...",
     "createdWithRork": "נוצר עם Rork"
+  },
+  "chatTheme": {
+    "title": "ערכת נושא צ׳אט",
+    "solid": "אחיד",
+    "gradient": "מדורג",
+    "animated": "מונפש"
   }
 }

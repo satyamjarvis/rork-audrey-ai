@@ -57,5 +57,11 @@
     "deleteNodeMessage": "Tem certeza? Isso excluirá o nó e suas conexões.",
     "loading": "Carregando...",
     "createdWithRork": "Criado com Rork"
+  },
+  "chatTheme": {
+    "title": "Tema do Chat",
+    "solid": "Sólido",
+    "gradient": "Gradiente",
+    "animated": "Animado"
   }
 }

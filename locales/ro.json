@@ -57,5 +57,11 @@
     "deleteNodeMessage": "Sigur? Acest lucru va șterge nodul și conexiunile sale.",
     "loading": "Se încarcă...",
     "createdWithRork": "Creat cu Rork"
+  },
+  "chatTheme": {
+    "title": "Temă Chat",
+    "solid": "Solid",
+    "gradient": "Gradient",
+    "animated": "Animat"
   }
 }

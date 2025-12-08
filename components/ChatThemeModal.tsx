@@ -14,6 +14,7 @@ import { ChatTheme, ChatThemeType } from '@/contexts/ChatContext';
 import ChatBackground from './ChatBackground';
 import * as Haptics from 'expo-haptics';
 import { getThemesByType } from '@/constants/chatBackgrounds';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -27,11 +28,7 @@ interface ChatThemeModalProps {
 
 
 
-const TABS: { id: ChatThemeType; label: string }[] = [
-  { id: 'solid', label: 'Solid' },
-  { id: 'gradient', label: 'Gradient' },
-  { id: 'animated', label: 'Animated' },
-];
+
 
 export default function ChatThemeModal({
   visible,
@@ -40,7 +37,14 @@ export default function ChatThemeModal({
   currentThemeId,
   isNightMode,
 }: ChatThemeModalProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<ChatThemeType>('gradient');
+
+  const TABS: { id: ChatThemeType; label: string }[] = [
+    { id: 'solid', label: t('chatTheme.solid') },
+    { id: 'gradient', label: t('chatTheme.gradient') },
+    { id: 'animated', label: t('chatTheme.animated') },
+  ];
 
   const filteredThemes = getThemesByType(activeTab);
 
@@ -97,7 +101,7 @@ export default function ChatThemeModal({
         ]}>
           <View style={styles.header}>
             <Text style={[styles.title, { color: isNightMode ? '#FFF' : '#000' }]}>
-              Chat Theme
+              {t('chatTheme.title')}
             </Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <X color={isNightMode ? '#FFF' : '#000'} size={24} />

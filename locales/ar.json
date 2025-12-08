@@ -57,5 +57,11 @@
     "deleteNodeMessage": "هل أنت متأكد؟ سيؤدي هذا إلى حذف العقدة واتصالاتها.",
     "loading": "جاري التحميل...",
     "createdWithRork": "تم الإنشاء بواسطة Rork"
+  },
+  "chatTheme": {
+    "title": "مظهر الدردشة",
+    "solid": "لون موحد",
+    "gradient": "متدرج",
+    "animated": "متحرك"
   }
 }

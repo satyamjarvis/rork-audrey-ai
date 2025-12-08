@@ -57,5 +57,11 @@
     "deleteNodeMessage": "Вы уверены? Это удалит узел и его связи.",
     "loading": "Загрузка...",
     "createdWithRork": "Создано с помощью Rork"
+  },
+  "chatTheme": {
+    "title": "Тема Чата",
+    "solid": "Однотонный",
+    "gradient": "Градиент",
+    "animated": "Анимированный"
   }
 }
