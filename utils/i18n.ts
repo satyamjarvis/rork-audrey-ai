@@ -2130,8 +2130,8 @@ export function createLegacyTranslations(translations: TranslationFile) {
     areYouSureDeleteEvent: cal.areYouSureDeleteEvent,
     addNotes: cal.addNotes,
     
-    selectLanguage: translations.language.selectLanguage,
-    chooseYourPreferredLanguage: translations.language.chooseYourPreferredLanguage,
+    selectLanguage: translations.language?.selectLanguage || en.language.selectLanguage,
+    chooseYourPreferredLanguage: translations.language?.chooseYourPreferredLanguage || en.language.chooseYourPreferredLanguage,
     
     trackProgress: translations.track.trackProgress,
     yourFinancialJourney: translations.track.yourFinancialJourney,
