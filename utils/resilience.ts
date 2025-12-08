@@ -238,6 +238,161 @@ export function safeAccess<T, D>(
   }
 }
 
+export function safeGet<T>(obj: unknown, path: string, defaultValue: T): T {
+  try {
+    if (obj === null || obj === undefined) return defaultValue;
+    
+    const keys = path.split('.');
+    let result: unknown = obj;
+    
+    for (const key of keys) {
+      if (result === null || result === undefined) return defaultValue;
+      if (typeof result !== 'object') return defaultValue;
+      result = (result as Record<string, unknown>)[key];
+    }
+    
+    return result === undefined || result === null ? defaultValue : result as T;
+  } catch {
+    return defaultValue;
+  }
+}
+
+export function safeArrayAccess<T>(arr: T[] | null | undefined, index: number, defaultValue: T): T {
+  try {
+    if (!Array.isArray(arr)) return defaultValue;
+    if (index < 0 || index >= arr.length) return defaultValue;
+    const value = arr[index];
+    return value === undefined || value === null ? defaultValue : value;
+  } catch {
+    return defaultValue;
+  }
+}
+
+export function ensureArray<T>(value: unknown, defaultValue: T[] = []): T[] {
+  if (Array.isArray(value)) return value;
+  return defaultValue;
+}
+
+export function ensureObject<T extends Record<string, unknown>>(value: unknown, defaultValue: T): T {
+  if (value && typeof value === 'object' && !Array.isArray(value)) return value as T;
+  return defaultValue;
+}
+
+export function ensureString(value: unknown, defaultValue: string = ''): string {
+  if (typeof value === 'string') return value;
+  if (value === null || value === undefined) return defaultValue;
+  return String(value);
+}
+
+export function ensureNumber(value: unknown, defaultValue: number = 0): number {
+  if (typeof value === 'number' && !isNaN(value) && isFinite(value)) return value;
+  if (typeof value === 'string') {
+    const parsed = parseFloat(value);
+    if (!isNaN(parsed) && isFinite(parsed)) return parsed;
+  }
+  return defaultValue;
+}
+
+export function ensureBoolean(value: unknown, defaultValue: boolean = false): boolean {
+  if (typeof value === 'boolean') return value;
+  return defaultValue;
+}
+
+export function createSafeContextValue<T>(value: T | undefined | null, defaultValue: T): T {
+  if (value === undefined || value === null) {
+    console.warn('[SafeContext] Using default value for undefined/null context');
+    return defaultValue;
+  }
+  return value;
+}
+
+export function wrapContextProvider<T>(
+  useContextHook: () => T,
+  defaultValue: T
+): () => T {
+  return () => {
+    try {
+      const value = useContextHook();
+      return createSafeContextValue(value, defaultValue);
+    } catch (error) {
+      console.error('[SafeContext] Error accessing context:', error);
+      return defaultValue;
+    }
+  };
+}
+
+export function safeMapArray<T, R>(
+  arr: T[] | null | undefined,
+  mapper: (item: T, index: number) => R,
+  defaultValue: R[] = []
+): R[] {
+  try {
+    if (!Array.isArray(arr)) return defaultValue;
+    return arr.map((item, index) => {
+      try {
+        return mapper(item, index);
+      } catch (error) {
+        console.warn(`[SafeMap] Error mapping item at index ${index}:`, error);
+        return null as unknown as R;
+      }
+    }).filter((item): item is R => item !== null);
+  } catch {
+    return defaultValue;
+  }
+}
+
+export function safeFilterArray<T>(
+  arr: T[] | null | undefined,
+  predicate: (item: T, index: number) => boolean,
+  defaultValue: T[] = []
+): T[] {
+  try {
+    if (!Array.isArray(arr)) return defaultValue;
+    return arr.filter((item, index) => {
+      try {
+        return predicate(item, index);
+      } catch {
+        return false;
+      }
+    });
+  } catch {
+    return defaultValue;
+  }
+}
+
+export function safeFindInArray<T>(
+  arr: T[] | null | undefined,
+  predicate: (item: T, index: number) => boolean,
+  defaultValue: T | undefined = undefined
+): T | undefined {
+  try {
+    if (!Array.isArray(arr)) return defaultValue;
+    return arr.find((item, index) => {
+      try {
+        return predicate(item, index);
+      } catch {
+        return false;
+      }
+    }) ?? defaultValue;
+  } catch {
+    return defaultValue;
+  }
+}
+
+export function autoCorrectData<T>(
+  data: unknown,
+  validator: (data: unknown) => data is T,
+  defaultFactory: () => T
+): T {
+  try {
+    if (validator(data)) return data;
+    console.warn('[AutoCorrect] Invalid data, using default');
+    return defaultFactory();
+  } catch {
+    return defaultFactory();
+  }
+}
+
 export function createSafeHandler<T extends (...args: any[]) => any>(
   handler: T,
   options?: { 

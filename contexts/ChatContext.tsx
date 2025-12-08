@@ -3,6 +3,7 @@ import createContextHook from "@nkzw/create-context-hook";
 import { usePersistentStorage } from "@/utils/usePersistentStorage";
 import { encryptMessage, decryptMessage, encryptFile, decryptFile, EncryptedData } from "@/utils/encryption";
 import { getMimeTypeFromFileName } from "@/utils/attachmentHelpers";
+import { ensureArray, ensureString, safeFilterArray, safeExecute } from "@/utils/resilience";
 
 export type FileAttachment = {
   id: string;
@@ -78,12 +79,28 @@ export const [ChatProvider, useChat] = createContextHook(() => {
   const isLoading = isMessagesLoading || isThemesLoading;
 
   const setChatTheme = useCallback(async (calendarId: string, theme: ChatTheme) => {
-    const newThemes = { ...chatThemes, [calendarId]: theme };
-    await saveThemes(newThemes);
+    try {
+      if (!calendarId || !theme) {
+        console.warn('[ChatContext] setChatTheme: invalid params');
+        return;
+      }
+      const safeThemes = chatThemes && typeof chatThemes === 'object' ? chatThemes : {};
+      const newThemes = { ...safeThemes, [calendarId]: theme };
+      await saveThemes(newThemes);
+    } catch (error) {
+      console.error('[ChatContext] setChatTheme error:', error);
+    }
   }, [chatThemes, saveThemes]);
 
   const getChatTheme = useCallback((calendarId: string): ChatTheme => {
-    return chatThemes[calendarId] || DEFAULT_THEME;
+    try {
+      if (!calendarId) return DEFAULT_THEME;
+      const safeThemes = chatThemes && typeof chatThemes === 'object' ? chatThemes : {};
+      return safeThemes[calendarId] || DEFAULT_THEME;
+    } catch (error) {
+      console.error('[ChatContext] getChatTheme error:', error);
+      return DEFAULT_THEME;
+    }
   }, [chatThemes]);
 
   const sendMessage = useCallback(async (
@@ -95,12 +112,18 @@ export const [ChatProvider, useChat] = createContextHook(() => {
     fontStyle?: 'normal' | 'bold' | 'italic' | 'bold-italic'
   ) => {
     try {
-      const encryptedData = await encryptMessage(text);
+      if (!calendarId) {
+        console.error('[ChatContext] sendMessage: calendarId is required');
+        throw new Error('Calendar ID is required');
+      }
+      
+      const safeText = ensureString(text, '');
+      const encryptedData = await encryptMessage(safeText);
       
       const newMessage: ChatMessage = {
-        id: `msg_${Date.now()}_${Math.random()}`,
+        id: `msg_${Date.now()}_${Math.random().toString(36).slice(2)}`,
         calendarId,
-        senderEmail,
+        senderEmail: ensureString(senderEmail, 'me'),
         text: "",
         encrypted: true,
         encryptedData,
@@ -110,7 +133,8 @@ export const [ChatProvider, useChat] = createContextHook(() => {
         fontStyle,
       };
       
-      const updatedMessages = [...messages, newMessage];
+      const safeMessages = ensureArray<ChatMessage>(messages, []);
+      const updatedMessages = [...safeMessages, newMessage];
       await saveMessages(updatedMessages);
       console.log("✅ Encrypted message sent:", newMessage.id);
       return newMessage;
@@ -121,29 +145,64 @@ export const [ChatProvider, useChat] = createContextHook(() => {
   }, [messages, saveMessages]);
 
   const getMessagesForCalendar = useCallback((calendarId: string): ChatMessage[] => {
-    return messages
-      .filter((msg) => msg.calendarId === calendarId)
-      .sort((a, b) => a.timestamp - b.timestamp);
+    try {
+      const safeMessages = ensureArray<ChatMessage>(messages, []);
+      return safeFilterArray(
+        safeMessages,
+        (msg) => msg && msg.calendarId === calendarId,
+        []
+      ).sort((a, b) => (a?.timestamp || 0) - (b?.timestamp || 0));
+    } catch (error) {
+      console.error('[ChatContext] getMessagesForCalendar error:', error);
+      return [];
+    }
   }, [messages]);
 
   const deleteMessage = useCallback(async (messageId: string) => {
-    const updatedMessages = messages.filter((msg) => msg.id !== messageId);
-    await saveMessages(updatedMessages);
-    console.log("Message deleted:", messageId);
+    try {
+      const safeMessages = ensureArray<ChatMessage>(messages, []);
+      const updatedMessages = safeFilterArray(
+        safeMessages,
+        (msg) => msg && msg.id !== messageId,
+        []
+      );
+      await saveMessages(updatedMessages);
+      console.log("Message deleted:", messageId);
+    } catch (error) {
+      console.error('[ChatContext] deleteMessage error:', error);
+    }
   }, [messages, saveMessages]);
 
   const clearCalendarChat = useCallback(async (calendarId: string) => {
-    const updatedMessages = messages.filter((msg) => msg.calendarId !== calendarId);
-    await saveMessages(updatedMessages);
-    console.log("Chat cleared for calendar:", calendarId);
+    try {
+      const safeMessages = ensureArray<ChatMessage>(messages, []);
+      const updatedMessages = safeFilterArray(
+        safeMessages,
+        (msg) => msg && msg.calendarId !== calendarId,
+        []
+      );
+      await saveMessages(updatedMessages);
+      console.log("Chat cleared for calendar:", calendarId);
+    } catch (error) {
+      console.error('[ChatContext] clearCalendarChat error:', error);
+    }
   }, [messages, saveMessages]);
 
   const getDecryptedMessage = useCallback(async (message: ChatMessage): Promise<string> => {
-    if (!message.encrypted || !message.encryptedData) {
-      return message.text;
-    }
     try {
-      return await decryptMessage(message.encryptedData);
+      if (!message) {
+        console.warn('[ChatContext] getDecryptedMessage: message is null/undefined');
+        return "[No message]";
+      }
+      if (!message.encrypted || !message.encryptedData) {
+        return ensureString(message.text, "");
+      }
+      const result = await safeExecute(
+        () => decryptMessage(message.encryptedData!),
+        "[Decryption failed]",
+        { context: 'ChatContext.getDecryptedMessage' }
+      );
+      return result.data || "[Decryption failed]";
     } catch (error) {
       console.error("❌ Error decrypting message:", error);
       return "[Decryption failed]";

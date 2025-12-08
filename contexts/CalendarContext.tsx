@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useMemo } from "react";
 import createContextHook from "@nkzw/create-context-hook";
 import { usePersistentStorage } from "@/utils/usePersistentStorage";
+import { ensureArray, ensureString, safeFilterArray, safeFindInArray } from "@/utils/resilience";
 
 export type AttachmentPermissions = 'edit_download' | 'view_download' | 'view_only';
 
@@ -124,51 +125,79 @@ export const [CalendarProvider, useCalendar] = createContextHook(() => {
 
   // Derived state for selected calendar object
   const selectedCalendar = useMemo(() => {
-    if (!calendars || calendars.length === 0) return null;
-    return calendars.find(c => c.id === selectedCalendarId) || calendars[0];
+    try {
+      const safeCalendars = ensureArray<Calendar>(calendars, []);
+      if (safeCalendars.length === 0) return null;
+      return safeFindInArray(safeCalendars, c => c && c.id === selectedCalendarId, safeCalendars[0]);
+    } catch (error) {
+      console.error('[CalendarContext] selectedCalendar error:', error);
+      return null;
+    }
   }, [calendars, selectedCalendarId]);
 
   // Initialization logic for default calendar if none exists
   useEffect(() => {
-    if (!isCalendarsLoading && calendars.length === 0) {
-      const defaultCalendar = createDefaultCalendar();
-      saveCalendars([defaultCalendar]);
-      if (!selectedCalendarId) {
-        saveSelectedCalendarId(defaultCalendar.id);
+    try {
+      const safeCalendars = ensureArray<Calendar>(calendars, []);
+      if (!isCalendarsLoading && safeCalendars.length === 0) {
+        const defaultCalendar = createDefaultCalendar();
+        saveCalendars([defaultCalendar]);
+        if (!selectedCalendarId) {
+          saveSelectedCalendarId(defaultCalendar.id);
+        }
       }
+    } catch (error) {
+      console.error('[CalendarContext] Initialization error:', error);
     }
-  }, [isCalendarsLoading, calendars.length, saveCalendars, selectedCalendarId, saveSelectedCalendarId]);
+  }, [isCalendarsLoading, calendars, saveCalendars, selectedCalendarId, saveSelectedCalendarId]);
 
   const createCalendar = useCallback(async (name: string, isShared: boolean = false) => {
-    const newCalendar: Calendar = {
-      id: `cal_${Date.now()}`,
-      name,
-      color: defaultColors[calendars.length % defaultColors.length],
-      isShared,
-      sharedWith: [],
-      owner: "me",
-      attachmentSettings: {
-        allowDownload: true,
-      },
-    };
-    const updatedCalendars = [...calendars, newCalendar];
-    await saveCalendars(updatedCalendars);
-    console.log("Calendar created:", newCalendar);
-    return newCalendar;
+    try {
+      const safeCalendars = ensureArray<Calendar>(calendars, []);
+      const newCalendar: Calendar = {
+        id: `cal_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        name: ensureString(name, 'New Calendar'),
+        color: defaultColors[safeCalendars.length % defaultColors.length],
+        isShared,
+        sharedWith: [],
+        owner: "me",
+        attachmentSettings: {
+          allowDownload: true,
+        },
+      };
+      const updatedCalendars = [...safeCalendars, newCalendar];
+      await saveCalendars(updatedCalendars);
+      console.log("Calendar created:", newCalendar);
+      return newCalendar;
+    } catch (error) {
+      console.error('[CalendarContext] createCalendar error:', error);
+      throw error;
+    }
   }, [calendars, saveCalendars]);
 
   const deleteCalendar = useCallback(async (calendarId: string) => {
-    const updatedCalendars = calendars.filter((cal) => cal.id !== calendarId);
-    await saveCalendars(updatedCalendars);
+    try {
+      if (!calendarId) {
+        console.warn('[CalendarContext] deleteCalendar: calendarId is required');
+        return;
+      }
+      const safeCalendars = ensureArray<Calendar>(calendars, []);
+      const safeEvents = ensureArray<CalendarEvent>(events, []);
+      
+      const updatedCalendars = safeFilterArray(safeCalendars, (cal) => cal && cal.id !== calendarId, []);
+      await saveCalendars(updatedCalendars);
 
-    const updatedEvents = events.filter((event) => event.calendarId !== calendarId);
-    await saveEvents(updatedEvents);
+      const updatedEvents = safeFilterArray(safeEvents, (event) => event && event.calendarId !== calendarId, []);
+      await saveEvents(updatedEvents);
 
-    if (selectedCalendarId === calendarId) {
-      const newSelected = updatedCalendars[0] || null;
-      await saveSelectedCalendarId(newSelected ? newSelected.id : null);
+      if (selectedCalendarId === calendarId) {
+        const newSelected = updatedCalendars[0] || null;
+        await saveSelectedCalendarId(newSelected ? newSelected.id : null);
+      }
+      console.log("Calendar deleted:", calendarId);
+    } catch (error) {
+      console.error('[CalendarContext] deleteCalendar error:', error);
     }
-    console.log("Calendar deleted:", calendarId);
   }, [calendars, events, saveCalendars, saveEvents, selectedCalendarId, saveSelectedCalendarId]);
 
   const setSelectedCalendar = useCallback(async (calendar: Calendar | null) => {
@@ -176,21 +205,30 @@ export const [CalendarProvider, useCalendar] = createContextHook(() => {
   }, [saveSelectedCalendarId]);
 
   const shareCalendar = useCallback(async (calendarId: string, userEmail: string) => {
-    const calendarToShare = calendars.find((cal) => cal.id === calendarId);
-    if (!calendarToShare) return;
+    try {
+      if (!calendarId || !userEmail) {
+        console.warn('[CalendarContext] shareCalendar: calendarId and userEmail are required');
+        return;
+      }
+      const safeCalendars = ensureArray<Calendar>(calendars, []);
+      const calendarToShare = safeFindInArray(safeCalendars, (cal) => cal && cal.id === calendarId);
+      if (!calendarToShare) return;
 
-    const updatedCalendar: Calendar = {
-      ...calendarToShare,
-      isShared: true,
-      sharedWith: [...calendarToShare.sharedWith, userEmail],
-    };
+      const updatedCalendar: Calendar = {
+        ...calendarToShare,
+        isShared: true,
+        sharedWith: [...ensureArray(calendarToShare.sharedWith, []), userEmail],
+      };
 
-    const updatedCalendars = calendars.map((cal) =>
-      cal.id === calendarId ? updatedCalendar : cal
-    );
+      const updatedCalendars = safeCalendars.map((cal) =>
+        cal && cal.id === calendarId ? updatedCalendar : cal
+      );
 
-    await saveCalendars(updatedCalendars);
-    console.log(`Calendar ${calendarId} shared with ${userEmail}`);
+      await saveCalendars(updatedCalendars);
+      console.log(`Calendar ${calendarId} shared with ${userEmail}`);
+    } catch (error) {
+      console.error('[CalendarContext] shareCalendar error:', error);
+    }
   }, [calendars, saveCalendars]);
 
   const unshareCalendar = useCallback(async (calendarId: string, userEmail: string) => {
@@ -212,61 +250,99 @@ export const [CalendarProvider, useCalendar] = createContextHook(() => {
   }, [calendars, saveCalendars]);
 
   const addEvent = useCallback(async (event: Omit<CalendarEvent, "id">) => {
-    const newEvent: CalendarEvent = {
-      ...event,
-      id: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    };
-    
-    // Check for duplicate prevention
-    const isDuplicate = events.some(e => 
-      e.title === newEvent.title && 
-      e.date === newEvent.date && 
-      e.time === newEvent.time &&
-      e.calendarId === newEvent.calendarId
-    );
-    
-    if (isDuplicate) {
-      console.warn("⚠️ Duplicate event detected, skipping add");
+    try {
+      if (!event || !event.calendarId) {
+        console.warn('[CalendarContext] addEvent: valid event with calendarId is required');
+        throw new Error('Invalid event data');
+      }
+      
+      const newEvent: CalendarEvent = {
+        ...event,
+        id: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        title: ensureString(event.title, 'Untitled Event'),
+      };
+      
+      const safeEvents = ensureArray<CalendarEvent>(events, []);
+      
+      // Check for duplicate prevention
+      const isDuplicate = safeEvents.some(e => 
+        e && e.title === newEvent.title && 
+        e.date === newEvent.date && 
+        e.time === newEvent.time &&
+        e.calendarId === newEvent.calendarId
+      );
+      
+      if (isDuplicate) {
+        console.warn("⚠️ Duplicate event detected, skipping add");
+        return newEvent;
+      }
+      
+      const updatedEvents = [...safeEvents, newEvent];
+      await saveEvents(updatedEvents);
+      
+      console.log("✅ Event added:", {
+        title: newEvent.title,
+        date: newEvent.date,
+        time: newEvent.time,
+        id: newEvent.id
+      });
+      
       return newEvent;
+    } catch (error) {
+      console.error('[CalendarContext] addEvent error:', error);
+      throw error;
     }
-    
-    const updatedEvents = [...events, newEvent];
-    await saveEvents(updatedEvents);
-    
-    console.log("✅ Event added:", {
-      title: newEvent.title,
-      date: newEvent.date,
-      time: newEvent.time,
-      id: newEvent.id
-    });
-    
-    return newEvent;
   }, [events, saveEvents]);
 
   const updateEvent = useCallback(async (eventId: string, updates: Partial<CalendarEvent>) => {
-    const updatedEvents = events.map((event) =>
-      event.id === eventId ? { ...event, ...updates } : event
-    );
-    await saveEvents(updatedEvents);
-    console.log("Event updated:", eventId);
+    try {
+      if (!eventId) {
+        console.warn('[CalendarContext] updateEvent: eventId is required');
+        return;
+      }
+      const safeEvents = ensureArray<CalendarEvent>(events, []);
+      const updatedEvents = safeEvents.map((event) =>
+        event && event.id === eventId ? { ...event, ...updates } : event
+      );
+      await saveEvents(updatedEvents);
+      console.log("Event updated:", eventId);
+    } catch (error) {
+      console.error('[CalendarContext] updateEvent error:', error);
+    }
   }, [events, saveEvents]);
 
   const deleteEvent = useCallback(async (eventId: string) => {
-    // Only delete if explicitly requested by user
-    const eventToDelete = events.find(e => e.id === eventId);
-    if (!eventToDelete) {
-      console.warn("Event not found for deletion:", eventId);
-      return;
+    try {
+      if (!eventId) {
+        console.warn('[CalendarContext] deleteEvent: eventId is required');
+        return;
+      }
+      const safeEvents = ensureArray<CalendarEvent>(events, []);
+      // Only delete if explicitly requested by user
+      const eventToDelete = safeFindInArray(safeEvents, e => e && e.id === eventId);
+      if (!eventToDelete) {
+        console.warn("Event not found for deletion:", eventId);
+        return;
+      }
+      
+      console.log("🗑️ Deleting event:", eventToDelete.title, "ID:", eventId);
+      const updatedEvents = safeFilterArray(safeEvents, (event) => event && event.id !== eventId, []);
+      await saveEvents(updatedEvents);
+      console.log("✅ Event deleted successfully:", eventId);
+    } catch (error) {
+      console.error('[CalendarContext] deleteEvent error:', error);
     }
-    
-    console.log("🗑️ Deleting event:", eventToDelete.title, "ID:", eventId);
-    const updatedEvents = events.filter((event) => event.id !== eventId);
-    await saveEvents(updatedEvents);
-    console.log("✅ Event deleted successfully:", eventId);
   }, [events, saveEvents]);
 
   const getEventsForCalendar = useCallback((calendarId: string): CalendarEvent[] => {
-    return events.filter((event) => event.calendarId === calendarId);
+    try {
+      if (!calendarId) return [];
+      const safeEvents = ensureArray<CalendarEvent>(events, []);
+      return safeFilterArray(safeEvents, (event) => event && event.calendarId === calendarId, []);
+    } catch (error) {
+      console.error('[CalendarContext] getEventsForCalendar error:', error);
+      return [];
+    }
   }, [events]);
 
   const updateCalendarSettings = useCallback(async (calendarId: string, settings: { allowDownload: boolean }) => {

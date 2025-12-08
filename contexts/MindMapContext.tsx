@@ -1,6 +1,7 @@
 import createContextHook from "@nkzw/create-context-hook";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { usePersistentStorage } from "@/utils/usePersistentStorage";
+import { ensureArray, ensureString, safeFilterArray, safeFindInArray, safeMapArray } from "@/utils/resilience";
 
 export interface Node {
   id: string;
@@ -43,52 +44,90 @@ export const [MindMapProvider, useMindMap] = createContextHook(() => {
   });
 
   const createMindMap = useCallback(async (title: string) => {
-    const newMap: MindMap = {
-      id: Date.now().toString(),
-      title,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      nodes: [
-        {
-          id: 'root',
-          text: title,
-          x: 0, 
-          y: 0, // Center coordinate logic will be handled in view
-          color: '#FFD700',
-          type: 'root'
-        }
-      ],
-      edges: []
-    };
+    try {
+      const safeTitle = ensureString(title, 'New Mind Map');
+      const newMap: MindMap = {
+        id: `${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        title: safeTitle,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        nodes: [
+          {
+            id: 'root',
+            text: safeTitle,
+            x: 0, 
+            y: 0, // Center coordinate logic will be handled in view
+            color: '#FFD700',
+            type: 'root'
+          }
+        ],
+        edges: []
+      };
 
-    setMindMaps((prevMaps) => [newMap, ...prevMaps]);
-    return newMap.id;
+      setMindMaps((prevMaps) => {
+        const safePrev = ensureArray<MindMap>(prevMaps, []);
+        return [newMap, ...safePrev];
+      });
+      return newMap.id;
+    } catch (error) {
+      console.error('[MindMapContext] createMindMap error:', error);
+      throw error;
+    }
   }, [setMindMaps]);
 
   const updateMindMap = useCallback(async (id: string, updates: Partial<MindMap>) => {
-    setMindMaps((prevMaps) => 
-      prevMaps.map(map => 
-        map.id === id 
-          ? { ...map, ...updates, updatedAt: new Date().toISOString() }
-          : map
-      )
-    );
+    try {
+      if (!id) {
+        console.warn('[MindMapContext] updateMindMap: id is required');
+        return;
+      }
+      setMindMaps((prevMaps) => {
+        const safePrev = ensureArray<MindMap>(prevMaps, []);
+        return safeMapArray(
+          safePrev,
+          map => map && map.id === id 
+            ? { ...map, ...updates, updatedAt: new Date().toISOString() }
+            : map,
+          safePrev
+        );
+      });
+    } catch (error) {
+      console.error('[MindMapContext] updateMindMap error:', error);
+    }
   }, [setMindMaps]);
 
   const deleteMindMap = useCallback(async (id: string) => {
-    setMindMaps((prevMaps) => prevMaps.filter(map => map.id !== id));
+    try {
+      if (!id) {
+        console.warn('[MindMapContext] deleteMindMap: id is required');
+        return;
+      }
+      setMindMaps((prevMaps) => {
+        const safePrev = ensureArray<MindMap>(prevMaps, []);
+        return safeFilterArray(safePrev, map => map && map.id !== id, []);
+      });
+    } catch (error) {
+      console.error('[MindMapContext] deleteMindMap error:', error);
+    }
   }, [setMindMaps]);
 
-  const getMindMap = useCallback((id: string) => {
-    return mindMaps.find(map => map.id === id);
+  const getMindMap = useCallback((id: string): MindMap | undefined => {
+    try {
+      if (!id) return undefined;
+      const safeMaps = ensureArray<MindMap>(mindMaps, []);
+      return safeFindInArray(safeMaps, map => map && map.id === id, undefined);
+    } catch (error) {
+      console.error('[MindMapContext] getMindMap error:', error);
+      return undefined;
+    }
   }, [mindMaps]);
 
-  return {
-    mindMaps,
+  return useMemo(() => ({
+    mindMaps: ensureArray<MindMap>(mindMaps, []),
     isLoading,
     createMindMap,
     updateMindMap,
     deleteMindMap,
     getMindMap
-  };
+  }), [mindMaps, isLoading, createMindMap, updateMindMap, deleteMindMap, getMindMap]);
 });

@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Animated } from 'react-native';
-import { AlertCircle, RefreshCw, Home, ChevronDown, ChevronUp } from 'lucide-react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Animated, ActivityIndicator } from 'react-native';
+import { AlertCircle, RefreshCw, Home, ChevronDown, ChevronUp, Zap } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type ErrorBoundaryProps = {
@@ -21,8 +21,22 @@ type ErrorBoundaryState = {
   isRecovering: boolean;
 };
 
-const MAX_AUTO_RETRIES = 2;
-const RETRY_DELAY = 1000;
+const MAX_AUTO_RETRIES = 3;
+const RETRY_DELAY = 800;
+const AUTO_RECOVER_PATTERNS = [
+  /cannot read propert/i,
+  /undefined is not an object/i,
+  /null is not an object/i,
+  /is not a function/i,
+  /network/i,
+  /timeout/i,
+  /fetch/i,
+  /loading chunk/i,
+  /dynamically imported/i,
+  /module not found/i,
+  /failed to load/i,
+  /script error/i,
+];
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   private retryTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -72,32 +86,113 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       useNativeDriver: true,
     }).start();
 
-    if (retryCount < MAX_AUTO_RETRIES && this.isRecoverableError(error)) {
-      console.log(`[ErrorBoundary] Auto-retry attempt ${retryCount + 1}/${MAX_AUTO_RETRIES}`);
-      this.retryTimeout = setTimeout(() => {
-        this.setState(prev => ({
-          hasError: false,
-          error: null,
-          errorInfo: null,
-          retryCount: prev.retryCount + 1,
-          isRecovering: true,
-        }));
-      }, RETRY_DELAY * (retryCount + 1));
-    }
+    this.attemptAutoRecovery(error).then(canRecover => {
+      if (retryCount < MAX_AUTO_RETRIES && canRecover) {
+        console.log(`[ErrorBoundary] Auto-retry attempt ${retryCount + 1}/${MAX_AUTO_RETRIES}`);
+        this.retryTimeout = setTimeout(() => {
+          this.setState(prev => ({
+            hasError: false,
+            error: null,
+            errorInfo: null,
+            retryCount: prev.retryCount + 1,
+            isRecovering: true,
+          }));
+        }, RETRY_DELAY * (retryCount + 1));
+      }
+    });
   }
 
   private isRecoverableError(error: Error): boolean {
-    const recoverablePatterns = [
-      /network/i,
-      /timeout/i,
-      /fetch/i,
-      /loading chunk/i,
-      /dynamically imported/i,
-      /module not found/i,
-    ];
-    
     const errorMessage = error?.message || '';
-    return recoverablePatterns.some(pattern => pattern.test(errorMessage));
+    const errorName = error?.name || '';
+    
+    const isRecoverable = AUTO_RECOVER_PATTERNS.some(pattern => 
+      pattern.test(errorMessage) || pattern.test(errorName)
+    );
+    
+    console.log(`[ErrorBoundary] Error recoverable check: ${isRecoverable} for "${errorMessage.slice(0, 100)}"`);
+    return isRecoverable;
+  }
+
+  private async attemptAutoRecovery(error: Error): Promise<boolean> {
+    try {
+      console.log('[ErrorBoundary] Attempting auto-recovery...');
+      
+      const errorMessage = error?.message || '';
+      
+      if (/cannot read propert|undefined is not|null is not/i.test(errorMessage)) {
+        console.log('[ErrorBoundary] Detected data access error, clearing corrupted state...');
+        await this.clearCorruptedData();
+        return true;
+      }
+      
+      if (/storage|asyncstorage/i.test(errorMessage)) {
+        console.log('[ErrorBoundary] Detected storage error, attempting recovery...');
+        await this.recoverStorage();
+        return true;
+      }
+      
+      return this.isRecoverableError(error);
+    } catch (recoveryError) {
+      console.error('[ErrorBoundary] Auto-recovery failed:', recoveryError);
+      return false;
+    }
+  }
+
+  private async clearCorruptedData(): Promise<void> {
+    try {
+      const corruptedKeys = [
+        '@learn_data',
+        '@learn_main_media',
+        '@chat_messages',
+        '@chat_themes',
+      ];
+      
+      for (const key of corruptedKeys) {
+        try {
+          const data = await AsyncStorage.getItem(key);
+          if (data && (data === 'undefined' || data === 'null' || data.startsWith('object'))) {
+            console.log(`[ErrorBoundary] Removing corrupted key: ${key}`);
+            await AsyncStorage.removeItem(key);
+          }
+        } catch (e) {
+          console.warn(`[ErrorBoundary] Could not check key ${key}:`, e);
+        }
+      }
+    } catch (e) {
+      console.error('[ErrorBoundary] clearCorruptedData failed:', e);
+    }
+  }
+
+  private async recoverStorage(): Promise<void> {
+    try {
+      const allKeys = await AsyncStorage.getAllKeys();
+      for (const key of allKeys) {
+        try {
+          const value = await AsyncStorage.getItem(key);
+          if (value && !this.isValidStorageValue(value)) {
+            console.log(`[ErrorBoundary] Removing invalid storage key: ${key}`);
+            await AsyncStorage.removeItem(key);
+          }
+        } catch {
+          console.warn(`[ErrorBoundary] Could not validate key ${key}`);
+        }
+      }
+    } catch (e) {
+      console.error('[ErrorBoundary] recoverStorage failed:', e);
+    }
+  }
+
+  private isValidStorageValue(value: string): boolean {
+    if (!value || value === 'undefined' || value === 'null') return false;
+    if (value.startsWith('object') || value.includes('[object Object]')) return false;
+    
+    try {
+      JSON.parse(value);
+      return true;
+    } catch {
+      return value.length > 0 && !value.includes('\x00');
+    }
   }
 
   private async logErrorToStorage(error: Error, errorInfo: React.ErrorInfo) {
@@ -251,7 +346,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
 
     if (isRecovering) {
-      return this.props.children;
+      return (
+        <View style={styles.recoveringWrapper}>
+          {this.props.children}
+          <View style={styles.recoveringOverlay}>
+            {this.renderRecoveringState()}
+          </View>
+        </View>
+      );
     }
 
     return this.props.children;
@@ -275,12 +377,29 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (/permission/i.test(message)) {
       return 'Permission denied. Please check your app settings.';
     }
+    if (/cannot read propert|undefined is not|null is not/i.test(message)) {
+      return 'Some data was not available. The app is auto-correcting this issue.';
+    }
+    if (/is not a function/i.test(message)) {
+      return 'A feature encountered an issue. Please try again.';
+    }
     
     if (message.length > 100) {
       return message.slice(0, 100) + '...';
     }
     
     return message || 'An unexpected error occurred. Please try again.';
+  }
+
+  private renderRecoveringState() {
+    return (
+      <View style={styles.recoveringContainer}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+        <Zap size={24} color="#4CAF50" style={{ marginTop: 12 }} />
+        <Text style={styles.recoveringText}>Auto-correcting...</Text>
+        <Text style={styles.recoveringSubtext}>The app is fixing itself</Text>
+      </View>
+    );
   }
 }
 
@@ -414,5 +533,36 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
     lineHeight: 16,
+  },
+  recoveringContainer: {
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    padding: 24,
+  },
+  recoveringWrapper: {
+    flex: 1,
+    position: 'relative' as const,
+  },
+  recoveringOverlay: {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    zIndex: 9999,
+  },
+  recoveringText: {
+    fontSize: 18,
+    fontWeight: '600' as const,
+    color: '#4CAF50',
+    marginTop: 16,
+  },
+  recoveringSubtext: {
+    fontSize: 14,
+    color: '#888888',
+    marginTop: 8,
   },
 });

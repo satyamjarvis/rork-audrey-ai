@@ -2,6 +2,7 @@ import { isValidJSON } from "@/utils/asyncStorageHelpers";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import createContextHook from "@nkzw/create-context-hook";
+import { ensureArray, ensureString, safeMapArray } from "@/utils/resilience";
 
 type VideoItem = {
   id: string;
@@ -79,16 +80,25 @@ export const [LearnContext, useLearn] = createContextHook(() => {
             // Validate data structure
             if (parsedData && parsedData.categories && Array.isArray(parsedData.categories)) {
               // Ensure each category has required fields and valid videos
-              const validCategories = parsedData.categories
-                .filter((cat: any) => 
-                  cat && typeof cat === 'object' && cat.id && cat.title && Array.isArray(cat.videos)
-                )
-                .map((cat: any) => ({
-                  ...cat,
-                  videos: cat.videos.filter((vid: any) => 
-                    vid && typeof vid === 'object' && vid.id && vid.title
-                  )
-                }));
+              const validCategories = safeMapArray(
+                ensureArray(parsedData.categories, []),
+                (cat: any) => {
+                  if (!cat || typeof cat !== 'object' || !cat.id) {
+                    return null as unknown as CourseCategory;
+                  }
+                  return {
+                    id: ensureString(cat.id, `cat_${Date.now()}`),
+                    title: ensureString(cat.title, 'Untitled'),
+                    icon: ensureString(cat.icon, 'Book'),
+                    color: ensureString(cat.color, '#667EEA'),
+                    videos: ensureArray(cat.videos, []).filter((vid: any) => 
+                      vid && typeof vid === 'object' && vid.id && vid.title
+                    ),
+                    isSubscriptionRequired: cat.isSubscriptionRequired ?? false,
+                  } as CourseCategory;
+                },
+                []
+              ).filter((cat): cat is CourseCategory => cat !== null && cat.id !== undefined);
               
               setCategories(validCategories);
               console.log(`Loaded ${validCategories.length} categories from storage`);
@@ -229,56 +239,110 @@ export const [LearnContext, useLearn] = createContextHook(() => {
   }, [categories, hasInitialized]);
 
   const updateCategory = useCallback(async (categoryId: string, updatedCategory: Partial<CourseCategory>) => {
-    setCategories((prev) =>
-      prev.map((cat) =>
-        cat.id === categoryId ? { ...cat, ...updatedCategory } : cat
-      )
-    );
+    try {
+      if (!categoryId) {
+        console.warn('[LearnContext] updateCategory: categoryId is required');
+        return;
+      }
+      setCategories((prev) => {
+        const safePrev = ensureArray<CourseCategory>(prev, []);
+        return safePrev.map((cat) =>
+          cat && cat.id === categoryId ? { ...cat, ...updatedCategory } : cat
+        );
+      });
+    } catch (error) {
+      console.error('[LearnContext] updateCategory error:', error);
+    }
   }, []);
 
   const updateVideo = useCallback(async (categoryId: string, videoId: string, updatedVideo: Partial<VideoItem>) => {
-    console.log(`[LearnContext] Updating video ${videoId} in category ${categoryId}:`, updatedVideo);
-    setCategories((prev) =>
-      prev.map((cat) =>
-        cat.id === categoryId
-          ? {
+    try {
+      console.log(`[LearnContext] Updating video ${videoId} in category ${categoryId}:`, updatedVideo);
+      if (!categoryId || !videoId) {
+        console.warn('[LearnContext] updateVideo: categoryId and videoId are required');
+        return;
+      }
+      setCategories((prev) => {
+        const safePrev = ensureArray<CourseCategory>(prev, []);
+        return safePrev.map((cat) => {
+          if (!cat) return cat;
+          if (cat.id === categoryId) {
+            const safeVideos = ensureArray<VideoItem>(cat.videos, []);
+            return {
               ...cat,
-              videos: cat.videos.map((vid) =>
-                vid.id === videoId ? { ...vid, ...updatedVideo } : vid
+              videos: safeVideos.map((vid) =>
+                vid && vid.id === videoId ? { ...vid, ...updatedVideo } : vid
               ),
-            }
-          : cat
-      )
-    );
+            };
+          }
+          return cat;
+        });
+      });
+    } catch (error) {
+      console.error('[LearnContext] updateVideo error:', error);
+    }
   }, []);
 
   const addVideo = useCallback(async (categoryId: string, video: VideoItem) => {
-    console.log(`[LearnContext] Adding video to category ${categoryId}:`, video.title);
-    setCategories((prev) => {
-      const updated = prev.map((cat) =>
-        cat.id === categoryId ? { ...cat, videos: [...cat.videos, video] } : cat
-      );
-      console.log(`[LearnContext] Category ${categoryId} now has ${updated.find(c => c.id === categoryId)?.videos.length || 0} videos`);
-      return updated;
-    });
+    try {
+      console.log(`[LearnContext] Adding video to category ${categoryId}:`, video?.title);
+      if (!categoryId || !video || !video.id) {
+        console.warn('[LearnContext] addVideo: categoryId and valid video are required');
+        return;
+      }
+      setCategories((prev) => {
+        const safePrev = ensureArray<CourseCategory>(prev, []);
+        const updated = safePrev.map((cat) => {
+          if (!cat) return cat;
+          if (cat.id === categoryId) {
+            const safeVideos = ensureArray<VideoItem>(cat.videos, []);
+            return { ...cat, videos: [...safeVideos, video] };
+          }
+          return cat;
+        });
+        const foundCat = updated.find(c => c && c.id === categoryId);
+        console.log(`[LearnContext] Category ${categoryId} now has ${foundCat?.videos?.length || 0} videos`);
+        return updated;
+      });
+    } catch (error) {
+      console.error('[LearnContext] addVideo error:', error);
+    }
   }, []);
 
   const removeVideo = useCallback(async (categoryId: string, videoId: string) => {
-    setCategories((prev) =>
-      prev.map((cat) =>
-        cat.id === categoryId
-          ? { ...cat, videos: cat.videos.filter((vid) => vid.id !== videoId) }
-          : cat
-      )
-    );
+    try {
+      if (!categoryId || !videoId) {
+        console.warn('[LearnContext] removeVideo: categoryId and videoId are required');
+        return;
+      }
+      setCategories((prev) => {
+        const safePrev = ensureArray<CourseCategory>(prev, []);
+        return safePrev.map((cat) => {
+          if (!cat) return cat;
+          if (cat.id === categoryId) {
+            const safeVideos = ensureArray<VideoItem>(cat.videos, []);
+            return { ...cat, videos: safeVideos.filter((vid) => vid && vid.id !== videoId) };
+          }
+          return cat;
+        });
+      });
+    } catch (error) {
+      console.error('[LearnContext] removeVideo error:', error);
+    }
   }, []);
 
   const initializeDefaultCategories = useCallback((defaultCategories: CourseCategory[]) => {
-    // Only initialize if no categories exist
-    if (categories.length === 0) {
-      setCategories(defaultCategories);
+    try {
+      const safeCategories = ensureArray<CourseCategory>(categories, []);
+      // Only initialize if no categories exist
+      if (safeCategories.length === 0) {
+        const safeDefaults = ensureArray<CourseCategory>(defaultCategories, []);
+        setCategories(safeDefaults);
+      }
+    } catch (error) {
+      console.error('[LearnContext] initializeDefaultCategories error:', error);
     }
-  }, [categories.length]);
+  }, [categories]);
 
   // Save main page media with immediate persistence
   const updateMainPageMedia = useCallback(async (section: 'hero' | 'intro' | 'featured', data: MainPageMediaSection) => {
