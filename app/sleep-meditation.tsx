@@ -23,6 +23,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
+import { Audio } from "expo-av";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const { width } = Dimensions.get("window");
@@ -62,6 +63,7 @@ const FALLBACK_SOUNDS: readonly SleepSound[] = [
     title: "Ocean Waves",
     duration: "5 min",
     description: "Gentle waves lapping on shore",
+    audio: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/waves_night_meditation_1",
   },
   {
     id: "rainSounds",
@@ -89,6 +91,7 @@ const FALLBACK_SOUNDS: readonly SleepSound[] = [
     title: "White Noise",
     duration: "All night",
     description: "Continuous calming white noise",
+    audio: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/white_noise_60min_1",
   },
 ];
 
@@ -111,6 +114,7 @@ export default function SleepMeditationScreen() {
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeSoundId, setActiveSoundId] = useState<string | null>(null);
+  const soundRef = useRef<Audio.Sound | null>(null);
 
   const meditationQuotes = useMemo(() => {
     const quoteValues = sleepMeditationPage.quotes ? Object.values(sleepMeditationPage.quotes).filter(Boolean) : [];
@@ -184,6 +188,16 @@ export default function SleepMeditationScreen() {
     }, 60000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.stopAsync().then(() => {
+          soundRef.current?.unloadAsync();
+        });
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -280,17 +294,46 @@ export default function SleepMeditationScreen() {
     });
   }, [fadeAnim, slideAnim, musicPulse, starsRotate, sparkleOpacity, glitterParticles]);
 
-  const handleTogglePlay = useCallback((id: string) => {
+  const handleTogglePlay = useCallback(async (id: string, audioUrl?: string) => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
-    setActiveSoundId((current) => {
-      const nextId = current === id ? null : id;
-      console.log("[SleepMeditation] Toggling sound", { id, nextId });
-      return nextId;
-    });
-  }, []);
+    const isCurrentlyPlaying = activeSoundId === id;
+
+    if (isCurrentlyPlaying) {
+      console.log("[SleepMeditation] Pausing sound", { id });
+      if (soundRef.current) {
+        await soundRef.current.pauseAsync();
+      }
+      setActiveSoundId(null);
+    } else {
+      console.log("[SleepMeditation] Playing sound", { id, audioUrl });
+      
+      if (soundRef.current) {
+        await soundRef.current.stopAsync();
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+
+      if (audioUrl) {
+        try {
+          const { sound } = await Audio.Sound.createAsync(
+            { uri: audioUrl },
+            { shouldPlay: true, isLooping: id === "whiteNoise" },
+            undefined,
+            true
+          );
+          soundRef.current = sound;
+          console.log("[SleepMeditation] Audio loaded and playing", { id, isLooping: id === "whiteNoise" });
+        } catch (error) {
+          console.error("[SleepMeditation] Error loading audio", error);
+        }
+      }
+      
+      setActiveSoundId(id);
+    }
+  }, [activeSoundId]);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString(undefined, {
@@ -468,7 +511,7 @@ export default function SleepMeditationScreen() {
                             </View>
                           </View>
                           <TouchableOpacity
-                            onPress={() => handleTogglePlay(sound.id)}
+                            onPress={() => handleTogglePlay(sound.id, sound.audio)}
                             style={styles.playButton}
                             activeOpacity={0.7}
                             testID={`sleepMeditationPlayButton-${sound.id}`}
@@ -504,7 +547,7 @@ export default function SleepMeditationScreen() {
                             </View>
                           </View>
                           <TouchableOpacity
-                            onPress={() => handleTogglePlay(sound.id)}
+                            onPress={() => handleTogglePlay(sound.id, sound.audio)}
                             style={styles.playButton}
                             activeOpacity={0.7}
                             testID={`sleepMeditationPlayButton-${sound.id}`}
