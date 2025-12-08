@@ -122,40 +122,40 @@ export default function NightScreen() {
   const features: FeatureCard[] = useMemo(() => [
     {
       id: "journal",
-      title: translations.night.momentsOfGratitude,
-      description: translations.night.captureYourThoughts,
+      title: translations.night?.momentsOfGratitude || "Moments of Gratitude",
+      description: translations.night?.captureYourThoughts || "Capture your thoughts",
       icon: BookOpen,
       gradient: ["#4a148c", "#6a1b9a"] as const,
       route: "/gratitude-moments",
     },
     {
       id: "mood",
-      title: translations.night.howImFeeling,
-      description: translations.night.checkInWithEmotions,
+      title: translations.night?.howImFeeling || "How I'm Feeling",
+      description: translations.night?.checkInWithEmotions || "Check in with your emotions",
       icon: Smile,
       gradient: ["#283593", "#3949ab"] as const,
       route: "/how-am-i-feeling",
     },
     {
       id: "dreamlog",
-      title: translations.night.dreamJournal,
-      description: translations.night.captureYourDreams,
+      title: translations.night?.dreamJournal || "Dream Journal",
+      description: translations.night?.captureYourDreams || "Capture your dreams",
       icon: Cloud,
       gradient: ["#4527a0", "#5e35b1"] as const,
       route: "/dream-journal",
     },
     {
       id: "meditation",
-      title: translations.night.sleepMeditation,
-      description: translations.night.peacefulRestSounds,
+      title: translations.night?.sleepMeditation || "Sleep Meditation",
+      description: translations.night?.peacefulRestSounds || "Peaceful rest sounds",
       icon: Music,
       gradient: ["#6a1b9a", "#8e24aa"] as const,
       route: "/sleep-meditation",
     },
     {
       id: "tomorrow",
-      title: translations.night.tomorrowsIntentions,
-      description: translations.night.setGoalsForTomorrow,
+      title: translations.night?.tomorrowsIntentions || "Tomorrow's Intentions",
+      description: translations.night?.setGoalsForTomorrow || "Set goals for tomorrow",
       icon: Sunset,
       gradient: ["#ad1457", "#c2185b"] as const,
       route: "/tomorrows-intentions",
@@ -198,9 +198,9 @@ export default function NightScreen() {
 
   const getGreeting = useCallback(() => {
     const hour = currentTime.getHours();
-    if (hour >= 18 && hour < 21) return translations.night.goodEvening;
-    if (hour >= 21 || hour < 3) return translations.night.goodNight;
-    return translations.night.restWell;
+    if (hour >= 18 && hour < 21) return translations.night?.goodEvening || "Good Evening";
+    if (hour >= 21 || hour < 3) return translations.night?.goodNight || "Good Night";
+    return translations.night?.restWell || "Rest Well";
   }, [currentTime, translations]);
 
   const formatTime = (date: Date) => {
@@ -280,7 +280,7 @@ export default function NightScreen() {
                     <View style={styles.quoteHeader}>
                       <Moon color="#f4e4c1" size={18} strokeWidth={2} />
                       <Text style={styles.quoteLabel}>
-                        {translations.night.tonightsReflection}
+                        {translations.night?.tonightsReflection || "Tonight's Reflection"}
                       </Text>
                     </View>
                     <Text style={styles.quoteText}>
@@ -294,7 +294,7 @@ export default function NightScreen() {
                     <View style={styles.quoteHeader}>
                       <Moon color="#f4e4c1" size={18} strokeWidth={2} />
                       <Text style={styles.quoteLabel}>
-                        {translations.night.tonightsReflection}
+                        {translations.night?.tonightsReflection || "Tonight's Reflection"}
                       </Text>
                     </View>
                     <Text style={styles.quoteText}>
@@ -305,7 +305,7 @@ export default function NightScreen() {
               )}
 
               <Text style={styles.sectionTitle}>
-                {translations.night.eveningRituals}
+                {translations.night?.eveningRituals || "Evening Rituals"}
               </Text>
             </Animated.View>
 
@@ -317,7 +317,7 @@ export default function NightScreen() {
 
             <Animated.View style={{ opacity: fadeAnim, marginTop: 24 }}>
               <Text style={styles.footerText}>
-                {translations.night.takeYourTime}
+                {translations.night?.takeYourTime || "Take your time. There's no rush."}
               </Text>
             </Animated.View>
           </ScrollView>
