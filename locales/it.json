@@ -63,5 +63,49 @@
     "solid": "Solido",
     "gradient": "Sfumatura",
     "animated": "Animato"
+  },
+  "morning": {
+    "habitsPage": {
+      "title": "Abitudini Mattutine",
+      "morningInspiration": "Ispirazione Mattutina",
+      "todaysProgress": "Progresso di Oggi",
+      "habitsCompleted": "{completed} di {total} abitudini completate",
+      "yourMorningRituals": "I Tuoi Rituali Mattutini",
+      "startYourDay": "Inizia la tua giornata con queste abitudini potenti",
+      "addHabit": "Aggiungi Abitudine",
+      "newHabitPlaceholder": "Nuova abitudine mattutina...",
+      "editHabitPlaceholder": "Modifica abitudine...",
+      "chooseIcon": "Scegli un'Icona:",
+      "cancel": "Annulla",
+      "add": "Aggiungi",
+      "save": "Salva",
+      "deleteHabit": "Elimina Abitudine",
+      "deleteConfirmation": "Sei sicuro di voler eliminare questa abitudine?",
+      "delete": "Elimina",
+      "startBuilding": "Inizia a costruire la tua routine mattutina",
+      "tapToAdd": "Tocca Aggiungi Abitudine per iniziare",
+      "incredible": "Incredibile!",
+      "allCompleted": "Hai completato tutte le tue abitudini mattutine",
+      "footer": "Alzati e brilla con uno scopo ogni mattina",
+      "quotes": {
+        "1": "Inizia la tua giornata con intenzione e scopo.",
+        "2": "Le grandi cose non vengono mai dalle zone di comfort.",
+        "3": "Il modo in cui inizi la mattina imposta il tono della giornata.",
+        "4": "Ogni mattina è una possibilità di resettare e ricominciare.",
+        "5": "Le piccole abitudini quotidiane creano risultati straordinari.",
+        "6": "La tua routine mattutina è il tuo superpotere."
+      },
+      "defaultHabits": {
+        "hydrate": "Bere Acqua",
+        "exercise": "Esercizio Mattutino",
+        "breakfast": "Colazione Sana",
+        "coffee": "Caffè Mattutino",
+        "reading": "Leggere o Scrivere un Diario",
+        "sunshine": "Prendere il Sole"
+      }
+    }
+  },
+  "common": {
+    "cancel": "Annulla"
   }
 }

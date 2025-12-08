@@ -63,5 +63,49 @@
     "solid": "Sólido",
     "gradient": "Degradado",
     "animated": "Animado"
+  },
+  "morning": {
+    "habitsPage": {
+      "title": "Hábitos Matutinos",
+      "morningInspiration": "Inspiración Matutina",
+      "todaysProgress": "Progreso de Hoy",
+      "habitsCompleted": "{completed} de {total} hábitos completados",
+      "yourMorningRituals": "Tus Rituales Matutinos",
+      "startYourDay": "Comienza tu día con estos poderosos hábitos",
+      "addHabit": "Agregar Hábito",
+      "newHabitPlaceholder": "Nuevo hábito matutino...",
+      "editHabitPlaceholder": "Editar hábito...",
+      "chooseIcon": "Elige un Ícono:",
+      "cancel": "Cancelar",
+      "add": "Agregar",
+      "save": "Guardar",
+      "deleteHabit": "Eliminar Hábito",
+      "deleteConfirmation": "¿Estás seguro de que quieres eliminar este hábito?",
+      "delete": "Eliminar",
+      "startBuilding": "Comienza a construir tu rutina matutina",
+      "tapToAdd": "Toca \"Agregar Hábito\" para comenzar",
+      "incredible": "¡Increíble!",
+      "allCompleted": "Has completado todos tus hábitos matutinos",
+      "footer": "Levántate y brilla con propósito cada mañana",
+      "quotes": {
+        "1": "Comienza tu día con intención y propósito.",
+        "2": "Las grandes cosas nunca vienen de las zonas de confort.",
+        "3": "La forma en que comienzas tu mañana marca el tono del día.",
+        "4": "Cada mañana es una oportunidad para reiniciar y comenzar de nuevo.",
+        "5": "Los pequeños hábitos diarios crean resultados extraordinarios.",
+        "6": "Tu rutina matutina es tu superpoder."
+      },
+      "defaultHabits": {
+        "hydrate": "Beber Agua",
+        "exercise": "Ejercicio Matutino",
+        "breakfast": "Desayuno Saludable",
+        "coffee": "Café Matutino",
+        "reading": "Leer o Escribir en Diario",
+        "sunshine": "Tomar Sol"
+      }
+    }
+  },
+  "common": {
+    "cancel": "Cancelar"
   }
 }

@@ -63,5 +63,49 @@
     "solid": "Solid",
     "gradient": "Gradient",
     "animated": "Animat"
+  },
+  "morning": {
+    "habitsPage": {
+      "title": "Obiceiuri de Dimineață",
+      "morningInspiration": "Inspirație de Dimineață",
+      "todaysProgress": "Progresul de Azi",
+      "habitsCompleted": "{completed} din {total} obiceiuri completate",
+      "yourMorningRituals": "Ritualurile Tale de Dimineață",
+      "startYourDay": "Începe-ți ziua cu aceste obiceiuri puternice",
+      "addHabit": "Adaugă Obicei",
+      "newHabitPlaceholder": "Obicei nou de dimineață...",
+      "editHabitPlaceholder": "Editează obiceiul...",
+      "chooseIcon": "Alege o Pictogramă:",
+      "cancel": "Anulare",
+      "add": "Adaugă",
+      "save": "Salvează",
+      "deleteHabit": "Șterge Obiceiul",
+      "deleteConfirmation": "Ești sigur că vrei să ștergi acest obicei?",
+      "delete": "Șterge",
+      "startBuilding": "Începe să-ți construiești rutina de dimineață",
+      "tapToAdd": "Apasă pe Adaugă Obicei pentru a începe",
+      "incredible": "Incredibil!",
+      "allCompleted": "Ai completat toate obiceiurile de dimineață",
+      "footer": "Ridică-te și strălucește cu scop în fiecare dimineață",
+      "quotes": {
+        "1": "Începe-ți ziua cu intenție și scop.",
+        "2": "Lucrurile mari nu vin niciodată din zonele de confort.",
+        "3": "Modul în care îți începi dimineața stabilește tonul zilei.",
+        "4": "Fiecare dimineață este o șansă de a reseta și a începe din nou.",
+        "5": "Obiceiurile zilnice mici creează rezultate extraordinare.",
+        "6": "Rutina ta de dimineață este superputerea ta."
+      },
+      "defaultHabits": {
+        "hydrate": "Bea Apă",
+        "exercise": "Exerciții de Dimineață",
+        "breakfast": "Mic Dejun Sănătos",
+        "coffee": "Cafea de Dimineață",
+        "reading": "Citit sau Jurnal",
+        "sunshine": "Ia Lumina Soarelui"
+      }
+    }
+  },
+  "common": {
+    "cancel": "Anulare"
   }
 }

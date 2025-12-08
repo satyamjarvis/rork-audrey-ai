@@ -63,5 +63,49 @@
     "solid": "Sólido",
     "gradient": "Gradiente",
     "animated": "Animado"
+  },
+  "morning": {
+    "habitsPage": {
+      "title": "Hábitos Matinais",
+      "morningInspiration": "Inspiração Matinal",
+      "todaysProgress": "Progresso de Hoje",
+      "habitsCompleted": "{completed} de {total} hábitos concluídos",
+      "yourMorningRituals": "Seus Rituais Matinais",
+      "startYourDay": "Comece seu dia com esses hábitos poderosos",
+      "addHabit": "Adicionar Hábito",
+      "newHabitPlaceholder": "Novo hábito matinal...",
+      "editHabitPlaceholder": "Editar hábito...",
+      "chooseIcon": "Escolha um Ícone:",
+      "cancel": "Cancelar",
+      "add": "Adicionar",
+      "save": "Salvar",
+      "deleteHabit": "Excluir Hábito",
+      "deleteConfirmation": "Tem certeza que deseja excluir este hábito?",
+      "delete": "Excluir",
+      "startBuilding": "Comece a construir sua rotina matinal",
+      "tapToAdd": "Toque em \"Adicionar Hábito\" para começar",
+      "incredible": "Incrível!",
+      "allCompleted": "Você concluiu todos os seus hábitos matinais",
+      "footer": "Levante-se e brilhe com propósito toda manhã",
+      "quotes": {
+        "1": "Comece seu dia com intenção e propósito.",
+        "2": "Grandes coisas nunca vêm de zonas de conforto.",
+        "3": "A forma como você começa sua manhã define o tom do dia.",
+        "4": "Toda manhã é uma chance de recomeçar.",
+        "5": "Pequenos hábitos diários criam resultados extraordinários.",
+        "6": "Sua rotina matinal é seu superpoder."
+      },
+      "defaultHabits": {
+        "hydrate": "Beber Água",
+        "exercise": "Exercício Matinal",
+        "breakfast": "Café da Manhã Saudável",
+        "coffee": "Café da Manhã",
+        "reading": "Ler ou Escrever Diário",
+        "sunshine": "Tomar Sol"
+      }
+    }
+  },
+  "common": {
+    "cancel": "Cancelar"
   }
 }

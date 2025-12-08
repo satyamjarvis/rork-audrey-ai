@@ -63,5 +63,49 @@
     "solid": "Uni",
     "gradient": "Dégradé",
     "animated": "Animé"
+  },
+  "morning": {
+    "habitsPage": {
+      "title": "Habitudes Matinales",
+      "morningInspiration": "Inspiration Matinale",
+      "todaysProgress": "Progrès d'Aujourd'hui",
+      "habitsCompleted": "{completed} habitudes sur {total} complétées",
+      "yourMorningRituals": "Vos Rituels Matinaux",
+      "startYourDay": "Commencez votre journée avec ces habitudes puissantes",
+      "addHabit": "Ajouter une Habitude",
+      "newHabitPlaceholder": "Nouvelle habitude matinale...",
+      "editHabitPlaceholder": "Modifier l'habitude...",
+      "chooseIcon": "Choisissez une Icône :",
+      "cancel": "Annuler",
+      "add": "Ajouter",
+      "save": "Enregistrer",
+      "deleteHabit": "Supprimer l'Habitude",
+      "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer cette habitude ?",
+      "delete": "Supprimer",
+      "startBuilding": "Commencez à construire votre routine matinale",
+      "tapToAdd": "Appuyez sur \"Ajouter une Habitude\" pour commencer",
+      "incredible": "Incroyable !",
+      "allCompleted": "Vous avez terminé toutes vos habitudes matinales",
+      "footer": "Levez-vous et brillez avec détermination chaque matin",
+      "quotes": {
+        "1": "Commencez votre journée avec intention et but.",
+        "2": "Les grandes choses ne viennent jamais des zones de confort.",
+        "3": "La façon dont vous commencez votre matinée donne le ton de la journée.",
+        "4": "Chaque matin est une chance de recommencer.",
+        "5": "Les petites habitudes quotidiennes créent des résultats extraordinaires.",
+        "6": "Votre routine matinale est votre superpouvoir."
+      },
+      "defaultHabits": {
+        "hydrate": "Boire de l'Eau",
+        "exercise": "Exercice Matinal",
+        "breakfast": "Petit-déjeuner Sain",
+        "coffee": "Café du Matin",
+        "reading": "Lire ou Écrire un Journal",
+        "sunshine": "Prendre le Soleil"
+      }
+    }
+  },
+  "common": {
+    "cancel": "Annuler"
   }
 }

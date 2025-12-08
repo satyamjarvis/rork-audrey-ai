@@ -63,5 +63,49 @@
     "solid": "纯色",
     "gradient": "渐变",
     "animated": "动画"
+  },
+  "morning": {
+    "habitsPage": {
+      "title": "晨间习惯",
+      "morningInspiration": "晨间灵感",
+      "todaysProgress": "今日进度",
+      "habitsCompleted": "已完成 {completed}/{total} 个习惯",
+      "yourMorningRituals": "你的晨间仪式",
+      "startYourDay": "用这些强大的习惯开始你的一天",
+      "addHabit": "添加习惯",
+      "newHabitPlaceholder": "新的晨间习惯...",
+      "editHabitPlaceholder": "编辑习惯...",
+      "chooseIcon": "选择图标：",
+      "cancel": "取消",
+      "add": "添加",
+      "save": "保存",
+      "deleteHabit": "删除习惯",
+      "deleteConfirmation": "你确定要删除这个习惯吗？",
+      "delete": "删除",
+      "startBuilding": "开始建立你的晨间例程",
+      "tapToAdd": "点击添加习惯开始",
+      "incredible": "太棒了！",
+      "allCompleted": "你已完成所有晨间习惯",
+      "footer": "每天早上都要有目标地起床和发光",
+      "quotes": {
+        "1": "以意图和目标开始你的一天。",
+        "2": "伟大的事情永远不会来自舒适区。",
+        "3": "你开始早晨的方式决定了这一天的基调。",
+        "4": "每个早晨都是重新开始的机会。",
+        "5": "小小的日常习惯创造非凡的结果。",
+        "6": "你的晨间例程是你的超能力。"
+      },
+      "defaultHabits": {
+        "hydrate": "喝水",
+        "exercise": "晨间锻炼",
+        "breakfast": "健康早餐",
+        "coffee": "晨间咖啡",
+        "reading": "阅读或写日记",
+        "sunshine": "晒太阳"
+      }
+    }
+  },
+  "common": {
+    "cancel": "取消"
   }
 }

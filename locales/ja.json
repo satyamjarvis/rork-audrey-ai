@@ -63,5 +63,49 @@
     "solid": "単色",
     "gradient": "グラデーション",
     "animated": "アニメーション"
+  },
+  "morning": {
+    "habitsPage": {
+      "title": "朝の習慣",
+      "morningInspiration": "朝のインスピレーション",
+      "todaysProgress": "今日の進捗",
+      "habitsCompleted": "{total}個中{completed}個の習慣を完了",
+      "yourMorningRituals": "あなたの朝の儀式",
+      "startYourDay": "これらの強力な習慣で一日を始めましょう",
+      "addHabit": "習慣を追加",
+      "newHabitPlaceholder": "新しい朝の習慣...",
+      "editHabitPlaceholder": "習慣を編集...",
+      "chooseIcon": "アイコンを選択：",
+      "cancel": "キャンセル",
+      "add": "追加",
+      "save": "保存",
+      "deleteHabit": "習慣を削除",
+      "deleteConfirmation": "この習慣を削除してもよろしいですか？",
+      "delete": "削除",
+      "startBuilding": "朝のルーティンを構築し始める",
+      "tapToAdd": "習慣を追加をタップして開始",
+      "incredible": "素晴らしい！",
+      "allCompleted": "すべての朝の習慣を完了しました",
+      "footer": "毎朝目的を持って起きて輝きましょう",
+      "quotes": {
+        "1": "意図と目的を持って一日を始めましょう。",
+        "2": "偉大なことは快適な場所から生まれません。",
+        "3": "朝の始め方がその日の調子を決めます。",
+        "4": "毎朝はリセットしてやり直すチャンスです。",
+        "5": "小さな日々の習慣が並外れた結果を生み出します。",
+        "6": "あなたの朝のルーティンはあなたのスーパーパワーです。"
+      },
+      "defaultHabits": {
+        "hydrate": "水を飲む",
+        "exercise": "朝の運動",
+        "breakfast": "健康的な朝食",
+        "coffee": "モーニングコーヒー",
+        "reading": "読書または日記",
+        "sunshine": "日光を浴びる"
+      }
+    }
+  },
+  "common": {
+    "cancel": "キャンセル"
   }
 }
