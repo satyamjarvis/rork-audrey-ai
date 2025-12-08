@@ -843,25 +843,25 @@ export default function AnalyticsScreen() {
   }, [exportAsSpreadsheet, selectedTemplate, sendFileAttachment, rows, columns, evaluateFormula, getCellDisplayValue, isDark, theme.colors.primary, savedTrackers, activeTrackerId, createShareableFromSpreadsheet, shareItemToChat]);
 
   const templates = [
-    { type: "sales-general" as const, label: translations.metrics.templates.salesGeneral, icon: TrendingUp, color: "#FF6B6B" },
-    { type: "cold-calling" as const, label: translations.metrics.templates.coldCalling, icon: Phone, color: "#4ECDC4" },
-    { type: "closing-sales" as const, label: translations.metrics.templates.closingSales, icon: Handshake, color: "#95E1D3" },
-    { type: "insurance-sales" as const, label: translations.metrics.templates.insuranceSales, icon: Shield, color: "#F38181" },
-    { type: "sports-performance" as const, label: translations.metrics.templates.sportsPerformance, icon: Trophy, color: "#FEA47F" },
-    { type: "actors-career" as const, label: translations.metrics.templates.actorsCareer, icon: Clapperboard, color: "#B388EB" },
-    { type: "modeling-career" as const, label: translations.metrics.templates.modelingCareer, icon: Camera, color: "#FF85A1" },
-    { type: "music-career" as const, label: translations.metrics.templates.musicCareer, icon: Music, color: "#FFD93D" },
-    { type: "singing-career" as const, label: translations.metrics.templates.singingCareer, icon: Mic, color: "#A8E6CF" },
-    { type: "custom" as const, label: translations.metrics.templates.custom, icon: Settings2, color: "#6C5CE7" },
+    { type: "sales-general" as const, label: (translations as any).metrics?.templates?.salesGeneral || "Sales General", icon: TrendingUp, color: "#FF6B6B" },
+    { type: "cold-calling" as const, label: (translations as any).metrics?.templates?.coldCalling || "Cold Calling", icon: Phone, color: "#4ECDC4" },
+    { type: "closing-sales" as const, label: (translations as any).metrics?.templates?.closingSales || "Closing Sales", icon: Handshake, color: "#95E1D3" },
+    { type: "insurance-sales" as const, label: (translations as any).metrics?.templates?.insuranceSales || "Insurance Sales", icon: Shield, color: "#F38181" },
+    { type: "sports-performance" as const, label: (translations as any).metrics?.templates?.sportsPerformance || "Sports Performance", icon: Trophy, color: "#FEA47F" },
+    { type: "actors-career" as const, label: (translations as any).metrics?.templates?.actorsCareer || "Actors Career", icon: Clapperboard, color: "#B388EB" },
+    { type: "modeling-career" as const, label: (translations as any).metrics?.templates?.modelingCareer || "Modeling Career", icon: Camera, color: "#FF85A1" },
+    { type: "music-career" as const, label: (translations as any).metrics?.templates?.musicCareer || "Music Career", icon: Music, color: "#FFD93D" },
+    { type: "singing-career" as const, label: (translations as any).metrics?.templates?.singingCareer || "Singing Career", icon: Mic, color: "#A8E6CF" },
+    { type: "custom" as const, label: (translations as any).metrics?.templates?.custom || "Custom", icon: Settings2, color: "#6C5CE7" },
   ];
 
   const commonFormulas = [
-    { label: translations.metrics.formulaDescriptions.sumColumn, formula: "=SUM(ColumnName)", description: translations.metrics.formulaDescriptions.sumColumnDesc },
-    { label: translations.metrics.formulaDescriptions.average, formula: "=AVG(ColumnName)", description: translations.metrics.formulaDescriptions.averageDesc },
-    { label: translations.metrics.formulaDescriptions.count, formula: "=COUNT(ColumnName)", description: translations.metrics.formulaDescriptions.countDesc },
-    { label: translations.metrics.formulaDescriptions.minValue, formula: "=MIN(ColumnName)", description: translations.metrics.formulaDescriptions.minValueDesc },
-    { label: translations.metrics.formulaDescriptions.maxValue, formula: "=MAX(ColumnName)", description: translations.metrics.formulaDescriptions.maxValueDesc },
-    { label: translations.metrics.formulaDescriptions.percentage, formula: "=(Col1/Col2)*100", description: translations.metrics.formulaDescriptions.percentageDesc },
+    { label: (translations as any).metrics?.formulaDescriptions?.sumColumn || "Sum Column", formula: "=SUM(ColumnName)", description: (translations as any).metrics?.formulaDescriptions?.sumColumnDesc || "Total of all values" },
+    { label: (translations as any).metrics?.formulaDescriptions?.average || "Average", formula: "=AVG(ColumnName)", description: (translations as any).metrics?.formulaDescriptions?.averageDesc || "Average value" },
+    { label: (translations as any).metrics?.formulaDescriptions?.count || "Count", formula: "=COUNT(ColumnName)", description: (translations as any).metrics?.formulaDescriptions?.countDesc || "Count non-empty cells" },
+    { label: (translations as any).metrics?.formulaDescriptions?.minValue || "Min Value", formula: "=MIN(ColumnName)", description: (translations as any).metrics?.formulaDescriptions?.minValueDesc || "Minimum value" },
+    { label: (translations as any).metrics?.formulaDescriptions?.maxValue || "Max Value", formula: "=MAX(ColumnName)", description: (translations as any).metrics?.formulaDescriptions?.maxValueDesc || "Maximum value" },
+    { label: (translations as any).metrics?.formulaDescriptions?.percentage || "Percentage", formula: "=(Col1/Col2)*100", description: (translations as any).metrics?.formulaDescriptions?.percentageDesc || "Calculate percentage" },
   ];
 
   const cardStyle = isDark ? styles.darkCard : styles.lightCard;
