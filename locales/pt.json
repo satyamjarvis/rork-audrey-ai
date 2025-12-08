@@ -120,5 +120,30 @@
   },
   "common": {
     "cancel": "Cancelar"
+  },
+  "calendar": {
+    "thisMonth": "Este Mês",
+    "events": "Eventos",
+    "high": "Alta",
+    "medium": "Média",
+    "low": "Baixa",
+    "noEventsForThisDay": "Nenhum evento para este dia",
+    "tapThePlusButtonToAddOne": "Toque no botão + para adicionar um",
+    "addEvent": "Adicionar Evento",
+    "editEvent": "Editar Evento",
+    "eventTitle": "Título do Evento",
+    "category": "Categoria",
+    "priority": "Prioridade",
+    "time": "Hora",
+    "description": "Descrição",
+    "work": "Trabalho",
+    "personal": "Pessoal",
+    "health": "Saúde",
+    "social": "Social",
+    "other": "Outro",
+    "updateEvent": "Atualizar Evento",
+    "deleteEvent": "Excluir Evento",
+    "areYouSureDeleteEvent": "Tem certeza de que deseja excluir este evento?",
+    "addNotes": "Adicionar notas..."
   }
 }

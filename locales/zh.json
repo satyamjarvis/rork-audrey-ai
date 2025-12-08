@@ -120,5 +120,30 @@
   },
   "common": {
     "cancel": "取消"
+  },
+  "calendar": {
+    "thisMonth": "本月",
+    "events": "事件",
+    "high": "高",
+    "medium": "中",
+    "low": "低",
+    "noEventsForThisDay": "今天没有事件",
+    "tapThePlusButtonToAddOne": "点击 + 按钮添加事件",
+    "addEvent": "添加事件",
+    "editEvent": "编辑事件",
+    "eventTitle": "事件标题",
+    "category": "类别",
+    "priority": "优先级",
+    "time": "时间",
+    "description": "描述",
+    "work": "工作",
+    "personal": "个人",
+    "health": "健康",
+    "social": "社交",
+    "other": "其他",
+    "updateEvent": "更新事件",
+    "deleteEvent": "删除事件",
+    "areYouSureDeleteEvent": "您确定要删除此事件吗？",
+    "addNotes": "添加备注..."
   }
 }

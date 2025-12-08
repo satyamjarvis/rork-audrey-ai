@@ -120,5 +120,30 @@
   },
   "common": {
     "cancel": "إلغاء"
+  },
+  "calendar": {
+    "thisMonth": "هذا الشهر",
+    "events": "الأحداث",
+    "high": "عالية",
+    "medium": "متوسطة",
+    "low": "منخفضة",
+    "noEventsForThisDay": "لا توجد أحداث لهذا اليوم",
+    "tapThePlusButtonToAddOne": "اضغط على زر + لإضافة حدث",
+    "addEvent": "إضافة حدث",
+    "editEvent": "تعديل الحدث",
+    "eventTitle": "عنوان الحدث",
+    "category": "الفئة",
+    "priority": "الأولوية",
+    "time": "الوقت",
+    "description": "الوصف",
+    "work": "العمل",
+    "personal": "شخصي",
+    "health": "الصحة",
+    "social": "اجتماعي",
+    "other": "أخرى",
+    "updateEvent": "تحديث الحدث",
+    "deleteEvent": "حذف الحدث",
+    "areYouSureDeleteEvent": "هل أنت متأكد من حذف هذا الحدث؟",
+    "addNotes": "إضافة ملاحظات..."
   }
 }
