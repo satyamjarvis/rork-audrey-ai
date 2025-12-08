@@ -80,8 +80,9 @@ const FALLBACK_SOUNDS: readonly SleepSound[] = [
   {
     id: "guidedSleep",
     title: "Guided Sleep",
-    duration: "20 min",
+    duration: "3:20 min",
     description: "Calming voice-guided meditation",
+    audio: "https://rork.app/pa/ier8mze8ucoqq9oktvadp/sleep_meditation_20min_1",
   },
   {
     id: "whiteNoise",
