@@ -227,12 +227,12 @@ export default function IntroSplash() {
         Animated.timing(sparkleOpacityAnim, {
           toValue: 0.8,
           duration: 2500,
-          useNativeDriver: false,
+          useNativeDriver: true,
         }),
         Animated.timing(sparkleOpacityAnim, {
           toValue: 0.5,
           duration: 2500,
-          useNativeDriver: false,
+          useNativeDriver: true,
         }),
       ])
     ).start();
