@@ -2023,7 +2023,20 @@ export function getDeviceLanguage(): Language {
 }
 
 export function getTranslations(language: Language): TranslationFile {
-  return translations[language] || translations.en;
+  const result = translations[language] || translations.en;
+  
+  // Ensure track section exists with fallbacks
+  if (!result.track || !result.track.trackProgress) {
+    return {
+      ...result,
+      track: {
+        ...en.track,
+        ...(result.track || {}),
+      },
+    };
+  }
+  
+  return result;
 }
 
 export function isRTL(language: Language): boolean {
