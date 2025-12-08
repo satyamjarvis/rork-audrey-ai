@@ -53,6 +53,67 @@
   },
   "common": {
     "save": "Salvează",
-    "cancel": "Anulează"
+    "cancel": "Anulează",
+    "loading": "Se încarcă..."
+  },
+  "howAmIFeeling": {
+    "title": "Verificare Stare de Sănătate",
+    "completeCheckIn": "Finalizare Verificare",
+    "checkInLogged": "Verificarea a fost înregistrată!",
+    "incomplete": "Incomplet",
+    "fillAllParameters": "Te rog completează toți parametrii de stare",
+    "success": "Succes",
+    "understanding": "Înțelegerea sentimentelor tale este primul pas către bunăstare",
+    "howAreYouFeeling": "Cum te simți?",
+    "checkYourWellness": "Verifică-ți Stările",
+    "checkedInToday": "Ai făcut deja verificare astăzi!",
+    "howAreYouFeelingToday": "Cum te simți astăzi?",
+    "todaysReminder": "Memento de Astăzi",
+    "energyLevel": "Nivel de Energie",
+    "stressLevel": "Nivel de Stres",
+    "sleepQuality": "Calitatea Somnului",
+    "physicalHealth": "Sănătate Fizică",
+    "gratitudeLabel": "Recunoștință (una pe linie)",
+    "gratitudePlaceholder": "Pentru ce ești recunoscător astăzi?",
+    "waterLabel": "Apă (pahare)",
+    "exerciseLabel": "Exerciții (min)",
+    "additionalNotes": "Note Adiționale",
+    "notesPlaceholder": "Vreo gânduri sau observații?",
+    "footer": "Bunăstarea ta contează în fiecare zi",
+    "mood": {
+      "excellent": "Excelent",
+      "good": "Bine",
+      "okay": "Ok",
+      "low": "Scăzut",
+      "poor": "Prost"
+    },
+    "energy": {
+      "high": "Ridicat",
+      "moderate": "Moderat",
+      "low": "Scăzut",
+      "exhausted": "Epuizat"
+    },
+    "stress": {
+      "none": "Niciunul",
+      "mild": "Ușor",
+      "moderate": "Moderat",
+      "high": "Ridicat",
+      "overwhelming": "Copleșitor"
+    },
+    "sleep": {
+      "excellent": "Excelent",
+      "good": "Bun",
+      "fair": "Acceptabil",
+      "poor": "Prost",
+      "terrible": "Teribil"
+    },
+    "quotes": {
+      "1": "Călătoria ta spre bunăstare începe cu cunoștința de sine.",
+      "2": "Sănătatea este o stare de armonie completă a corpului, minții și spiritului.",
+      "3": "Ai grijă de corpul tău. Este singurul loc în care trebuie să trăiești.",
+      "4": "Bunăstarea nu este o destinație, ci un mod de viață.",
+      "5": "Cea mai mare bogăție este sănătatea.",
+      "6": "Ascultă-ți corpul. Încearcă mereu să îți spună ceva."
+    }
   }
 }

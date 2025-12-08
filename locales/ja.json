@@ -53,6 +53,67 @@
   },
   "common": {
     "save": "保存",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "loading": "読み込み中..."
+  },
+  "howAmIFeeling": {
+    "title": "ウェルネスチェック",
+    "completeCheckIn": "チェックインを完了",
+    "checkInLogged": "チェックインが記録されました！",
+    "incomplete": "不完全",
+    "fillAllParameters": "すべてのウェルネスパラメータを入力してください",
+    "success": "成功",
+    "understanding": "自分の気持ちを理解することがウェルネスへの第一歩です",
+    "howAreYouFeeling": "気分はどうですか？",
+    "checkYourWellness": "ウェルネスをチェック",
+    "checkedInToday": "今日は既にチェックインしました！",
+    "howAreYouFeelingToday": "今日の気分はどうですか？",
+    "todaysReminder": "今日のリマインダー",
+    "energyLevel": "エネルギーレベル",
+    "stressLevel": "ストレスレベル",
+    "sleepQuality": "睡眠の質",
+    "physicalHealth": "身体的健康",
+    "gratitudeLabel": "感謝（一行に一つ）",
+    "gratitudePlaceholder": "今日何に感謝していますか？",
+    "waterLabel": "水（グラス）",
+    "exerciseLabel": "運動（分）",
+    "additionalNotes": "追加メモ",
+    "notesPlaceholder": "何か考えや気づきはありますか？",
+    "footer": "あなたのウェルネスは毎日大切です",
+    "mood": {
+      "excellent": "最高",
+      "good": "良い",
+      "okay": "まあまあ",
+      "low": "低い",
+      "poor": "悪い"
+    },
+    "energy": {
+      "high": "高い",
+      "moderate": "普通",
+      "low": "低い",
+      "exhausted": "疲れ果てた"
+    },
+    "stress": {
+      "none": "なし",
+      "mild": "軽度",
+      "moderate": "中程度",
+      "high": "高い",
+      "overwhelming": "圧倒的"
+    },
+    "sleep": {
+      "excellent": "最高",
+      "good": "良い",
+      "fair": "まあまあ",
+      "poor": "悪い",
+      "terrible": "最悪"
+    },
+    "quotes": {
+      "1": "ウェルネスの旅は自己認識から始まります。",
+      "2": "健康は心身精神の完全な調和状態です。",
+      "3": "体を大切にしてください。それはあなたが住む唯一の場所です。",
+      "4": "ウェルネスは目的地ではなく、生き方です。",
+      "5": "最大の財産は健康です。",
+      "6": "体の声に耳を傾けてください。いつも何かを伝えようとしています。"
+    }
   }
 }

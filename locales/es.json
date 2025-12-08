@@ -1707,5 +1707,65 @@
     "failedToSavePassword": "Error al guardar contraseña",
     "deletePasswordConfirm": "¿Estás seguro de que quieres eliminar esta contraseña?",
     "couldNotDecrypt": "No se pudo descifrar la contraseña"
+  },
+  "howAmIFeeling": {
+    "title": "Verificación de Bienestar",
+    "completeCheckIn": "Completar Registro",
+    "checkInLogged": "¡Tu registro ha sido guardado!",
+    "incomplete": "Incompleto",
+    "fillAllParameters": "Por favor completa todos los parámetros de bienestar",
+    "success": "Éxito",
+    "understanding": "Comprender tus sentimientos es el primer paso hacia el bienestar",
+    "howAreYouFeeling": "¿Cómo te sientes?",
+    "checkYourWellness": "Verifica Tu Bienestar",
+    "checkedInToday": "¡Ya te registraste hoy!",
+    "howAreYouFeelingToday": "¿Cómo te sientes hoy?",
+    "todaysReminder": "Recordatorio de Hoy",
+    "energyLevel": "Nivel de Energía",
+    "stressLevel": "Nivel de Estrés",
+    "sleepQuality": "Calidad del Sueño",
+    "physicalHealth": "Salud Física",
+    "gratitudeLabel": "Gratitud (una por línea)",
+    "gratitudePlaceholder": "¿Por qué estás agradecido hoy?",
+    "waterLabel": "Agua (vasos)",
+    "exerciseLabel": "Ejercicio (min)",
+    "additionalNotes": "Notas Adicionales",
+    "notesPlaceholder": "¿Algún pensamiento u observación?",
+    "footer": "Tu bienestar importa cada día",
+    "mood": {
+      "excellent": "Excelente",
+      "good": "Bueno",
+      "okay": "Regular",
+      "low": "Bajo",
+      "poor": "Malo"
+    },
+    "energy": {
+      "high": "Alta",
+      "moderate": "Moderada",
+      "low": "Baja",
+      "exhausted": "Agotado"
+    },
+    "stress": {
+      "none": "Ninguno",
+      "mild": "Leve",
+      "moderate": "Moderado",
+      "high": "Alto",
+      "overwhelming": "Abrumador"
+    },
+    "sleep": {
+      "excellent": "Excelente",
+      "good": "Bueno",
+      "fair": "Regular",
+      "poor": "Malo",
+      "terrible": "Terrible"
+    },
+    "quotes": {
+      "1": "Tu viaje de bienestar comienza con el autoconocimiento.",
+      "2": "La salud es un estado de armonía completa de cuerpo, mente y espíritu.",
+      "3": "Cuida tu cuerpo. Es el único lugar donde tienes que vivir.",
+      "4": "El bienestar no es un destino, es una forma de vida.",
+      "5": "La mayor riqueza es la salud.",
+      "6": "Escucha a tu cuerpo. Siempre está tratando de decirte algo."
+    }
   }
 }

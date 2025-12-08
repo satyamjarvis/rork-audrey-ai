@@ -53,6 +53,67 @@
   },
   "common": {
     "save": "שמור",
-    "cancel": "ביטול"
+    "cancel": "ביטול",
+    "loading": "טוען..."
+  },
+  "howAmIFeeling": {
+    "title": "בדיקת בריאות",
+    "completeCheckIn": "השלם צ'ק-אין",
+    "checkInLogged": "הצ'ק-אין שלך נרשם!",
+    "incomplete": "לא שלם",
+    "fillAllParameters": "אנא מלא את כל פרמטרי הבריאות",
+    "success": "הצלחה",
+    "understanding": "הבנת הרגשות שלך היא הצעד הראשון לבריאות",
+    "howAreYouFeeling": "איך אתה מרגיש?",
+    "checkYourWellness": "בדוק את הבריאות שלך",
+    "checkedInToday": "כבר עשית צ'ק-אין היום!",
+    "howAreYouFeelingToday": "איך אתה מרגיש היום?",
+    "todaysReminder": "תזכורת היום",
+    "energyLevel": "רמת אנרגיה",
+    "stressLevel": "רמת לחץ",
+    "sleepQuality": "איכות שינה",
+    "physicalHealth": "בריאות גופנית",
+    "gratitudeLabel": "הודיה (אחת לשורה)",
+    "gratitudePlaceholder": "על מה אתה מודה היום?",
+    "waterLabel": "מים (כוסות)",
+    "exerciseLabel": "פעילות גופנית (דקות)",
+    "additionalNotes": "הערות נוספות",
+    "notesPlaceholder": "מחשבות או תצפיות?",
+    "footer": "הבריאות שלך חשובה כל יום",
+    "mood": {
+      "excellent": "מצוין",
+      "good": "טוב",
+      "okay": "בסדר",
+      "low": "נמוך",
+      "poor": "רע"
+    },
+    "energy": {
+      "high": "גבוהה",
+      "moderate": "בינונית",
+      "low": "נמוכה",
+      "exhausted": "מותש"
+    },
+    "stress": {
+      "none": "ללא",
+      "mild": "קל",
+      "moderate": "בינוני",
+      "high": "גבוה",
+      "overwhelming": "מוצף"
+    },
+    "sleep": {
+      "excellent": "מצוינת",
+      "good": "טובה",
+      "fair": "סבירה",
+      "poor": "רעה",
+      "terrible": "נוראית"
+    },
+    "quotes": {
+      "1": "מסע הבריאות שלך מתחיל במודעות עצמית.",
+      "2": "בריאות היא מצב של הרמוניה מלאה של גוף, מוח ורוח.",
+      "3": "דאג לגוף שלך. זה המקום היחיד שיש לך לחיות בו.",
+      "4": "בריאות אינה יעד, אלא דרך חיים.",
+      "5": "העושר הגדול ביותר הוא הבריאות.",
+      "6": "הקשב לגוף שלך. הוא תמיד מנסה לומר לך משהו."
+    }
   }
 }
