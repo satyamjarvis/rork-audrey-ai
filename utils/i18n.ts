@@ -2156,6 +2156,14 @@ export function getTranslations(language: Language): TranslationFile {
     };
   }
   
+  // Attachment preview section
+  if (!ensuredResult.attachmentPreview || !ensuredResult.attachmentPreview.preview) {
+    ensuredResult.attachmentPreview = {
+      ...en.attachmentPreview,
+      ...(ensuredResult.attachmentPreview || {}),
+    };
+  }
+  
   return ensuredResult;
 }
 
