@@ -1492,7 +1492,7 @@ export default function LearnScreen() {
                 {selectedCategory.title}
               </Text>
               <View style={styles.categoryVideosList}>
-                {selectedCategory.videos.map((video, index) => (
+                {selectedCategory.videos.filter(v => v && v.title).map((video, index) => (
                   <View key={video.id || `video-${index}`} style={styles.videoItemWrapper}>
                     <TouchableOpacity
                       style={[styles.categoryVideoCard, {

@@ -78,10 +78,18 @@ export const [LearnContext, useLearn] = createContextHook(() => {
             const parsedData = JSON.parse(stored);
             // Validate data structure
             if (parsedData && parsedData.categories && Array.isArray(parsedData.categories)) {
-              // Ensure each category has required fields
-              const validCategories = parsedData.categories.filter((cat: any) => 
-                cat && typeof cat === 'object' && cat.id && cat.title && Array.isArray(cat.videos)
-              );
+              // Ensure each category has required fields and valid videos
+              const validCategories = parsedData.categories
+                .filter((cat: any) => 
+                  cat && typeof cat === 'object' && cat.id && cat.title && Array.isArray(cat.videos)
+                )
+                .map((cat: any) => ({
+                  ...cat,
+                  videos: cat.videos.filter((vid: any) => 
+                    vid && typeof vid === 'object' && vid.id && vid.title
+                  )
+                }));
+              
               setCategories(validCategories);
               console.log(`Loaded ${validCategories.length} categories from storage`);
             } else {
