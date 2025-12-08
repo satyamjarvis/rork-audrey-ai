@@ -905,7 +905,14 @@ export default function CalendarChatScreen() {
       return;
     }
 
+    if (!calendarId) {
+      console.error("[CalendarChat] No calendarId available");
+      Alert.alert("Error", "Chat not found. Please go back and try again.");
+      return;
+    }
+
     try {
+      console.log("[CalendarChat] ===== Starting File Attachment Flow =====");
       setIsPickingDocument(true);
       setShowAttachMenu(false);
       console.log("[CalendarChat] Starting document picker, type:", type);
@@ -930,7 +937,17 @@ export default function CalendarChatScreen() {
         messagePrefix = "🎵";
       }
       
-      const pickedFile = await pickFileFromDevice({ type: fileType, maxSizeInMB: 10 });
+      let pickedFile;
+      try {
+        console.log("[CalendarChat] Calling pickFileFromDevice...");
+        pickedFile = await pickFileFromDevice({ type: fileType, maxSizeInMB: 10 });
+        console.log("[CalendarChat] pickFileFromDevice returned");
+      } catch (pickError) {
+        console.error("[CalendarChat] Error calling pickFileFromDevice:", pickError);
+        Alert.alert("File Picker Error", "Failed to open file picker. Please try again.");
+        setIsPickingDocument(false);
+        return;
+      }
       
       if (!pickedFile) {
         console.log("[CalendarChat] No file picked or user cancelled");
@@ -954,42 +971,48 @@ export default function CalendarChatScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       }
 
-      if (calendarId) {
-        const displayName = pickedFile.name.length > 30 ? pickedFile.name.substring(0, 27) + "..." : pickedFile.name;
-        
-        console.log("[CalendarChat] Sending attachment to chat...");
-        try {
-          await sendFileAttachment(
-            calendarId,
-            pickedFile.base64Data,
-            pickedFile.name,
-            `${messagePrefix} ${displayName}`,
-            "me",
-            true,
-            'external'
-          );
-          console.log("[CalendarChat] Attachment sent successfully");
+      const displayName = pickedFile.name.length > 30 ? pickedFile.name.substring(0, 27) + "..." : pickedFile.name;
+      
+      console.log("[CalendarChat] Sending attachment to chat...");
+      try {
+        await sendFileAttachment(
+          calendarId,
+          pickedFile.base64Data,
+          pickedFile.name,
+          `${messagePrefix} ${displayName}`,
+          "me",
+          true,
+          'external'
+        );
+        console.log("[CalendarChat] Attachment sent successfully");
           
-          if (Platform.OS !== "web") {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          }
-          
-          setTimeout(() => {
-            scrollViewRef.current?.scrollToEnd({ animated: true });
-          }, 100);
-        } catch (sendError) {
-          console.error("[CalendarChat] Error sending attachment:", sendError);
-          Alert.alert("Send Error", "Failed to send attachment. Please try again.");
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
-      } else {
-        console.error("[CalendarChat] Missing calendarId");
-        Alert.alert("Error", "Chat not found. Please try again.");
+        
+        setTimeout(() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+      } catch (sendError) {
+        console.error("[CalendarChat] Error sending attachment:", sendError);
+        const errorMessage = sendError instanceof Error ? sendError.message : 'Unknown error';
+        console.error("[CalendarChat] Error details:", errorMessage);
+        Alert.alert("Send Error", `Failed to send attachment: ${errorMessage}`);
       }
       
       setIsPickingDocument(false);
+      console.log("[CalendarChat] ===== File Attachment Flow Complete =====");
     } catch (err) {
-      console.error("[CalendarChat] Error picking document:", err);
-      Alert.alert("Attachment Error", "Failed to attach file. Please try again.");
+      console.error("[CalendarChat] ===== Unexpected Error in File Attachment Flow =====");
+      console.error("[CalendarChat] Error type:", err instanceof Error ? err.constructor.name : typeof err);
+      console.error("[CalendarChat] Error message:", err instanceof Error ? err.message : String(err));
+      console.error("[CalendarChat] Error stack:", err instanceof Error ? err.stack : 'No stack trace');
+      
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      Alert.alert(
+        "Attachment Error", 
+        `Failed to attach file: ${errorMessage}. Please try again.`
+      );
       setIsPickingDocument(false);
     }
   };

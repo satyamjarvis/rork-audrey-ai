@@ -455,7 +455,15 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
     console.log('[Pick File] Platform:', Platform.OS);
     console.log('[Pick File] Max size:', maxSizeInMB, 'MB');
     
-    const DocumentPicker = await import('expo-document-picker');
+    let DocumentPicker;
+    try {
+      DocumentPicker = await import('expo-document-picker');
+      console.log('[Pick File] Document picker module loaded');
+    } catch (importError) {
+      console.error('[Pick File] Failed to import expo-document-picker:', importError);
+      Alert.alert('Module Error', 'Document picker module could not be loaded.');
+      return null;
+    }
     const getDocumentAsync = DocumentPicker.getDocumentAsync;
 
     if (!getDocumentAsync) {
@@ -487,11 +495,19 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
     
     console.log('[Pick File] Opening picker with mimeType:', mimeType);
     
-    const result = await getDocumentAsync({
-      type: mimeType,
-      copyToCacheDirectory: true,
-      multiple: allowMultiple,
-    });
+    let result;
+    try {
+      result = await getDocumentAsync({
+        type: mimeType,
+        copyToCacheDirectory: true,
+        multiple: allowMultiple,
+      });
+      console.log('[Pick File] Picker returned successfully');
+    } catch (pickerError) {
+      console.error('[Pick File] Document picker error:', pickerError);
+      Alert.alert('Picker Error', 'Failed to open file picker. Please try again.');
+      return null;
+    }
 
     console.log('[Pick File] Picker result:', result.canceled ? 'CANCELED' : 'FILE SELECTED');
 
@@ -531,6 +547,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
       let blob: Blob;
       
       try {
+        console.log('[Pick File] Fetching file from URI:', file.uri);
         const response = await fetch(file.uri);
         console.log('[Pick File] Fetch response status:', response.status);
         
@@ -556,10 +573,12 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
         
         reader.onloadend = () => {
           try {
+            console.log('[Pick File] FileReader finished reading');
             const base64data = reader.result as string;
             
             if (!base64data) {
               console.error('[Pick File] No data from FileReader');
+              Alert.alert('Read Error', 'Failed to read file data.');
               resolve(null);
               return;
             }
@@ -592,6 +611,7 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
         
         reader.onerror = (error) => {
           console.error('[Pick File] FileReader error:', error);
+          Alert.alert('Read Error', 'An error occurred while reading the file.');
           resolve(null);
         };
         
@@ -601,7 +621,9 @@ export async function pickFileFromDevice(options: PickFileOptions = {}): Promise
       console.log('[Pick File] Using Native file reading method');
       try {
         const FileSystem = await import('expo-file-system');
+        console.log('[Pick File] FileSystem module loaded');
         
+        console.log('[Pick File] Getting file info for URI:', file.uri);
         const fileInfo = await FileSystem.getInfoAsync(file.uri);
         console.log('[Pick File] File info:', JSON.stringify(fileInfo, null, 2));
         
