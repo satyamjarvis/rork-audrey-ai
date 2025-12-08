@@ -71,7 +71,58 @@ export default function AttachmentPreviewModal({
   const insets = useSafeAreaInsets();
   const { saveTracker } = useStatistics();
   const { translations } = useLanguage();
-  const t = translations.attachmentPreview;
+  
+  // Fallback translations for attachmentPreview
+  const defaultT = {
+    preview: "Preview",
+    shareRestricted: "Share Restricted",
+    downloadRestrictedByOwner: "The owner of this calendar ({owner}) has disabled sharing for shared users.",
+    error: "Error",
+    noFileDataAvailable: "No file data available",
+    failedToShareFile: "Failed to share file. Please try again.",
+    videoPreview: "Video Preview",
+    audioFile: "Audio File",
+    pause: "Pause",
+    play: "Play",
+    failedToPlayAudio: "Failed to play audio file",
+    spreadsheet: "Spreadsheet",
+    openInMetrics: "Open in Metrics",
+    saveAsActiveSpreadsheet: "Save as Active Spreadsheet",
+    editingRestricted: "Editing restricted",
+    documentPreview: "Document Preview",
+    downloadRestrictedInfo: "Download restricted by owner",
+    noPreviewAvailable: "No preview available",
+    fileName: "File Name",
+    fileSize: "File Size",
+    fileType: "File Type",
+    uploaded: "Uploaded",
+    createdIn: "Created In",
+    downloadRestrictedWarning: "Download is restricted by the calendar owner: {owner}",
+    shareToDevice: "Share to Device",
+    downloadToMetrics: "Download to Metrics",
+    actionsRestrictedByOwner: "Actions restricted by owner",
+    analytics: "Analytics",
+    planner: "Planner",
+    notes: "Notes",
+    mindMap: "Mind Map",
+    source: "Source",
+    info: "Info",
+    openingAnalytics: "Opening Analytics. The original tracker should be visible in your saved trackers.",
+    openingPlanner: "Opening Planner. Look for the task in your task list.",
+    openingNotes: "Opening Notes.",
+    failedToOpenInSourceFeature: "Failed to open in source feature",
+    unsupportedFileForAnalytics: "Unsupported file format for Analytics",
+    couldNotParseSpreadsheet: "Could not parse spreadsheet data",
+    success: "Success",
+    spreadsheetSavedToAnalytics: "Spreadsheet saved to Analytics!",
+    openAnalytics: "Open Analytics",
+    failedToSaveToAnalytics: "Failed to save to Analytics",
+    restricted: "Restricted",
+    senderRestrictedEditing: "Sender has restricted saving/editing this file.",
+    failedToProcessSpreadsheet: "Failed to process spreadsheet",
+  };
+  
+  const t = translations?.attachmentPreview ?? defaultT;
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
