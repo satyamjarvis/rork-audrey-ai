@@ -2049,29 +2049,114 @@ export function getDeviceLanguage(): Language {
 export function getTranslations(language: Language): TranslationFile {
   const result = translations[language] || translations.en;
   
-  // Ensure track section exists with fallbacks
-  if (!result.track || !result.track.trackProgress) {
-    return {
-      ...result,
-      track: {
-        ...en.track,
-        ...(result.track || {}),
-      },
+  // Ensure all sections exist with fallbacks
+  const ensuredResult: TranslationFile = { ...result };
+  
+  // Track section
+  if (!ensuredResult.track || !ensuredResult.track.trackProgress) {
+    ensuredResult.track = {
+      ...en.track,
+      ...(ensuredResult.track || {}),
     };
   }
   
-  // Ensure night section exists with fallbacks
-  if (!result.night || !result.night.goodEvening) {
-    return {
-      ...result,
-      night: {
-        ...en.night,
-        ...(result.night || {}),
-      },
+  // Night section
+  if (!ensuredResult.night || !ensuredResult.night.goodEvening) {
+    ensuredResult.night = {
+      ...en.night,
+      ...(ensuredResult.night || {}),
     };
   }
   
-  return result;
+  // Settings section
+  if (!ensuredResult.settings || !ensuredResult.settings.toolsAndSettings) {
+    ensuredResult.settings = {
+      ...en.settings,
+      ...(ensuredResult.settings || {}),
+    };
+  }
+  
+  // Calendar section
+  if (!ensuredResult.calendar || !ensuredResult.calendar.thisMonth) {
+    ensuredResult.calendar = {
+      ...en.calendar,
+      ...(ensuredResult.calendar || {}),
+    };
+  }
+  
+  // Language section
+  if (!ensuredResult.language || !ensuredResult.language.selectLanguage) {
+    ensuredResult.language = {
+      ...en.language,
+      ...(ensuredResult.language || {}),
+    };
+  }
+  
+  // Mode selection section
+  if (!ensuredResult.modeSelection || !ensuredResult.modeSelection.pickYourMode) {
+    ensuredResult.modeSelection = {
+      ...en.modeSelection,
+      ...(ensuredResult.modeSelection || {}),
+    };
+  }
+  
+  // Morning section
+  if (!ensuredResult.morning || !ensuredResult.morning.goodMorning) {
+    ensuredResult.morning = {
+      ...en.morning,
+      ...(ensuredResult.morning || {}),
+    };
+  }
+  
+  // Mind map section
+  if (!ensuredResult.mindMap || !ensuredResult.mindMap.title) {
+    ensuredResult.mindMap = {
+      ...en.mindMap,
+      ...(ensuredResult.mindMap || {}),
+    };
+  }
+  
+  // App tour section
+  if (!ensuredResult.appTour || !ensuredResult.appTour.title) {
+    ensuredResult.appTour = {
+      ...en.appTour,
+      ...(ensuredResult.appTour || {}),
+    };
+  }
+  
+  // Account settings section
+  if (!ensuredResult.accountSettings || !ensuredResult.accountSettings.title) {
+    ensuredResult.accountSettings = {
+      ...en.accountSettings,
+      ...(ensuredResult.accountSettings || {}),
+    };
+  }
+  
+  // Passwords section
+  if (!ensuredResult.passwords || !ensuredResult.passwords.passwordManager) {
+    ensuredResult.passwords = {
+      ...en.passwords,
+      ...(ensuredResult.passwords || {}),
+    };
+  }
+  
+  // AI section
+  if (!ensuredResult.ai || !ensuredResult.ai.audrey) {
+    ensuredResult.ai = {
+      ...en.ai,
+      ...(ensuredResult.ai || {}),
+    };
+  }
+  
+  // Navigation section
+  if (!ensuredResult.navigation || !ensuredResult.navigation.calendar) {
+    ensuredResult.navigation = {
+      ...en.navigation,
+      ...(ensuredResult.navigation || {}),
+    };
+  }
+  
+  return ensuredResult;
 }
 
 export function isRTL(language: Language): boolean {
