@@ -425,6 +425,27 @@
       "quote5": "Les rêves sont la poésie écrite par un cœur paisible.",
       "quote6": "La lune nous rappelle : même l'obscurité a sa lumière."
     },
+    "tomorrowsIntentionsPage": {
+      "title": "Intentions pour Demain",
+      "intentionWisdom": "Sagesse des Intentions",
+      "setYourIntentions": "Définissez Vos Intentions",
+      "whatDoYouWantToCreate": "Que voulez-vous créer demain ?",
+      "addIntention": "Ajouter une Intention",
+      "placeholder": "Sur quoi aimeriez-vous vous concentrer demain ?",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "beginSetting": "Commencez à définir vos intentions",
+      "tapToAdd": "Appuyez sur \"Ajouter une Intention\" pour commencer",
+      "footer": "Demain est façonné par les intentions que nous définissons aujourd'hui",
+      "quotes": {
+        "1": "Demain est façonné par les intentions que nous définissons aujourd'hui.",
+        "2": "Ce sur quoi vous vous concentrez grandit. Définissez vos intentions avec soin.",
+        "3": "Rêvez-le ce soir, vivez-le demain.",
+        "4": "Votre lendemain commence par la vision douce d'aujourd'hui.",
+        "5": "Plantez des graines d'intention, regardez-les fleurir demain.",
+        "6": "L'avenir est créé par ce que nous faisons dans le moment présent."
+      }
+    },
     "sleepMeditationPage": {
       "title": "Sleep Meditation",
       "sleepWisdom": "Sleep Wisdom",
