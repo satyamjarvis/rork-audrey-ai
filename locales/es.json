@@ -196,6 +196,25 @@
     "wellnessCheck": "Control de Bienestar",
     "tuneIntoYourEnergy": "Sintoniza con tu energía",
     "embraceTheLight": "Abraza la luz. Adueñate de tu día.",
+    "affirmationsPage": {
+      "title": "Afirmaciones Matinales",
+      "todaysInspiration": "Inspiración de Hoy",
+      "empowerYourDay": "Empodera Tu Día",
+      "whatAffirmations": "¿Qué afirmaciones te guiarán hoy?",
+      "addAffirmation": "Agregar Afirmación",
+      "startJourney": "Comienza tu viaje de empoderamiento",
+      "tapToAdd": "Toca \"Agregar Afirmación\" para comenzar",
+      "footer": "Las afirmaciones positivas crean transformaciones poderosas",
+      "inputPlaceholder": "Yo soy...",
+      "quotes": {
+        "1": "Hoy está lleno de posibilidades infinitas.",
+        "2": "Soy poderoso, seguro y capaz.",
+        "3": "Cada mañana es un nuevo comienzo.",
+        "4": "Irradio positividad y luz.",
+        "5": "Estoy agradecido por este hermoso día.",
+        "6": "Mi potencial es ilimitado."
+      }
+    },
     "routinesPage": {
       "title": "Rutinas Matutinas",
       "todaysInspiration": "Inspiración de Hoy",

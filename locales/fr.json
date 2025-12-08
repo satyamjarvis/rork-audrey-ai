@@ -156,6 +156,25 @@
     "wellnessCheck": "Bilan de Bien-être",
     "tuneIntoYourEnergy": "Connectez-vous à votre énergie",
     "embraceTheLight": "Embrassez la lumière. Saisissez votre journée.",
+    "affirmationsPage": {
+      "title": "Affirmations Matinales",
+      "todaysInspiration": "Inspiration du Jour",
+      "empowerYourDay": "Donnez du Pouvoir à Votre Journée",
+      "whatAffirmations": "Quelles affirmations vous guideront aujourd'hui ?",
+      "addAffirmation": "Ajouter une Affirmation",
+      "startJourney": "Commencez votre voyage d'autonomisation",
+      "tapToAdd": "Appuyez sur \"Ajouter une Affirmation\" pour commencer",
+      "footer": "Les affirmations positives créent des transformations puissantes",
+      "inputPlaceholder": "Je suis...",
+      "quotes": {
+        "1": "Aujourd'hui est plein de possibilités infinies.",
+        "2": "Je suis puissant, confiant et capable.",
+        "3": "Chaque matin est un nouveau départ.",
+        "4": "Je rayonne de positivité et de lumière.",
+        "5": "Je suis reconnaissant pour cette belle journée.",
+        "6": "Mon potentiel est illimité."
+      }
+    },
     "routinesPage": {
       "title": "Routines Matinales",
       "todaysInspiration": "Inspiration du Jour",
