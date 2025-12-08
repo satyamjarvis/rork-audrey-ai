@@ -1897,7 +1897,7 @@ GUIDELINES FOR EXCELLENCE:
               <View style={styles.modalOverlay}>
                 <View style={[styles.modalContent, { backgroundColor: isNightMode ? "#000000" : "#FFFFFF" }]}>
                   <View style={styles.modalHeader}>
-                    <Text style={[styles.modalTitle, { color: palette.textPrimary }]}>{i18n.ai.aboutAudrey}</Text>
+                    <Text style={[styles.modalTitle, { color: palette.textPrimary }]}>{i18n.ai.aboutAudreyModal.title}</Text>
                     <TouchableOpacity
                       onPress={() => setShowAboutModal(false)}
                       style={[styles.closeButton, { backgroundColor: "rgba(255,255,255,0.1)" }]}
@@ -1921,22 +1921,22 @@ GUIDELINES FOR EXCELLENCE:
                           />
                         </LinearGradient>
                         <Text style={[styles.aboutSubtitle, { color: palette.textPrimary }]}>
-                          {i18n.ai.yourAiCompanion}
+                          {i18n.ai.aboutAudreyModal.subtitle}
                         </Text>
                         <Text style={[styles.aboutDescription, { color: palette.subtext }]}>
-                          {i18n.ai.audreyDescription}
+                          {i18n.ai.aboutAudreyModal.description}
                         </Text>
                       </View>
 
-                      <Text style={[styles.sectionHeader, { color: palette.accent }]}>{i18n.ai.whatICanDo}</Text>
+                      <Text style={[styles.sectionHeader, { color: palette.accent }]}>{i18n.ai.aboutAudreyModal.capabilities}</Text>
 
                       <View style={styles.featuresGrid}>
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <Calendar color="#A78BFA" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.smartScheduling}</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.aboutAudreyModal.smartScheduling}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              {i18n.ai.smartSchedulingDesc}
+                              {i18n.ai.aboutAudreyModal.smartSchedulingDesc}
                             </Text>
                           </View>
                         </View>
@@ -1944,9 +1944,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <CheckCircle2 color="#34D399" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.taskManagement}</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.aboutAudreyModal.taskManagement}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              {i18n.ai.taskManagementDesc}
+                              {i18n.ai.aboutAudreyModal.taskManagementDesc}
                             </Text>
                           </View>
                         </View>
@@ -1954,9 +1954,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <Heart color="#F472B6" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.wellnessSupport}</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.aboutAudreyModal.wellnessSupport}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              {i18n.ai.wellnessSupportDesc}
+                              {i18n.ai.aboutAudreyModal.wellnessSupportDesc}
                             </Text>
                           </View>
                         </View>
@@ -1964,9 +1964,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <Search color="#60A5FA" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.knowledgeWeb}</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.aboutAudreyModal.knowledgeWeb}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              {i18n.ai.knowledgeWebDesc}
+                              {i18n.ai.aboutAudreyModal.knowledgeWebDesc}
                             </Text>
                           </View>
                         </View>
@@ -1974,9 +1974,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <BookOpen color="#E879F9" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.learningGrowth}</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.aboutAudreyModal.learningGrowth}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              {i18n.ai.learningGrowthDesc}
+                              {i18n.ai.aboutAudreyModal.learningGrowthDesc}
                             </Text>
                           </View>
                         </View>
@@ -1984,9 +1984,9 @@ GUIDELINES FOR EXCELLENCE:
                         <View style={[styles.featureItem, { backgroundColor: "transparent" }]}>
                           <Brain color="#FB923C" size={24} />
                           <View style={styles.featureText}>
-                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.intelligentAnalysis}</Text>
+                            <Text style={[styles.featureTitle, { color: palette.textPrimary }]}>{i18n.ai.aboutAudreyModal.intelligentAnalysis}</Text>
                             <Text style={[styles.featureDesc, { color: palette.subtext }]}>
-                              {i18n.ai.intelligentAnalysisDesc}
+                              {i18n.ai.aboutAudreyModal.intelligentAnalysisDesc}
                             </Text>
                           </View>
                         </View>

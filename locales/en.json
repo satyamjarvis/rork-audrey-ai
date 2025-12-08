@@ -695,7 +695,25 @@
     "failedToReadFile": "Failed to read file:",
     "failedToSendMessage": "Failed to send message.",
     "aiAssistantButton": "AI Assistant",
-    "chatWithAudreyDescription": "Get intelligent assistance with your tasks"
+    "chatWithAudreyDescription": "Get intelligent assistance with your tasks",
+    "aboutAudreyModal": {
+      "title": "About Audrey",
+      "subtitle": "Your AI Life Companion",
+      "description": "I am Audrey, an advanced AI designed to understand you, support your goals, and help you navigate life with clarity and purpose.",
+      "capabilities": "What I Can Do",
+      "smartScheduling": "Smart Scheduling",
+      "smartSchedulingDesc": "Manage your calendar, appointments, and daily agenda.",
+      "taskManagement": "Task Management",
+      "taskManagementDesc": "Organize to-dos, set priorities, and track progress.",
+      "wellnessSupport": "Wellness & Support",
+      "wellnessSupportDesc": "Emotional check-ins, sleep meditation, and wellness advice.",
+      "knowledgeWeb": "Knowledge & Web",
+      "knowledgeWebDesc": "Search the web, answer questions, and provide info.",
+      "learningGrowth": "Learning & Growth",
+      "learningGrowthDesc": "Create study plans and help you learn new skills.",
+      "intelligentAnalysis": "Intelligent Analysis",
+      "intelligentAnalysisDesc": "Analyze attached files, photos, and documents for deep insights."
+    }
   },
   "automations": {
     "title": "Automations Manager",
