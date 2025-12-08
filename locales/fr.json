@@ -1126,5 +1126,65 @@
       "5": "Chaque rêve est une porte vers une autre dimension.",
       "6": "Laisse tes rêves te guider vers tes vérités les plus profondes."
     }
+  },
+  "howAmIFeeling": {
+    "title": "Contrôle du Bien-être",
+    "completeCheckIn": "Compléter l'enregistrement",
+    "checkInLogged": "Votre enregistrement a été sauvegardé !",
+    "incomplete": "Incomplet",
+    "fillAllParameters": "Veuillez compléter tous les paramètres de bien-être",
+    "success": "Succès",
+    "understanding": "Comprendre vos sentiments est la première étape vers le bien-être",
+    "howAreYouFeeling": "Comment vous sentez-vous ?",
+    "checkYourWellness": "Vérifiez votre bien-être",
+    "checkedInToday": "Vous vous êtes enregistré aujourd'hui !",
+    "howAreYouFeelingToday": "Comment vous sentez-vous aujourd'hui ?",
+    "todaysReminder": "Rappel du jour",
+    "energyLevel": "Niveau d'énergie",
+    "stressLevel": "Niveau de stress",
+    "sleepQuality": "Qualité du sommeil",
+    "physicalHealth": "Santé physique",
+    "gratitudeLabel": "Gratitude (une par ligne)",
+    "gratitudePlaceholder": "De quoi êtes-vous reconnaissant aujourd'hui ?",
+    "waterLabel": "Eau (verres)",
+    "exerciseLabel": "Exercice (min)",
+    "additionalNotes": "Notes additionnelles",
+    "notesPlaceholder": "Des pensées ou observations ?",
+    "footer": "Votre bien-être compte chaque jour",
+    "mood": {
+      "excellent": "Excellent",
+      "good": "Bien",
+      "okay": "Correct",
+      "low": "Faible",
+      "poor": "Mauvais"
+    },
+    "energy": {
+      "high": "Élevée",
+      "moderate": "Modérée",
+      "low": "Faible",
+      "exhausted": "Épuisé"
+    },
+    "stress": {
+      "none": "Aucun",
+      "mild": "Léger",
+      "moderate": "Modéré",
+      "high": "Élevé",
+      "overwhelming": "Accablant"
+    },
+    "sleep": {
+      "excellent": "Excellent",
+      "good": "Bon",
+      "fair": "Correct",
+      "poor": "Mauvais",
+      "terrible": "Terrible"
+    },
+    "quotes": {
+      "1": "Votre voyage vers le bien-être commence par la conscience de soi.",
+      "2": "La santé est un état d'harmonie complète du corps, de l'esprit et de l'esprit.",
+      "3": "Prenez soin de votre corps. C'est le seul endroit où vous devez vivre.",
+      "4": "Le bien-être n'est pas une destination, c'est un mode de vie.",
+      "5": "La plus grande richesse est la santé.",
+      "6": "Écoutez votre corps. Il essaie toujours de vous dire quelque chose."
+    }
   }
 }
