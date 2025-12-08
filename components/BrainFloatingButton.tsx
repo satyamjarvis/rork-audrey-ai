@@ -80,7 +80,7 @@ export default function BrainFloatingButton() {
             toValue: 1,
             duration: 800,
             easing: Easing.out(Easing.back(1.5)),
-            useNativeDriver: true,
+            useNativeDriver: false,
           }),
           // Gentle bounce effect
           Animated.sequence([
@@ -103,7 +103,7 @@ export default function BrainFloatingButton() {
             Animated.timing(rotateAnim, {
               toValue: 1,
               duration: 6000,
-              useNativeDriver: true,
+              useNativeDriver: false,
             })
           ).start();
 
@@ -112,12 +112,12 @@ export default function BrainFloatingButton() {
               Animated.timing(glowAnim, {
                 toValue: 1,
                 duration: 2500,
-                useNativeDriver: true,
+                useNativeDriver: false,
               }),
               Animated.timing(glowAnim, {
                 toValue: 0,
                 duration: 2500,
-                useNativeDriver: true,
+                useNativeDriver: false,
               }),
             ])
           ).start();
@@ -140,13 +140,13 @@ export default function BrainFloatingButton() {
     Animated.sequence([
       Animated.spring(scaleAnim, {
         toValue: 0.85,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
         friction: 3,
         tension: 40,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
     ]).start();
 

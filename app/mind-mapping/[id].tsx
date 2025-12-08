@@ -1092,20 +1092,18 @@ const DraggableNode = React.memo<DraggableNodeProps>(({ node, isSelected, onSele
   }, [onDrag, onSelect, onDragEnd]);
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: isDragging.current ? 1.05 : 1,
-        useNativeDriver: true,
-        tension: 300,
-        friction: 20,
-      }),
-      Animated.spring(shadowAnim, {
-        toValue: isSelected ? 1 : 0,
-        useNativeDriver: false,
-        tension: 300,
-        friction: 20,
-      })
-    ]).start();
+    Animated.spring(scaleAnim, {
+      toValue: isDragging.current ? 1.05 : 1,
+      useNativeDriver: true,
+      tension: 300,
+      friction: 20,
+    }).start();
+    Animated.spring(shadowAnim, {
+      toValue: isSelected ? 1 : 0,
+      useNativeDriver: false,
+      tension: 300,
+      friction: 20,
+    }).start();
   }, [isSelected, scaleAnim, shadowAnim]);
 
   const panResponder = useRef(

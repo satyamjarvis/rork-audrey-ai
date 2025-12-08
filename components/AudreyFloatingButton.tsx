@@ -151,12 +151,12 @@ export default function AudreyFloatingButton() {
         Animated.timing(pulseAnim, {
           toValue: 1.1,
           duration: 1500,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(pulseAnim, {
           toValue: 1,
           duration: 1500,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ])
     ).start();
@@ -168,12 +168,12 @@ export default function AudreyFloatingButton() {
         Animated.timing(glowAnim, {
           toValue: 1,
           duration: 2000,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(glowAnim, {
           toValue: 0,
           duration: 2000,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ])
     ).start();
@@ -188,13 +188,13 @@ export default function AudreyFloatingButton() {
       Animated.sequence([
         Animated.spring(scaleAnim, {
           toValue: 0.85,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.spring(scaleAnim, {
           toValue: 1,
           friction: 3,
           tension: 40,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ]).start();
       
@@ -209,13 +209,13 @@ export default function AudreyFloatingButton() {
     Animated.sequence([
       Animated.spring(scaleAnim, {
         toValue: 0.85,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
         friction: 3,
         tension: 40,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
     ]).start();
 
