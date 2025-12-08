@@ -121,6 +121,9 @@
   "common": {
     "cancel": "取消"
   },
+  "settings": {
+    "toolsAndSettings": "工具与设置"
+  },
   "track": {
     "trackProgress": "追踪进度",
     "yourFinancialJourney": "您的财务之旅",

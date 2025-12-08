@@ -228,5 +228,8 @@
   },
   "common": {
     "cancel": "Anulare"
+  },
+  "settings": {
+    "toolsAndSettings": "Instrumente și Setări"
   }
 }

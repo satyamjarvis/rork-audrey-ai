@@ -228,5 +228,8 @@
   },
   "common": {
     "cancel": "Отмена"
+  },
+  "settings": {
+    "toolsAndSettings": "Инструменты и Настройки"
   }
 }

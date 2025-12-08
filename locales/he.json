@@ -228,5 +228,8 @@
   },
   "common": {
     "cancel": "ביטול"
+  },
+  "settings": {
+    "toolsAndSettings": "כלים והגדרות"
   }
 }

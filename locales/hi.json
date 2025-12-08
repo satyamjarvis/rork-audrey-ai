@@ -228,5 +228,8 @@
   },
   "common": {
     "cancel": "रद्द करें"
+  },
+  "settings": {
+    "toolsAndSettings": "उपकरण और सेटिंग्स"
   }
 }

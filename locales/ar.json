@@ -121,6 +121,9 @@
   "common": {
     "cancel": "إلغاء"
   },
+  "settings": {
+    "toolsAndSettings": "الأدوات والإعدادات"
+  },
   "track": {
     "trackProgress": "تتبع التقدم",
     "yourFinancialJourney": "رحلتك المالية",

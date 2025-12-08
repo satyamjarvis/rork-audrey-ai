@@ -228,5 +228,8 @@
   },
   "common": {
     "cancel": "キャンセル"
+  },
+  "settings": {
+    "toolsAndSettings": "ツールと設定"
   }
 }
