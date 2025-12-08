@@ -193,7 +193,7 @@ const MindMapCard = React.memo(({ map, onPress, onDelete, index }: {
                   translate('mindMap.deleteMapConfirmation'),
                   [
                     { text: translate('common.cancel'), style: "cancel" },
-                    { text: translate('common.delete'), style: "destructive", onPress: onDelete }
+                    { text: translate('mindMap.delete'), style: "destructive", onPress: onDelete }
                   ]
                 );
               }}
