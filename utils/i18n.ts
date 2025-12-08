@@ -12,22 +12,159 @@ export type Language = 'en' | 'es' | 'fr' | 'ar' | 'zh' | 'pt' | 'ja' | 'he' | '
 
 export type TranslationFile = typeof en;
 
-const translations: Record<string, TranslationFile> = {
-  en,
-  es: es as unknown as TranslationFile,
-  fr: fr as unknown as TranslationFile,
-  ar: ar as unknown as TranslationFile,
-  zh: zh as unknown as TranslationFile,
-  pt: pt as unknown as TranslationFile,
-  ja: en,
-  he: en,
-  ro: en,
-  ru: en,
-  hi: en,
-  it: en,
-};
+type FontSizeCopy = TranslationFile['fontSize'];
+
+const esTranslations = es as unknown as TranslationFile;
+const frTranslations = fr as unknown as TranslationFile;
+const arTranslations = ar as unknown as TranslationFile;
+const zhTranslations = zh as unknown as TranslationFile;
+const ptTranslations = pt as unknown as TranslationFile;
 
 export const supportedLanguages: Language[] = ['en', 'es', 'fr', 'ar', 'zh', 'pt', 'ja', 'he', 'ro', 'ru', 'hi', 'it'];
+
+const fontSizeTranslations: Record<Language, FontSizeCopy> = {
+  en: en.fontSize,
+  es: {
+    previewText: 'El rápido zorro marrón salta sobre el perro perezoso',
+    options: {
+      small: { name: 'Pequeño', description: 'Texto compacto' },
+      medium: { name: 'Mediano (Predeterminado)', description: 'Tamaño estándar' },
+      large: { name: 'Grande', description: 'Más fácil de leer' },
+      xlarge: { name: 'Extra Grande', description: 'Legibilidad mejorada' },
+      xxlarge: { name: 'XXL', description: 'Legibilidad máxima' },
+    },
+  },
+  fr: {
+    previewText: 'Le vif renard brun saute par-dessus le chien paresseux',
+    options: {
+      small: { name: 'Petit', description: 'Texte compact' },
+      medium: { name: 'Moyen (Par défaut)', description: 'Taille standard' },
+      large: { name: 'Grand', description: 'Plus facile à lire' },
+      xlarge: { name: 'Très grand', description: 'Lisibilité renforcée' },
+      xxlarge: { name: 'XXL', description: 'Lisibilité maximale' },
+    },
+  },
+  ar: {
+    previewText: 'الثعلب البني السريع يقفز فوق الكلب الكسول',
+    options: {
+      small: { name: 'صغير', description: 'نص مدمج' },
+      medium: { name: 'متوسط (افتراضي)', description: 'حجم قياسي' },
+      large: { name: 'كبير', description: 'أسهل في القراءة' },
+      xlarge: { name: 'كبير جدًا', description: 'وضوح محسن' },
+      xxlarge: { name: 'عملاق', description: 'أقصى وضوح' },
+    },
+  },
+  zh: {
+    previewText: '敏捷的棕狐跳过了懒狗',
+    options: {
+      small: { name: '小号', description: '紧凑的文字' },
+      medium: { name: '中号（默认）', description: '标准尺寸' },
+      large: { name: '大号', description: '更易阅读' },
+      xlarge: { name: '特大号', description: '提升可读性' },
+      xxlarge: { name: '超大号', description: '最大可读性' },
+    },
+  },
+  pt: {
+    previewText: 'A rápida raposa marrom salta sobre o cão preguiçoso',
+    options: {
+      small: { name: 'Pequeno', description: 'Texto compacto' },
+      medium: { name: 'Médio (Padrão)', description: 'Tamanho padrão' },
+      large: { name: 'Grande', description: 'Mais fácil de ler' },
+      xlarge: { name: 'Extra Grande', description: 'Legibilidade aprimorada' },
+      xxlarge: { name: 'XXL', description: 'Legibilidade máxima' },
+    },
+  },
+  ja: {
+    previewText: '素早い茶色のキツネがのろい犬を飛び越える',
+    options: {
+      small: { name: '小サイズ', description: 'コンパクトな文字' },
+      medium: { name: '中サイズ（標準）', description: '標準サイズ' },
+      large: { name: '大サイズ', description: '読みやすさアップ' },
+      xlarge: { name: '特大サイズ', description: 'さらに見やすく' },
+      xxlarge: { name: 'XXL', description: '最大の読みやすさ' },
+    },
+  },
+  he: {
+    previewText: 'השועל החום המהיר קופץ מעל הכלב העצלן',
+    options: {
+      small: { name: 'קטן', description: 'טקסט קומפקטי' },
+      medium: { name: 'בינוני (ברירת מחדל)', description: 'גודל סטנדרטי' },
+      large: { name: 'גדול', description: 'קל יותר לקריאה' },
+      xlarge: { name: 'גדול מאוד', description: 'קריאות משופרת' },
+      xxlarge: { name: 'ענק', description: 'קריאות מקסימלית' },
+    },
+  },
+  ro: {
+    previewText: 'Vulpea brună rapidă sare peste câinele leneș',
+    options: {
+      small: { name: 'Mic', description: 'Text compact' },
+      medium: { name: 'Mediu (Implicit)', description: 'Dimensiune standard' },
+      large: { name: 'Mare', description: 'Mai ușor de citit' },
+      xlarge: { name: 'Foarte mare', description: 'Lizibilitate sporită' },
+      xxlarge: { name: 'XXL', description: 'Lizibilitate maximă' },
+    },
+  },
+  ru: {
+    previewText: 'Проворная коричневая лисица перепрыгивает через ленивую собаку',
+    options: {
+      small: { name: 'Малый', description: 'Компактный текст' },
+      medium: { name: 'Средний (по умолчанию)', description: 'Стандартный размер' },
+      large: { name: 'Крупный', description: 'Легче читать' },
+      xlarge: { name: 'Очень крупный', description: 'Повышенная читаемость' },
+      xxlarge: { name: 'XXL', description: 'Максимальная читаемость' },
+    },
+  },
+  hi: {
+    previewText: 'फुर्तीली भूरी लोमड़ी सुस्त कुत्ते के ऊपर कूदती है',
+    options: {
+      small: { name: 'छोटा', description: 'संक्षिप्त पाठ' },
+      medium: { name: 'मध्यम (डिफ़ॉल्ट)', description: 'मानक आकार' },
+      large: { name: 'बड़ा', description: 'पढ़ना आसान' },
+      xlarge: { name: 'अतिरिक्त बड़ा', description: 'बेहतर पठनीयता' },
+      xxlarge: { name: 'XXL', description: 'अधिकतम पठनीयता' },
+    },
+  },
+  it: {
+    previewText: 'La rapida volpe marrone salta sopra il cane pigro',
+    options: {
+      small: { name: 'Piccolo', description: 'Testo compatto' },
+      medium: { name: 'Medio (Predefinito)', description: 'Dimensione standard' },
+      large: { name: 'Grande', description: 'Più facile da leggere' },
+      xlarge: { name: 'Extra Grande', description: 'Maggiore leggibilità' },
+      xxlarge: { name: 'XXL', description: 'Massima leggibilità' },
+    },
+  },
+};
+
+const getBaseTranslations = (lang: Language): TranslationFile => {
+  switch (lang) {
+    case 'es':
+      return esTranslations;
+    case 'fr':
+      return frTranslations;
+    case 'ar':
+      return arTranslations;
+    case 'zh':
+      return zhTranslations;
+    case 'pt':
+      return ptTranslations;
+    default:
+      return en;
+  }
+};
+
+const translations: Record<Language, TranslationFile> = supportedLanguages.reduce(
+  (acc, lang) => {
+    const base = getBaseTranslations(lang);
+    const fontSize = fontSizeTranslations[lang] ?? fontSizeTranslations.en;
+    acc[lang] = {
+      ...base,
+      fontSize,
+    };
+    return acc;
+  },
+  {} as Record<Language, TranslationFile>,
+);
 
 export const languageInfo: Record<Language, { name: string; nativeName: string; flag: string; rtl: boolean }> = {
   en: { name: 'English', nativeName: 'English', flag: '🇺🇸', rtl: false },
