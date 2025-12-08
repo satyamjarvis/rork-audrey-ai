@@ -43,6 +43,7 @@ import { useMindMap, MindMap, Node, Edge } from '@/contexts/MindMapContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useChat } from '@/contexts/ChatContext';
 import { useCalendar } from '@/contexts/CalendarContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import KeyboardDismissButton from '@/components/KeyboardDismissButton';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -149,6 +150,7 @@ BackgroundGlitter.displayName = 'BackgroundGlitter';
 export default function MindMapEditor() {
   const { id } = useLocalSearchParams();
   const { theme } = useTheme();
+  const { translate } = useLanguage();
   const isNightMode = theme.id === 'night-mode' || theme.id === 'night';
   const insets = useSafeAreaInsets();
   const { getMindMap, updateMindMap, isLoading } = useMindMap();
@@ -204,8 +206,8 @@ export default function MindMapEditor() {
           setTranslateY(-root.y - NODE_HEIGHT/2 + SCREEN_HEIGHT/2);
         }
       } else {
-        Alert.alert("Error", "Mind map not found", [
-          { text: "OK", onPress: () => router.back() }
+        Alert.alert(translate('mindMap.error'), translate('mindMap.failedToCreateMindMap'), [
+          { text: translate('common.ok'), onPress: () => router.back() }
         ]);
       }
     }
@@ -395,12 +397,12 @@ export default function MindMapEditor() {
     }
 
     Alert.alert(
-      "Delete Node",
-      "Are you sure? This will delete the node and its connections.",
+      translate('mindMap.deleteNodeTitle'),
+      translate('mindMap.deleteNodeMessage'),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: translate('mindMap.cancel'), style: "cancel" },
         { 
-          text: "Delete", 
+          text: translate('mindMap.delete'), 
           style: "destructive",
           onPress: () => {
             setNodes(prev => prev.filter(n => n.id !== selectedNodeId));
@@ -521,12 +523,12 @@ export default function MindMapEditor() {
               dialogTitle: 'Share Mind Map'
             });
           } else {
-            Alert.alert("Saved", "Image saved to temporary storage");
+            Alert.alert(translate('common.saved'), translate('mindMap.saveAsTextFile'));
           }
         }
       } catch (error) {
         console.error('Export error:', error);
-        Alert.alert('Error', 'Failed to export mind map image');
+        Alert.alert(translate('mindMap.error'), translate('mindMap.failedToCreateMindMap'));
       } finally {
         setIsExporting(false);
         setExportFormat(null);
@@ -606,12 +608,12 @@ export default function MindMapEditor() {
               dialogTitle: 'Share Mind Map PDF'
             });
           } else {
-            Alert.alert("Saved", "PDF saved");
+            Alert.alert(translate('common.saved'), translate('mindMap.saveAsShareableDocument'));
           }
         }
       } catch (error) {
         console.error('Export error:', error);
-        Alert.alert('Error', 'Failed to export mind map PDF');
+        Alert.alert(translate('mindMap.error'), translate('mindMap.failedToCreateMindMap'));
       } finally {
         setIsExporting(false);
         setExportFormat(null);
@@ -645,12 +647,12 @@ export default function MindMapEditor() {
         { title: map.title, nodeCount: nodes.length }
       );
       
-      Alert.alert('Success', 'Mind map shared to chat!');
+      Alert.alert(translate('mindMap.success'), translate('mindMap.mindMapSharedToChat'));
       setIsSelectChatModalVisible(false);
       setIsShareModalVisible(false);
     } catch (error) {
       console.error('Share to chat error:', error);
-      Alert.alert('Error', 'Failed to share mind map to chat');
+      Alert.alert(translate('mindMap.error'), translate('mindMap.failedToCreateMindMap'));
     } finally {
       setIsExporting(false);
     }
@@ -658,7 +660,7 @@ export default function MindMapEditor() {
 
   if (!map) return (
     <View style={[styles.container, { backgroundColor: isNightMode ? "#000" : "#FFF" }]}>
-       <Text style={{color: isNightMode ? "#FFF" : "#000"}}>Loading...</Text>
+       <Text style={{color: isNightMode ? "#FFF" : "#000"}}>{translate('mindMap.loading')}</Text>
     </View>
   );
 
@@ -827,7 +829,7 @@ export default function MindMapEditor() {
       >
         <View style={styles.modalOverlay}>
            <View style={[styles.modalContent, { backgroundColor: isNightMode ? "#1E1E24" : "#FFFFFF" }]}>
-             <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Edit Node</Text>
+             <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{translate('mindMap.editNode')}</Text>
              <TextInput
                style={[
                  styles.modalInput, 
@@ -846,10 +848,10 @@ export default function MindMapEditor() {
                <KeyboardDismissButton isDark={isNightMode} />
                <View style={styles.modalButtonsRow}>
                  <TouchableOpacity onPress={() => setIsEditModalVisible(false)} style={styles.modalButton}>
-                   <Text style={{ color: theme.colors.text.secondary }}>Cancel</Text>
+                   <Text style={{ color: theme.colors.text.secondary }}>{translate('mindMap.cancel')}</Text>
                  </TouchableOpacity>
                  <TouchableOpacity onPress={saveNodeText} style={[styles.modalButton, { backgroundColor: theme.colors.primary }]}>
-                   <Text style={{ color: "#FFF", fontWeight: "600" as const }}>Save</Text>
+                   <Text style={{ color: "#FFF", fontWeight: "600" as const }}>{translate('mindMap.save')}</Text>
                  </TouchableOpacity>
                </View>
              </View>
@@ -865,7 +867,7 @@ export default function MindMapEditor() {
       >
         <View style={styles.modalOverlay}>
            <View style={[styles.modalContent, { backgroundColor: isNightMode ? "#1E1E24" : "#FFFFFF" }]}>
-             <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>Choose Color</Text>
+             <Text style={[styles.modalTitle, { color: theme.colors.text.primary }]}>{translate('mindMap.chooseColor')}</Text>
              <View style={styles.colorGrid}>
                {COLORS.map(color => (
                  <TouchableOpacity
@@ -876,7 +878,7 @@ export default function MindMapEditor() {
                ))}
              </View>
              <TouchableOpacity onPress={() => setIsColorModalVisible(false)} style={[styles.modalButton, { marginTop: 20 }]}>
-                 <Text style={{ color: theme.colors.text.primary }}>Cancel</Text>
+                 <Text style={{ color: theme.colors.text.primary }}>{translate('mindMap.cancel')}</Text>
              </TouchableOpacity>
            </View>
         </View>
@@ -895,7 +897,7 @@ export default function MindMapEditor() {
           ]}>
             <View style={styles.shareModalHeader}>
               <Text style={[styles.shareModalTitle, { color: theme.colors.text.primary }]}>
-                Share Mind Map
+                {translate('mindMap.shareMindMap')}
               </Text>
               <TouchableOpacity 
                 onPress={() => setIsShareModalVisible(false)}
@@ -925,10 +927,10 @@ export default function MindMapEditor() {
                   <MessageCircle size={24} color={isNightMode ? '#FFD700' : '#667EEA'} />
                 </View>
                 <Text style={[styles.shareOptionTitle, { color: theme.colors.text.primary }]}>
-                  Share to Chat
+                  {translate('mindMap.shareToChat')}
                 </Text>
                 <Text style={[styles.shareOptionDesc, { color: theme.colors.text.secondary }]}>
-                  Send to a calendar chat
+                  {translate('mindMap.sendToCalendarChat')}
                 </Text>
               </TouchableOpacity>
 
@@ -953,10 +955,10 @@ export default function MindMapEditor() {
                   )}
                 </View>
                 <Text style={[styles.shareOptionTitle, { color: theme.colors.text.primary }]}>
-                  {isExporting && exportFormat === 'jpg' ? 'Exporting...' : 'Export as Image'}
+                  {isExporting && exportFormat === 'jpg' ? translate('mindMap.exporting') : translate('mindMap.exportAsImage')}
                 </Text>
                 <Text style={[styles.shareOptionDesc, { color: theme.colors.text.secondary }]}>
-                  Save as text file with structure
+                  {translate('mindMap.saveAsTextFile')}
                 </Text>
               </TouchableOpacity>
 
@@ -981,10 +983,10 @@ export default function MindMapEditor() {
                   )}
                 </View>
                 <Text style={[styles.shareOptionTitle, { color: theme.colors.text.primary }]}>
-                  {isExporting && exportFormat === 'pdf' ? 'Exporting...' : 'Export as Document'}
+                  {isExporting && exportFormat === 'pdf' ? translate('mindMap.exporting') : translate('mindMap.exportAsDocument')}
                 </Text>
                 <Text style={[styles.shareOptionDesc, { color: theme.colors.text.secondary }]}>
-                  Save as shareable document
+                  {translate('mindMap.saveAsShareableDocument')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -1011,7 +1013,7 @@ export default function MindMapEditor() {
                 <ArrowLeft size={24} color={theme.colors.text.primary} />
               </TouchableOpacity>
               <Text style={[styles.shareModalTitle, { color: theme.colors.text.primary, flex: 1, textAlign: 'center' }]}>
-                Select Chat
+                {translate('mindMap.selectChat')}
               </Text>
               <View style={{ width: 40 }} />
             </View>
@@ -1021,7 +1023,7 @@ export default function MindMapEditor() {
                 <View style={styles.emptyChatState}>
                   <MessageCircle size={48} color={theme.colors.text.secondary} />
                   <Text style={[styles.emptyChatText, { color: theme.colors.text.secondary }]}>
-                    No chats available
+                    {translate('mindMap.noChatsAvailable')}
                   </Text>
                 </View>
               ) : (
@@ -1043,7 +1045,7 @@ export default function MindMapEditor() {
                         {calendar.name}
                       </Text>
                       <Text style={[styles.chatItemDesc, { color: theme.colors.text.secondary }]}>
-                        {calendar.isShared ? `Shared with ${calendar.sharedWith.length} people` : 'Private chat'}
+                        {calendar.isShared ? translate('mindMap.sharedWith').replace('{count}', calendar.sharedWith.length.toString()) : translate('mindMap.privateChat')}
                       </Text>
                     </View>
                     {isExporting ? (
