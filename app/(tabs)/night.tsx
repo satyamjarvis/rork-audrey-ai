@@ -160,14 +160,6 @@ export default function NightScreen() {
       gradient: ["#ad1457", "#c2185b"] as const,
       route: "/tomorrows-intentions",
     },
-    {
-      id: "wellness",
-      title: translations.morning.wellnessCheck,
-      description: translations.night.dailyHealthAssessment,
-      icon: Moon,
-      gradient: ["#1a237e", "#283593"] as const,
-      route: "/wellness-check",
-    },
   ], [translations]);
 
   const getScaleAnim = (id: string) => {
