@@ -1,0 +1,58 @@
+{
+  "navigation": {
+    "calendar": "לוח שנה",
+    "track": "מעקב",
+    "learn": "למידה",
+    "settings": "הגדרות",
+    "morning": "בוקר",
+    "night": "לילה",
+    "phonebook": "אנשי קשר",
+    "chats": "צ'אטים",
+    "planner": "מתכנן",
+    "ai": "בינה מלאכותית",
+    "universe": "יקום",
+    "analytics": "ניתוח",
+    "tools": "כלים"
+  },
+  "morning": {
+    "riseAndShine": "קום והאיר",
+    "goodMorning": "בוקר טוב",
+    "seizeTheDay": "תפוס את היום",
+    "morningInspiration": "השראת בוקר",
+    "awakeningRituals": "טקסי התעוררות",
+    "morningMeditation": "מדיטציית בוקר",
+    "centerYourMind": "רכז את המחשבות ונשום",
+    "morningRoutines": "שגרת בוקר",
+    "buildYourPerfectRitual": "בנה את הטקס המושלם שלך",
+    "dailyAffirmations": "אישורים יומיים",
+    "speakPowerIntoExistence": "דבר כוח לתוך קיום",
+    "morningHabits": "הרגלי בוקר",
+    "fuelYourTransformation": "תדלק את השינוי שלך",
+    "wellnessCheck": "בדיקת בריאות",
+    "tuneIntoYourEnergy": "התכוונן לאנרגיה שלך",
+    "embraceTheLight": "חבק את האור. השתלט על היום שלך.",
+    "affirmationsPage": {
+      "title": "אישורי בוקר",
+      "todaysInspiration": "ההשראה של היום",
+      "empowerYourDay": "העצים את היום שלך",
+      "whatAffirmations": "אילו אישורים ידריכו אותך היום?",
+      "addAffirmation": "הוסף אישור",
+      "startJourney": "התחל את מסע ההעצמה שלך",
+      "tapToAdd": "הקש על \"הוסף אישור\" להתחלה",
+      "footer": "אישורים חיוביים יוצרים שינויים עוצמתיים",
+      "inputPlaceholder": "אני...",
+      "quotes": {
+        "1": "היום מלא באפשרויות אינסופיות.",
+        "2": "אני חזק, בטוח ומסוגל.",
+        "3": "כל בוקר הוא התחלה חדשה.",
+        "4": "אני מקרין חיוביות ואור.",
+        "5": "אני אסיר תודה על היום היפה הזה.",
+        "6": "הפוטנציאל שלי הוא בלתי מוגבל."
+      }
+    }
+  },
+  "common": {
+    "save": "שמור",
+    "cancel": "ביטול"
+  }
+}

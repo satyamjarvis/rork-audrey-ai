@@ -1,0 +1,58 @@
+{
+  "navigation": {
+    "calendar": "कैलेंडर",
+    "track": "ट्रैक करें",
+    "learn": "सीखें",
+    "settings": "सेटिंग्स",
+    "morning": "सुबह",
+    "night": "रात",
+    "phonebook": "संपर्क",
+    "chats": "चैट",
+    "planner": "योजनाकार",
+    "ai": "एआई",
+    "universe": "ब्रह्मांड",
+    "analytics": "विश्लेषण",
+    "tools": "उपकरण"
+  },
+  "morning": {
+    "riseAndShine": "उठो और चमको",
+    "goodMorning": "सुप्रभात",
+    "seizeTheDay": "दिन को पकड़ो",
+    "morningInspiration": "सुबह की प्रेरणा",
+    "awakeningRituals": "जागृति अनुष्ठान",
+    "morningMeditation": "सुबह का ध्यान",
+    "centerYourMind": "अपने मन को केंद्रित करें और सांस लें",
+    "morningRoutines": "सुबह की दिनचर्या",
+    "buildYourPerfectRitual": "अपना आदर्श अनुष्ठान बनाएं",
+    "dailyAffirmations": "दैनिक पुष्टि",
+    "speakPowerIntoExistence": "शक्ति को अस्तित्व में बोलें",
+    "morningHabits": "सुबह की आदतें",
+    "fuelYourTransformation": "अपने परिवर्तन को ईंधन दें",
+    "wellnessCheck": "कल्याण जाँच",
+    "tuneIntoYourEnergy": "अपनी ऊर्जा से जुड़ें",
+    "embraceTheLight": "प्रकाश को अपनाएं। अपने दिन के मालिक बनें।",
+    "affirmationsPage": {
+      "title": "सुबह की पुष्टि",
+      "todaysInspiration": "आज की प्रेरणा",
+      "empowerYourDay": "अपने दिन को सशक्त बनाएं",
+      "whatAffirmations": "आज कौन सी पुष्टि आपका मार्गदर्शन करेगी?",
+      "addAffirmation": "पुष्टि जोड़ें",
+      "startJourney": "अपनी सशक्तिकरण यात्रा शुरू करें",
+      "tapToAdd": "शुरू करने के लिए \"पुष्टि जोड़ें\" पर टैप करें",
+      "footer": "सकारात्मक पुष्टि शक्तिशाली परिवर्तन बनाती है",
+      "inputPlaceholder": "मैं हूँ...",
+      "quotes": {
+        "1": "आज अनंत संभावनाओं से भरा है।",
+        "2": "मैं शक्तिशाली, आत्मविश्वासी और सक्षम हूं।",
+        "3": "हर सुबह एक नई शुरुआत है।",
+        "4": "मैं सकारात्मकता और प्रकाश विकीर्ण करता हूं।",
+        "5": "मैं इस खूबसूरत दिन के लिए आभारी हूं।",
+        "6": "मेरी क्षमता असीमित है।"
+      }
+    }
+  },
+  "common": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें"
+  }
+}

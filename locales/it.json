@@ -1,0 +1,58 @@
+{
+  "navigation": {
+    "calendar": "Calendario",
+    "track": "Traccia",
+    "learn": "Impara",
+    "settings": "Impostazioni",
+    "morning": "Mattino",
+    "night": "Notte",
+    "phonebook": "Contatti",
+    "chats": "Chat",
+    "planner": "Pianificatore",
+    "ai": "IA",
+    "universe": "Universo",
+    "analytics": "Analisi",
+    "tools": "Strumenti"
+  },
+  "morning": {
+    "riseAndShine": "Alzati e risplendi",
+    "goodMorning": "Buongiorno",
+    "seizeTheDay": "Cogli il giorno",
+    "morningInspiration": "Ispirazione mattutina",
+    "awakeningRituals": "Rituali del risveglio",
+    "morningMeditation": "Meditazione mattutina",
+    "centerYourMind": "Centra la tua mente e respira",
+    "morningRoutines": "Routine mattutine",
+    "buildYourPerfectRitual": "Costruisci il tuo rituale perfetto",
+    "dailyAffirmations": "Affermazioni giornaliere",
+    "speakPowerIntoExistence": "Parla il potere nell'esistenza",
+    "morningHabits": "Abitudini mattutine",
+    "fuelYourTransformation": "Alimenta la tua trasformazione",
+    "wellnessCheck": "Controllo benessere",
+    "tuneIntoYourEnergy": "Sintonizzati con la tua energia",
+    "embraceTheLight": "Abbraccia la luce. Possiedi la tua giornata.",
+    "affirmationsPage": {
+      "title": "Affermazioni mattutine",
+      "todaysInspiration": "Ispirazione di oggi",
+      "empowerYourDay": "Potenzia la tua giornata",
+      "whatAffirmations": "Quali affermazioni ti guideranno oggi?",
+      "addAffirmation": "Aggiungi affermazione",
+      "startJourney": "Inizia il tuo viaggio di empowerment",
+      "tapToAdd": "Tocca \"Aggiungi affermazione\" per iniziare",
+      "footer": "Le affermazioni positive creano trasformazioni potenti",
+      "inputPlaceholder": "Io sono...",
+      "quotes": {
+        "1": "Oggi è pieno di possibilità infinite.",
+        "2": "Sono potente, fiducioso e capace.",
+        "3": "Ogni mattina è un nuovo inizio.",
+        "4": "Irradio positività e luce.",
+        "5": "Sono grato per questo bellissimo giorno.",
+        "6": "Il mio potenziale è illimitato."
+      }
+    }
+  },
+  "common": {
+    "save": "Salva",
+    "cancel": "Annulla"
+  }
+}

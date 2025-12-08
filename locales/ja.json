@@ -1,0 +1,58 @@
+{
+  "navigation": {
+    "calendar": "カレンダー",
+    "track": "追跡",
+    "learn": "学習",
+    "settings": "設定",
+    "morning": "朝",
+    "night": "夜",
+    "phonebook": "連絡先",
+    "chats": "チャット",
+    "planner": "プランナー",
+    "ai": "AI",
+    "universe": "ユニバース",
+    "analytics": "分析",
+    "tools": "ツール"
+  },
+  "morning": {
+    "riseAndShine": "起きて輝く",
+    "goodMorning": "おはようございます",
+    "seizeTheDay": "今日を掴め",
+    "morningInspiration": "朝のインスピレーション",
+    "awakeningRituals": "目覚めの儀式",
+    "morningMeditation": "朝の瞑想",
+    "centerYourMind": "心を落ち着かせて呼吸する",
+    "morningRoutines": "朝のルーティン",
+    "buildYourPerfectRitual": "完璧な儀式を作る",
+    "dailyAffirmations": "毎日のアファメーション",
+    "speakPowerIntoExistence": "力を言葉にする",
+    "morningHabits": "朝の習慣",
+    "fuelYourTransformation": "変革の原動力",
+    "wellnessCheck": "ウェルネスチェック",
+    "tuneIntoYourEnergy": "エネルギーに同調する",
+    "embraceTheLight": "光を受け入れる。あなたの一日を自分のものに。",
+    "affirmationsPage": {
+      "title": "朝のアファメーション",
+      "todaysInspiration": "今日のインスピレーション",
+      "empowerYourDay": "あなたの一日を力づける",
+      "whatAffirmations": "今日はどのアファメーションがあなたを導きますか？",
+      "addAffirmation": "アファメーションを追加",
+      "startJourney": "力を与える旅を始める",
+      "tapToAdd": "「アファメーションを追加」をタップして始める",
+      "footer": "ポジティブなアファメーションが強力な変容を生み出す",
+      "inputPlaceholder": "私は...",
+      "quotes": {
+        "1": "今日は無限の可能性に満ちている。",
+        "2": "私は力強く、自信があり、有能だ。",
+        "3": "毎朝は新しい始まり。",
+        "4": "私は前向きさと光を放つ。",
+        "5": "この美しい日に感謝している。",
+        "6": "私の可能性は無限だ。"
+      }
+    }
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "navigation": {
+    "calendar": "Calendar",
+    "track": "Urmărire",
+    "learn": "Învățare",
+    "settings": "Setări",
+    "morning": "Dimineață",
+    "night": "Noapte",
+    "phonebook": "Contacte",
+    "chats": "Conversații",
+    "planner": "Planificator",
+    "ai": "IA",
+    "universe": "Univers",
+    "analytics": "Analiză",
+    "tools": "Instrumente"
+  },
+  "morning": {
+    "riseAndShine": "Trezește-te și strălucește",
+    "goodMorning": "Bună dimineața",
+    "seizeTheDay": "Apucă ziua",
+    "morningInspiration": "Inspirație de dimineață",
+    "awakeningRituals": "Ritualuri de trezire",
+    "morningMeditation": "Meditație de dimineață",
+    "centerYourMind": "Centrează-ți mintea și respiră",
+    "morningRoutines": "Rutine de dimineață",
+    "buildYourPerfectRitual": "Construiește-ți ritualul perfect",
+    "dailyAffirmations": "Afirmații zilnice",
+    "speakPowerIntoExistence": "Vorbește puterea în existență",
+    "morningHabits": "Obiceiuri de dimineață",
+    "fuelYourTransformation": "Alimentează-ți transformarea",
+    "wellnessCheck": "Verificare bunăstare",
+    "tuneIntoYourEnergy": "Acordează-te cu energia ta",
+    "embraceTheLight": "Îmbrățișează lumina. Stăpânește-ți ziua.",
+    "affirmationsPage": {
+      "title": "Afirmații de dimineață",
+      "todaysInspiration": "Inspirația zilei",
+      "empowerYourDay": "Împuternicește-ți ziua",
+      "whatAffirmations": "Ce afirmații te vor ghida astăzi?",
+      "addAffirmation": "Adaugă afirmație",
+      "startJourney": "Începe-ți călătoria împuternicitoare",
+      "tapToAdd": "Apasă \"Adaugă afirmație\" pentru a începe",
+      "footer": "Afirmațiile pozitive creează transformări puternice",
+      "inputPlaceholder": "Eu sunt...",
+      "quotes": {
+        "1": "Astăzi este plin de posibilități nesfârșite.",
+        "2": "Sunt puternic, încrezător și capabil.",
+        "3": "Fiecare dimineață este un nou început.",
+        "4": "Radiez pozitivitate și lumină.",
+        "5": "Sunt recunoscător pentru această zi frumoasă.",
+        "6": "Potențialul meu este nelimitat."
+      }
+    }
+  },
+  "common": {
+    "save": "Salvează",
+    "cancel": "Anulează"
+  }
+}
